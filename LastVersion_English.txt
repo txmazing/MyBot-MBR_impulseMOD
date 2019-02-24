@@ -1,0 +1,5 @@
+[mod]
+version    = "v1.0"
+
+messagenew = "For more information, go to \nhttps://mybot.run\n\n Always free and open source."
+messageold = "A new version of MyBot impulseMOD 1.0 is available!\nPlease download the latest from:\https://github.com/txmazing/MyBot-MBR_impulseMOD"
