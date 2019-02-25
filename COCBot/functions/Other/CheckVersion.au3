@@ -27,7 +27,7 @@ Func CheckVersion()
 		ElseIf VersionNumFromVersionTXT($g_sModversion) < VersionNumFromVersionTXT($g_sLastModversion) Then
 			SetLog("WARNING, YOUR impulseMOD VERSION (" & $g_sModversion & ") IS OUT OF DATE.", $COLOR_ERROR)
 			SetLog("CHIEF, PLEASE DOWNLOAD THE LATEST (" & $g_sLastModversion & ")", $COLOR_ERROR)
-			SetLog("FROM https://MyBot.run               ", $COLOR_ERROR)
+			SetLog("FROM https://github.com/txmazing/MyBot-MBR_impulseMOD/releases", $COLOR_ERROR)
 			SetLog(" ")
 			_PrintLogVersion($g_sOldModversmessage)
 			CheckModVersion()
@@ -50,7 +50,7 @@ Func CheckVersionHTML()
 		FileCopy(@ScriptDir & "\TestVersion.txt", $versionfile, 1)
 	Else
 		;download page from site contains last bot version
-        Local $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-impulseMOD/master/LastVersion.txt", $versionfile, 0, 1)
+        Local $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-MBR_impulseMOD/master/LastVersion.txt", $versionfile, 0, 1)
 		; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
 		Local $i = 0
 		Do
@@ -72,7 +72,7 @@ Func CheckVersionHTML()
 			FileCopy(@ScriptDir & "\TestVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 1)
 		Else
 			;download page from site contains last bot version localized messages
-            $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-impulseMOD/master/LastVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 0, 1)
+            $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-MBR_impulseMOD/master/LastVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 0, 1)
 			; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
 			Local $i = 0
 			Do

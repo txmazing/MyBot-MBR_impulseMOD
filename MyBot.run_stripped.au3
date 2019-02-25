@@ -7195,13 +7195,15 @@ Local $iTop = $iCenterY - $iHeight / 2
 EndIf
 Local $iLeft = $iCenterX - $iX / 2
 $g_hSplash = GUICreate("", $iX, $iHeight, $iLeft, $iTop, BitOR($WS_POPUP, $WS_BORDER), BitOR($WS_EX_TOPMOST, $WS_EX_WINDOWEDGE, $WS_EX_TOOLWINDOW))
-GUISetBkColor($COLOR_WHITE, $g_hSplash)
+GUISetBkColor(0x2F3136, $g_hSplash)
 $g_lSplashPic = _GUICtrlCreatePic($hSplashImg, 0, $iT)
 GUICtrlSetOnEvent(-1, "MoveSplashScreen")
 $g_lSplashTitle = GUICtrlCreateLabel($g_sBotTitle, 15, $iY + $iT + $iB + 3, $iX - 30, 15, $SS_CENTER)
+GUICtrlSetColor(-1, 0xA6A7A8)
 GUICtrlSetOnEvent(-1, "MoveSplashScreen")
 $g_hSplashProgress = GUICtrlCreateProgress(15, $iY + $iT + $iB + 20, $iX - 30, 10, $PBS_SMOOTH, BitOR($WS_EX_TOPMOST, $WS_EX_WINDOWEDGE, $WS_EX_TOOLWINDOW))
 $g_lSplashStatus = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_Loading", "Loading..."), 15, $iY + $iT + $iB + 38, $iX - 30, 15, $SS_CENTER)
+GUICtrlSetColor(-1, 0xA6A7A8)
 GUICtrlSetOnEvent(-1, "MoveSplashScreen")
 _GDIPlus_BitmapDispose($hSplashImg)
 GUISetState($iGuiState, $g_hSplash)
@@ -21344,46 +21346,46 @@ _GUIToolTip_SetMaxTipWidth($g_hToolTip, $_GUI_MAIN_WIDTH)
 If $g_bCustomTitleBarActive = False Then
 GUICtrlCreateLabel("", 0, 0, $_GUI_MAIN_WIDTH, $_GUI_MAIN_TOP)
 GUICtrlSetOnEvent(-1, "BotMoveRequest")
-GUICtrlSetBkColor(-1, $COLOR_WHITE)
+GUICtrlSetBkColor(-1, 0x202225)
 Else
 Local $iTitleX = 25
 GUICtrlCreateLabel("", 0, 0, $iTitleX, $_GUI_MAIN_TOP)
 GUICtrlSetOnEvent(-1, "BotMoveRequest")
-GUICtrlSetBkColor(-1, $COLOR_WHITE)
+GUICtrlSetBkColor(-1, 0x202225)
 $g_hLblBotTitle = GUICtrlCreateLabel($g_sBotTitle, $iTitleX, 0, $_GUI_MAIN_WIDTH - $_GUI_MAIN_BUTTON_COUNT * $aBtnSize[0] - 25, $_GUI_MAIN_TOP)
 GUICtrlSetOnEvent(-1, "BotMoveRequest")
 GUICtrlSetFont(-1, 11, 0, 0, "Segoe UI")
-GUICtrlSetBkColor(-1, $COLOR_WHITE)
-GUICtrlSetColor(-1, 0x171717)
+GUICtrlSetBkColor(-1, 0x202225)
+GUICtrlSetColor(-1, 0xA6A7A8)
 GUISwitch($g_hFrmBotButtons)
 $g_hLblBotShrink = GUICtrlCreateLabel(ChrW(0x25C4), 0, 0, $aBtnSize[0], $aBtnSize[1], $SS_CENTER)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Title", "LblBotShrink", "Shrink Bot when docked"))
 GUICtrlSetFont(-1, 10)
-GUICtrlSetBkColor(-1, 0xF0F0F0)
-GUICtrlSetColor(-1, 0xB8B8B8)
+GUICtrlSetBkColor(-1, 0x202225)
+GUICtrlSetColor(-1, 0xA6A7A8)
 $g_hLblBotExpand = GUICtrlCreateLabel(ChrW(0x25BA), 0, 0, $aBtnSize[0], $aBtnSize[1], $SS_CENTER)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Title", "LblBotExpand", "Expand Bot when docked"))
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetFont(-1, 10)
-GUICtrlSetBkColor(-1, 0xF0F0F0)
-GUICtrlSetColor(-1, 0xB8B8B8)
+GUICtrlSetBkColor(-1, 0x202225)
+GUICtrlSetColor(-1, 0xA6A7A8)
 $g_hLblBotMiniGUI = GUICtrlCreateLabel(ChrW(0x2584), $aBtnSize[0] *($_GUI_MAIN_BUTTON_COUNT - 3), 0, $aBtnSize[0], $aBtnSize[1], $SS_CENTER)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Title", "LblBotMiniGUI", "Switch to Mini Mode"))
 GUICtrlSetState(-1, $g_iGuiMode = 1 ? $GUI_SHOW : $GUI_HIDE)
 GUICtrlSetFont(-1, 10)
-GUICtrlSetBkColor(-1, 0xF0F0F0)
-GUICtrlSetColor(-1, 0xB8B8B8)
+GUICtrlSetBkColor(-1, 0x202225)
+GUICtrlSetColor(-1, 0xA6A7A8)
 $g_hLblBotNormalGUI = GUICtrlCreateLabel(ChrW(0x2588), $aBtnSize[0] *($_GUI_MAIN_BUTTON_COUNT - 3), 0, $aBtnSize[0], $aBtnSize[1], $SS_CENTER)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Title", "LblBotNormal", "Switch to Normal Mode"))
 GUICtrlSetState(-1, $g_iGuiMode = 2 ? $GUI_SHOW : $GUI_HIDE)
 GUICtrlSetFont(-1, 10)
-GUICtrlSetBkColor(-1, 0xF0F0F0)
-GUICtrlSetColor(-1, 0xB8B8B8)
+GUICtrlSetBkColor(-1, 0x202225)
+GUICtrlSetColor(-1, 0xA6A7A8)
 $g_hLblBotMinimize = GUICtrlCreateLabel("̶", $aBtnSize[0] *($_GUI_MAIN_BUTTON_COUNT - 2), 0, $aBtnSize[0], $aBtnSize[1], $SS_CENTER)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Title", "LblBotMinimize", "Minimize"))
 GUICtrlSetFont(-1, 10)
-GUICtrlSetBkColor(-1, 0xF0F0F0)
-GUICtrlSetColor(-1, 0xB8B8B8)
+GUICtrlSetBkColor(-1, 0x202225)
+GUICtrlSetColor(-1, 0xA6A7A8)
 $g_hLblBotClose = GUICtrlCreateLabel("×", $aBtnSize[0] *($_GUI_MAIN_BUTTON_COUNT - 1), 0, $aBtnSize[0], $aBtnSize[1], $SS_CENTER)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Title", "LblBotClose", "Close"))
 GUICtrlSetFont(-1, 10)
@@ -21395,7 +21397,7 @@ GUICtrlSetCursor(-1, 0)
 GUISwitch($g_hFrmBotEx)
 GUICtrlCreateLabel("", $_GUI_MAIN_WIDTH - $_GUI_MAIN_BUTTON_COUNT * $aBtnSize[0], $aBtnSize[1], $_GUI_MAIN_BUTTON_COUNT * $aBtnSize[0], $_GUI_MAIN_TOP - $aBtnSize[1])
 GUICtrlSetOnEvent(-1, "BotMoveRequest")
-GUICtrlSetBkColor(-1, $COLOR_WHITE)
+GUICtrlSetBkColor(-1, 0x202225)
 EndIf
 $g_hFrmBot_MAIN_PIC = _GUICtrlCreatePic($g_sLogoPath, 0, $_GUI_MAIN_TOP, $_GUI_MAIN_WIDTH, 67)
 GUICtrlSetOnEvent(-1, "BotMoveRequest")
@@ -29572,7 +29574,7 @@ Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnSilverStar]
 Case $g_hGUI_ATTACKOPTION_TAB
 Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
 Case $g_hGUI_MOD_TAB
-Local $aIconIndex = [$eIcnModHumanization]
+Local $aIconIndex = [$eIcnHumanization]
 Case $g_hGUI_BOT_TAB
 Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnProfile, $eIcnProfile, $eIcnGold]
 Case $g_hGUI_STRATEGIES_TAB
@@ -53261,7 +53263,7 @@ CheckModVersion()
 ElseIf VersionNumFromVersionTXT($g_sModversion) < VersionNumFromVersionTXT($g_sLastModversion) Then
 SetLog("WARNING, YOUR impulseMOD VERSION (" & $g_sModversion & ") IS OUT OF DATE.", $COLOR_ERROR)
 SetLog("CHIEF, PLEASE DOWNLOAD THE LATEST (" & $g_sLastModversion & ")", $COLOR_ERROR)
-SetLog("FROM https://MyBot.run               ", $COLOR_ERROR)
+SetLog("FROM https://github.com/txmazing/MyBot-MBR_impulseMOD/releases", $COLOR_ERROR)
 SetLog(" ")
 _PrintLogVersion($g_sOldModversmessage)
 CheckModVersion()
@@ -53282,7 +53284,7 @@ Local $versionfile = @ScriptDir & "\LastVersion.txt"
 If FileExists(@ScriptDir & "\TestVersion.txt") Then
 FileCopy(@ScriptDir & "\TestVersion.txt", $versionfile, 1)
 Else
-Local $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-impulseMOD/master/LastVersion.txt", $versionfile, 0, 1)
+Local $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-MBR_impulseMOD/master/LastVersion.txt", $versionfile, 0, 1)
 Local $i = 0
 Do
 Sleep($DELAYCHECKVERSIONHTML1)
@@ -53298,7 +53300,7 @@ Local $versionfilelocalized = @ScriptDir & "\LastVersion_" & $g_sLanguage & ".tx
 If FileExists(@ScriptDir & "\TestVersion_" & $g_sLanguage & ".txt") Then
 FileCopy(@ScriptDir & "\TestVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 1)
 Else
-$hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-impulseMOD/master/LastVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 0, 1)
+$hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-MBR_impulseMOD/master/LastVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 0, 1)
 Local $i = 0
 Do
 Sleep($DELAYCHECKVERSIONHTML1)
