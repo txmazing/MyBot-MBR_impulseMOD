@@ -10,8 +10,8 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7"
-Global $g_sModversion = "v1.0"
-Global $g_sModSupportUrl = "https://github.com/txmazing/MyBot-impulseMOD/releases"
+Global $g_sModversion = "v1.0.1"
+Global $g_sModSupportUrl = "https://github.com/txmazing/MyBot-MBR_impulseMOD/releases"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
