@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7"
-Global $g_sModversion = "v1.0.1"
+Global $g_sModversion = "v1.0.2"
 Global $g_sModSupportUrl = "https://github.com/txmazing/MyBot-MBR_impulseMOD/releases"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
@@ -1167,6 +1167,11 @@ If StringUpper(StringMid($sClassCheck, 1, StringLen($aClassName[$x]))) = StringU
 Next
 Return False
 EndFunc
+Func _WinAPI_IsWindow($hWnd)
+Local $aResult = DllCall("user32.dll", "bool", "IsWindow", "hwnd", $hWnd)
+If @error Then Return SetError(@error, @extended, 0)
+Return $aResult[0]
+EndFunc
 Func _WinAPI_IsWindowVisible($hWnd)
 Local $aResult = DllCall("user32.dll", "bool", "IsWindowVisible", "hwnd", $hWnd)
 If @error Then Return SetError(@error, @extended, 0)
@@ -1313,6 +1318,11 @@ EndFunc
 Func _WinAPI_GetVersion()
 Return Number(BitAND(BitShift($__WINVER, 8), 0xFF) & '.' & BitAND($__WINVER, 0xFF), $NUMBER_DOUBLE)
 EndFunc
+Func _WinAPI_LoadKeyboardLayout($iLanguage, $iFlag = 0)
+Local $aRet = DllCall('user32.dll', 'handle', 'LoadKeyboardLayoutW', 'wstr', Hex($iLanguage, 8), 'uint', $iFlag)
+If @error Then Return SetError(@error, @extended, 0)
+Return $aRet[0]
+EndFunc
 Func _WinAPI_MapVirtualKey($iCode, $iType, $hLocale = 0)
 Local $aRet = DllCall('user32.dll', 'INT', 'MapVirtualKeyExW', 'uint', $iCode, 'uint', $iType, 'uint_ptr', $hLocale)
 If @error Then Return SetError(@error, @extended, 0)
@@ -1327,6 +1337,18 @@ Func _WinAPI_QueryPerformanceFrequency()
 Local $aRet = DllCall('kernel32.dll', 'bool', 'QueryPerformanceFrequency', 'int64*', 0)
 If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 Return $aRet[1]
+EndFunc
+Func _WinAPI_SetKeyboardLayout($hWnd, $iLanguage, $iFlags = 0)
+If Not _WinAPI_IsWindow($hWnd) Then Return SetError(@error + 10, @extended, 0)
+Local $hLocale = 0
+If $iLanguage Then
+$hLocale = _WinAPI_LoadKeyboardLayout($iLanguage)
+If Not $hLocale Then Return SetError(10, 0, 0)
+EndIf
+Local Const $WM_INPUTLANGCHANGEREQUEST = 0x0050
+DllCall('user32.dll', 'none', 'SendMessage', 'hwnd', $hWnd, 'uint', $WM_INPUTLANGCHANGEREQUEST, 'uint', $iFlags, 'uint_ptr', $hLocale)
+If @error Then Return SetError(@error, @extended, 0)
+Return 1
 EndFunc
 Func _WinAPI_SetWindowsHookEx($iHook, $pProc, $hDll, $iThreadId = 0)
 Local $aResult = DllCall("user32.dll", "handle", "SetWindowsHookEx", "int", $iHook, "ptr", $pProc, "handle", $hDll, "dword", $iThreadId)
@@ -1670,6 +1692,10 @@ Global Const $PROCESS_VM_WRITE = 0x00000020
 Global Const $PROCESS_QUERY_INFORMATION = 0x00000400
 Global Const $PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 Global Const $PROCESS_ALL_ACCESS = 0x001F0FFF
+Func _RunDos($sCommand)
+Local $iResult = RunWait(@ComSpec & " /C " & $sCommand, "", @SW_HIDE)
+Return SetError(@error, @extended, $iResult)
+EndFunc
 Func _Max($iNum1, $iNum2)
 If Not IsNumber($iNum1) Then Return SetError(1, 0, 0)
 If Not IsNumber($iNum2) Then Return SetError(2, 0, 0)
@@ -1734,6 +1760,7 @@ Global Const $GUI_EVENT_RESTORE = -5
 Global Const $GUI_EVENT_PRIMARYDOWN = -7
 Global Const $GUI_RUNDEFMSG = 'GUI_RUNDEFMSG'
 Global Const $GUI_CHECKED = 1
+Global Const $GUI_INDETERMINATE = 2
 Global Const $GUI_UNCHECKED = 4
 Global Const $GUI_SHOW = 16
 Global Const $GUI_HIDE = 32
@@ -6203,7 +6230,7 @@ Global Const $g_sIcnBldGold = @ScriptDir & "\Images\gold.png"
 Global Const $g_sIcnBldElixir = @ScriptDir & "\Images\elixir.png"
 Global Const $g_sIcnBldTrophy = @ScriptDir & "\Images\trophy.png"
 Global $g_iRedrawBotWindowMode = 2
-Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnGrayShield, $eIcnBlueShield, $eIcnGreenShield, $eIcnRedShield, $eIcnBattleB , $eIcnWallW, $eIcnSiegeCost, $eIcnBoostPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnModHumanization, $eIcnIMMod, $eIcnDebug, $eIcnBoostMagic, $eIcnClanHop, $eIcnBoostClMagic, $eIcnHumanization, $eIcnNEWChat, $eIcnNEWChat1, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnClanGames, $eIcnFarmingSchedule, $eIcnWarPreparation, $eIcnSwitchAcc, $eIcnSwitchProfile
+Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnGrayShield, $eIcnBlueShield, $eIcnGreenShield, $eIcnRedShield, $eIcnBattleB , $eIcnWallW, $eIcnSiegeCost, $eIcnBoostPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnModHumanization, $eIcnIMMod, $eIcnDebug, $eIcnBoostMagic, $eIcnClanHop, $eIcnBoostClMagic, $eIcnHumanization, $eIcnNEWChat, $eIcnNEWChat1, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnClanGames, $eIcnFarmingSchedule, $eIcnWarPreparation, $eIcnSwitchAcc, $eIcnSwitchProfile, $eIcnModChatBot
 Global $eIcnDonBlank = $eIcnDonBlacklist
 Global $eIcnOptions = $eIcnDonBlacklist
 Global $eIcnAchievements = $eIcnMain
@@ -6928,6 +6955,55 @@ Global $g_bUseBotHumanization = False, $g_bUseAltRClick = False, $g_iCmbMaxActio
 Global $g_aReplayDuration[2] = [0, 0]
 Global $g_bOnReplayWindow, $g_iReplayToPause
 Global $g_iLastLayout = 0
+Global Const $g_aButtonChatWindowOpen[6] = [8, 355, 16, 400, 0xC55115, 20]
+Global Const $g_aButtonChatWindowClose[6] = [321, 355, 330, 400, 0xC55115, 20]
+Global Const $g_aButtonChatSelectTabGlobal[6] = [74, 23, 20, 10, 0x79755B, 20]
+Global Const $g_aButtonChatSelectTabClan[6] = [222, 27, 170, 10, 0x79755B, 20]
+Global Const $g_aButtonChatSelectTextBox[6] = [277, 706, 100, 700, 0xFFFFFF, 20]
+Global Const $g_aButtonChatSendButton[6] = [840, 693, 840, 693, 0xFFFFFF, 20]
+Global Const $g_aButtonChatSelectTextBoxBottomNav[6] = [277, 706, 100, 690, 0xFFFFFF, 20]
+Global Const $g_aButtonChatJoinClan[4] = [157, 510, 0x6CBB1F, 20]
+Global Const $g_aButtonChatRules[6] = [ 155, 500, 70, 483, 0xDDF585, 20]
+Global Const $g_aButtonLangSetting[6] = [820, 585, 810, 584, 0xF5F5E0, 20]
+Global Const $g_aButtonLangSettingClose[6] = [777, 113, 777, 113, 0xFF8D8D, 20]
+Global Const $g_aButtonLangSettingSelectLang[2] = [210, 420]
+Global Const $g_aButtonLangSettingBackLang[6] = [127, 121, 116, 117, 0xFFFFFF, 20]
+Global Const $g_aButtonLangSettingOk[6] = [513, 426, 460, 408, 0xE2F98A, 20]
+Global Const $g_aButtonLanguageEN[2] = [165, 180]
+Global Const $g_aButtonLanguageFRA[2] = [163, 230]
+Global Const $g_aButtonLanguageRU[2] = [173, 607]
+Global Const $g_aButtonLanguageDE[2] = [163, 273]
+Global Const $g_aButtonLanguageES[2] = [163, 325]
+Global Const $g_aButtonLanguageITA[2] = [163, 375]
+Global Const $g_aButtonLanguageNL[2] = [163, 425]
+Global Const $g_aButtonLanguageNO[2] = [163, 475]
+Global Const $g_aButtonLanguagePR[2] = [163, 525]
+Global Const $g_aButtonLanguageTR[2] = [163, 575]
+Global $g_bChatGlobal = False
+Global $g_bScrambleGlobal = False
+Global $g_bSwitchLang = False
+Global $g_bChatClan = False
+Global $g_bClanUseResponses = False
+Global $g_bClanAlwaysMsg = False
+Global $g_bUseNotify = False
+Global $g_bPbSendNew = False
+Global $g_bRusLang = False
+Global $g_iCmbLang = 9
+Global $g_bCleverbot = False
+Global $g_bDelayTime = False
+Global $g_iTxtDelayTime = 10
+Global $g_iChkClanMessages = ""
+Global $g_iChkClanResponses = ""
+Global $g_iChkClanResponses0
+Global $g_iChkGlobalMessages1 = ""
+Global $g_iChkGlobalMessages2 = ""
+Global $g_sGlobalChatLastMsgSentTime = ""
+Global $glb1
+Global $glb2
+Global $cResp
+Global $cGeneric
+Global $ChatbotStartTime
+Global $g_sMessage = ""
 Global Const $DELAYSLEEP = 100
 Global Const $DELAYWAITFORPOPUP = 1500
 Global Const $DELAYCLOUDSCLEARED = 1000
@@ -21043,14 +21119,22 @@ Global $g_acmbPriority[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_acmbMaxSpeed[2] = [0, 0]
 Global $g_acmbPause[2] = [0, 0]
 Global $g_ahumanMessage[2] = ["", ""]
+Global $g_hCmblang = 0, $g_hChkDelayTime = 0, $g_hTxtDelayTime = 0
+Global $g_hChkGlobalChat = 0, $g_hChkGlobalScramble = 0, $g_hChkSwitchLang = 0, $g_hChkClanChat = 0, $g_hChkCleverbot = 0
+Global $g_hChkUseResponses = 0, $g_hChkUseGeneric = 0, $g_hChkChatNotify = 0, $g_hChkPbSendNewChats = 0, $g_hChkRusLang = 0
+Global $g_hTxtEditGlobalMessages1 = "", $g_hTxtEditGlobalMessages2 = ""
+Global $g_hTxtEditResponses = 0, $g_hTxtEditGeneric = 0, $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False, $TmpResp
+Global $g_alblAinGlobal, $g_alblSGchats, $g_alblSwitchlang, $g_alblChatclan, $g_alblUsecustomresp, $g_alblUsegenchats, $g_alblNotifyclanchat, $g_alblSwitchlang, $g_alblUseremotechat
 Global $g_hGUI_MOD = 0
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0
 Func CreateMODTab()
 $g_hGUI_MOD = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
 GUISwitch($g_hGUI_MOD)
 $g_hGUI_MOD_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
 $g_hGUI_MOD_TAB_HUMANIZATION = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_01", "Humanization"))
 TabHumanizationGUI()
+$g_hGUI_MOD_TAB_CHATBOT = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_02", "ChatBot"))
+TabChatBotGUI()
 GUICtrlCreateTabItem("")
 EndFunc
 Func TabHumanizationGUI()
@@ -21147,6 +21231,91 @@ For $i = $g_hLabel1 To $g_hChkLookAtRedNotifications
 GUICtrlSetState($i, $GUI_DISABLE)
 Next
 chkUseBotHumanization()
+EndFunc
+Func TabChatBotGUI()
+ChatbotReadSettings()
+Local $x = 10, $y = 45
+GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "Group_01", "Global Chat"), 16 - $x, $y, 438, 185)
+$y += 17
+_GUICtrlCreateIcon($g_sLibIconPath, $eIcnNEWChat1, $x + 7, $y, 40, 40)
+$g_hChkGlobalChat = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkGlobalChat_01", "Advertise in global"), 80 - $x, $y, 155, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkGlobalChat_02", "Use global chat to send messages"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkGlobalChat")
+$g_hChkSwitchLang = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkSwitchLang_01", "Switch languages"), 270 - $x, $y, 115, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkSwitchLang_02", "Switch languages after spamming for a new global chatroom"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkSwitchLang")
+$g_hCmblang = GUICtrlCreateCombo("", 390 - $x, $y, 50, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+GUICtrlSetData(-1, "EN|FR|DE|ES|IT|NL|NO|PR|TR|RU", "RU")
+GUICtrlSetState(-1, $GUI_INDETERMINATE)
+$y += 17
+$g_hChkGlobalScramble = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkGlobalScramble_01", "Scramble global chats"), 80 - $x, $y, 170, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkGlobalScramble_02", "Scramble the message pieces defined in the textboxes below to be in a random order"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkGlobalScramble")
+$g_hChkRusLang = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkRusLang_01", "Russian"), $x + 250, $y, 115, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkRusLang_02", "On. Russian send text. Note: The input language in the Android emulator must be RUSSIAN."))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkRusLang")
+$y += 17
+$g_hChkDelayTime = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "ChkDelayTime_01", "Delay Time"), 80 - $x, $y, -1, -1)
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkDelayTime")
+$g_hTxtDelayTime = GUICtrlCreateInput("10", 160 - $x, $y + 2, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetState(-1, $GUI_DISABLE)
+GUICtrlSetLimit(-1, 2)
+GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "Label_15", "min"), 190 - $x, $y + 3, -1, -1)
+$y += 25
+$g_hTxtEditGlobalMessages1 = GUICtrlCreateEdit(_ArrayToString($g_iChkGlobalMessages1, @CRLF), 24 - $x, $y, 420, 49)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "editGlobalMessages1_01", "Take one item randomly from this list (one per line) and add it to create a message to send to global"))
+GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
+$y += 51
+$g_hTxtEditGlobalMessages2 = GUICtrlCreateEdit(_ArrayToString($g_iChkGlobalMessages2, @CRLF), 24 - $x, $y, 420, 49)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "editGlobalMessages2_01", "Take one item randomly from this list (one per line) and add it to create a message to send to global"))
+GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$y += 60
+GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "Group_02", "Clan Chat"), 16 - $x, $y, 438, 190)
+$y += 17
+_GUICtrlCreateIcon($g_sLibIconPath, $eIcnNEWChat, $x + 5, $y, 40, 40)
+$g_hChkClanChat = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkClanChat_01", "Chat in clan chat"), 70 - $x, $y, 97, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkClanChat_02", "Use clan chat to send messages"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkClanChat")
+$g_hTxtEditResponses = GUICtrlCreateEdit(_ArrayToString($g_iChkClanResponses, ":", -1, -1, @CRLF), 220 - $x, $y - 5, 217, 81)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "editResponses_01", "Look for the specified keywords in clan messages and respond with the responses. One item per line, in the format keyword:response"))
+GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
+$y += 17
+$g_hChkUseResponses = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkUseResponses_01", "Use custom responses"), 70 - $x, $y, 135, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkUseResponses_02", "Use the keywords and responses defined below"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkUseResponses")
+$y += 17
+$g_hChkUseGeneric = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkUseGeneric_01", "Use generic chats"), 70 - $x, $y, 97, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkUseGeneric_02", "Use generic chats if reading the latest chat failed or there are no new chats"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkUseGeneric")
+$y += 17
+$g_hChkCleverbot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkCleverbot_01", "Cleverbot"), 70 - $x, $y, 97, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkCleverbot_02", "Enabele on this function to communicate Cleverbot with your clan"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkCleverbot")
+$y += 35
+_GUICtrlCreateIcon($g_sLibIconPath, $eIcnTelegram, $x + 7, $y, 32, 32)
+$g_hChkChatNotify = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkChatNotify_01", "Use remote for chatting"), 70 - $x, $y, 126, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkChatNotify_02", "Send and recieve chats via pushbullet or telegram." & @CRLF & "Use BOT <myvillage> GETCHATS <interval|NOW|STOP> to get the latest clan" & @CRLF & "chat as an image, and BOT <myvillage> SENDCHAT <chat message> to send a chat to your clan"))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkChatNotify")
+$g_hTxtEditGeneric = GUICtrlCreateEdit(_ArrayToString($g_iChkClanMessages, @CRLF), 220 - $x, $y - 5, 217, 81)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "editGeneric_01", "Generic messages to send, one per line"))
+GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
+$y += 17
+$g_hChkPbSendNewChats = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkPbSendNewChats_01", "Notify me new chat clan"), 70 - $x, $y, 150, 17)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkPbSendNewChats_02", "Will send an image of your clan chat via pushbullet & telegram when a new chat is detected. Not guaranteed to be 100% accurate."))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkPbSendNewChats")
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 Global $g_hGUI_ABOUT = 0
 Global $g_hLblCreditsBckGrnd = 0, $g_hLblMyBotURL = 0, $g_hLblForumURL = 0
@@ -29481,6 +29650,7 @@ Func tabMOD($lParam = "")
 Local $tabidx = GUICtrlRead($g_hGUI_MOD_TAB)
 Select
 Case $tabidx = 0
+Case $tabidx = 1
 EndSelect
 EndFunc
 Func tabBot()
@@ -29574,7 +29744,7 @@ Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnSilverStar]
 Case $g_hGUI_ATTACKOPTION_TAB
 Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
 Case $g_hGUI_MOD_TAB
-Local $aIconIndex = [$eIcnHumanization]
+Local $aIconIndex = [$eIcnHumanization, $eIcnModChatBot]
 Case $g_hGUI_BOT_TAB
 Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnProfile, $eIcnProfile, $eIcnGold]
 Case $g_hGUI_STRATEGIES_TAB
@@ -71166,6 +71336,16 @@ Return "Save(disabled)"
 EndIf
 Return "Save"
 EndFunc
+Func _StringRemoveBlanksFromSplit(ByRef $strMsg)
+Local $strArray = StringSplit($strMsg, "|", 2)
+$strMsg = ""
+For $i = 0 To(UBound($strArray) - 1)
+If $strArray[$i] <> "" Then
+$strMsg = $strMsg & $strArray[$i] & "|"
+EndIf
+Next
+If($strMsg <> "") Then $strMsg = StringTrimRight($strMsg, 1)
+EndFunc
 Func Click($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 If $g_bUseAltRClick = True Then
 Local $xclick = Random($x - 5, $x, 1)
@@ -72155,6 +72335,17 @@ If __TimerDiff($hTimer) >= $iWait Then ExitLoop
 Next
 Return False
 EndFunc
+Func _Wait4PixelGone($x, $y, $sColor, $iColorVariation, $iWait = 1000, $sMsglog = Default, $iDelay = 100)
+Local $hTimer = __TimerInit()
+Local $iMaxCount = Int($iWait / $iDelay)
+For $i = 1 To $iMaxCount
+ForceCaptureRegion()
+If Not _CheckColorPixel($x, $y, $sColor, $iColorVariation, True, $sMsglog) Then Return True
+If _Sleep($iDelay) Then Return False
+If __TimerDiff($hTimer) >= $iWait Then ExitLoop
+Next
+Return False
+EndFunc
 Func _CheckColorPixel($x, $y, $sColor, $iColorVariation, $bFCapture = True, $sMsglog = Default)
 Local $hPixelColor = _GetPixelColor2($x, $y, $bFCapture)
 Local $bFound = _ColorCheck($hPixelColor, Hex($sColor,6), Int($iColorVariation))
@@ -72194,6 +72385,19 @@ IniReadS($g_iahumanMessage[$i], $g_sProfileConfigPath, "Bot Humanization", "huma
 Next
 IniReadS($g_iCmbMaxActionsNumber, $g_sProfileConfigPath, "Bot Humanization", "cmbMaxActionsNumber", $g_iCmbMaxActionsNumber, "int")
 IniReadS($g_iTxtChallengeMessage, $g_sProfileConfigPath, "Bot Humanization", "challengeMessage", $g_iTxtChallengeMessage)
+IniReadS($g_bChatGlobal, $g_sProfileConfigPath, "Chatbot", "ChkChatGlobal", False, "Bool")
+IniReadS($g_bScrambleGlobal, $g_sProfileConfigPath, "Chatbot", "ChkScrambleGlobal", False, "Bool")
+IniReadS($g_bDelayTime, $g_sProfileConfigPath, "Chatbot", "ChkDelayTime", False, "Bool")
+IniReadS($g_iTxtDelayTime, $g_sProfileConfigPath, "Chatbot", "TxtDelayTime", $g_iTxtDelayTime)
+IniReadS($g_bSwitchLang, $g_sProfileConfigPath, "Chatbot", "ChkSwitchLang", False, "Bool")
+IniReadS($g_iCmbLang, $g_sProfileConfigPath, "Chatbot", "CmbLang", $g_iCmbLang, "int")
+IniReadS($g_bRusLang, $g_sProfileConfigPath, "Chatbot", "ChkRusLang", False, "Bool")
+IniReadS($g_bChatClan, $g_sProfileConfigPath, "Chatbot", "ChkChatClan", False, "Bool")
+IniReadS($g_bClanUseResponses, $g_sProfileConfigPath, "Chatbot", "ChkUseResponses", False, "Bool")
+IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "Chatbot", "ChkUseGeneric", False, "Bool")
+IniReadS($g_bCleverbot, $g_sProfileConfigPath, "Chatbot", "ChkCleverbot", False, "Bool")
+IniReadS($g_bUseNotify, $g_sProfileConfigPath, "Chatbot", "ChkChatNotify", False, "Bool")
+IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "Chatbot", "ChkPbSendNewChats", False, "Bool")
 EndFunc
 Func SaveConfig_IMMod()
 ApplyConfig_IMMod(GetApplyConfigSaveAction())
@@ -72215,6 +72419,23 @@ _Ini_Add("Bot Humanization", "humanMessage[" & $i & "]", GUICtrlRead($g_ahumanMe
 Next
 _Ini_Add("Bot Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_hCmbMaxActionsNumber))
 _Ini_Add("Bot Humanization", "challengeMessage", GUICtrlRead($g_hChallengeMessage))
+_Ini_Add("Chatbot", "ChkChatGlobal", $g_bChatGlobal ? True : False)
+_Ini_Add("Chatbot", "ChkScrambleGlobal", $g_bScrambleGlobal ? True : False)
+_Ini_Add("Chatbot", "ChkDelayTime", $g_bDelayTime ? True : False)
+_Ini_Add("Chatbot", "TxtDelayTime", $g_iTxtDelayTime)
+_Ini_Add("Chatbot", "ChkSwitchLang", $g_bSwitchLang ? True : False)
+_Ini_Add("Chatbot", "CmbLang", _GUICtrlComboBox_GetCurSel($g_hCmbLang))
+_Ini_Add("Chatbot", "ChkRusLang", $g_bRusLang ? True : False)
+_Ini_Add("Chatbot", "ChkChatClan", $g_bChatClan ? True : False)
+_Ini_Add("Chatbot", "ChkUseResponses", $g_bClanUseResponses ? True : False)
+_Ini_Add("Chatbot", "ChkUseGeneric", $g_bClanAlwaysMsg ? True : False)
+_Ini_Add("Chatbot", "ChkCleverbot", $g_bCleverbot ? True : False)
+_Ini_Add("Chatbot", "ChkChatNotify", $g_bUseNotify ? True : False)
+_Ini_Add("Chatbot", "ChkPbSendNewChats", $g_bPbSendNew ? True : False)
+_Ini_Add("Chatbot", "globalMsg1", $glb1)
+_Ini_Add("Chatbot", "globalMsg2", $glb2)
+_Ini_Add("Chatbot", "genericMsgClan", $cGeneric)
+_Ini_Add("Chatbot", "responseMsgClan", $cResp)
 EndFunc
 Func ApplyConfig_IMMod($TypeReadSave)
 Switch $TypeReadSave
@@ -72237,6 +72458,19 @@ $g_iahumanMessage[$i] = GUICtrlRead($g_ahumanMessage[$i])
 Next
 $g_iCmbMaxActionsNumber = _GUICtrlComboBox_GetCurSel($g_iCmbMaxActionsNumber)
 $g_iTxtChallengeMessage = GUICtrlRead($g_hChallengeMessage)
+$g_bChatGlobal =(GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED)
+$g_bScrambleGlobal =(GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED)
+$g_bDelayTime =(GUICtrlRead($g_hChkDelayTime) = $GUI_CHECKED)
+$g_iTxtDelayTime = GUICtrlRead($g_hTxtDelayTime)
+$g_bSwitchLang =(GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED)
+$g_iCmbLang = _GUICtrlComboBox_GetCurSel($g_hCmbLang)
+$g_bRusLang =(GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED)
+$g_bChatClan =(GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED)
+$g_bClanUseResponses =(GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED)
+$g_bClanAlwaysMsg =(GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
+$g_bCleverbot =(GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
+$g_bUseNotify =(GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
+$g_bPbSendNew =(GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
 Case "Read"
 GUICtrlSetState($g_hChkUseBotHumanization, $g_bUseBotHumanization ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkUseAltRClick, $g_bUseAltRClick ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -72259,7 +72493,847 @@ _GUICtrlComboBox_SetCurSel($g_hCmbMaxActionsNumber, $g_iCmbMaxActionsNumber)
 GUICtrlSetData($g_hChallengeMessage, $g_iTxtChallengeMessage)
 cmbStandardReplay()
 cmbWarReplay()
+GUICtrlSetState($g_hChkGlobalChat, $g_bChatGlobal ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkGlobalScramble, $g_bScrambleGlobal ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkDelayTime, $g_bDelayTime ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetData($g_hTxtDelayTime, $g_iTxtDelayTime)
+GUICtrlSetState($g_hChkSwitchLang, $g_bSwitchLang ? $GUI_CHECKED : $GUI_UNCHECKED)
+_GUICtrlComboBox_SetCurSel($g_hCmbLang, $g_iCmbLang)
+GUICtrlSetState($g_hChkRusLang, $g_bRusLang ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkClanChat, $g_bChatClan ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkUseResponses, $g_bClanUseResponses ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkUseGeneric, $g_bClanAlwaysMsg ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkCleverbot, $g_bCleverbot ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkChatNotify, $g_bUseNotify ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkPbSendNewChats, $g_bPbSendNew ? $GUI_CHECKED : $GUI_UNCHECKED)
+chkRusLang()
+chkGlobalChat()
+chkGlobalScramble()
+chkCleverbot()
+chkSwitchLang()
+chkClanChat()
+chkUseResponses()
+chkUseGeneric()
+chkChatNotify()
+chkPbSendNewChats()
+ChatGuiEditUpdate()
+chkDelayTime()
 EndSwitch
+EndFunc
+Func ChatbotReadSettings()
+$g_iChkClanMessages = StringSplit(IniRead($g_sProfileConfigPath, "Chatbot", "genericMsgClan", "Testing on Chat|Hey all"), "|", 2)
+$g_iChkClanResponses0 = StringSplit(IniRead($g_sProfileConfigPath, "Chatbot", "responseMsgClan", "keyword:Response|hello:Hi, Welcome to the clan|hey:Hey, how's it going?"), "|", 2)
+Global $g_iChkClanResponses1[UBound($g_iChkClanResponses0)][2]
+For $a = 0 To UBound($g_iChkClanResponses0) - 1
+$TmpResp = StringSplit($g_iChkClanResponses0[$a], ":", 2)
+If UBound($TmpResp) > 0 Then
+$g_iChkClanResponses1[$a][0] = $TmpResp[0]
+Else
+$g_iChkClanResponses1[$a][0] = "<invalid>"
+EndIf
+If UBound($TmpResp) > 1 Then
+$g_iChkClanResponses1[$a][1] = $TmpResp[1]
+Else
+$g_iChkClanResponses1[$a][1] = "<undefined>"
+EndIf
+Next
+$g_iChkClanResponses = $g_iChkClanResponses1
+$g_iChkGlobalMessages1 = StringSplit(IniRead($g_sProfileConfigPath, "Chatbot", "globalMsg1", "War Clan Recruiting|Active War Clan accepting applications"), "|", 2)
+$g_iChkGlobalMessages2 = StringSplit(IniRead($g_sProfileConfigPath, "Chatbot", "globalMsg2", "Join now|Apply now"), "|", 2)
+GUICtrlSetData($g_hTxtEditGlobalMessages1, _ArrayToString($g_iChkGlobalMessages1, @CRLF))
+GUICtrlSetData($g_hTxtEditGlobalMessages2, _ArrayToString($g_iChkGlobalMessages2, @CRLF))
+GUICtrlSetData($g_hTxtEditResponses, _ArrayToString($g_iChkClanResponses, ":", -1, -1, @CRLF))
+GUICtrlSetData($g_hTxtEditGeneric, _ArrayToString($g_iChkClanMessages, @CRLF))
+EndFunc
+Func chkGlobalChat()
+$g_bChatGlobal = True
+If GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED Then
+GUICtrlSetState($g_hChkGlobalScramble, $GUI_ENABLE)
+GUICtrlSetState($g_hChkDelayTime, $GUI_ENABLE)
+GUICtrlSetState($g_hChkSwitchLang, $GUI_ENABLE)
+GUICtrlSetState($g_hCmbLang, $GUI_SHOW)
+GUICtrlSetState($g_hChkRusLang, $GUI_ENABLE)
+GUICtrlSetState($g_hTxtEditGlobalMessages1, $GUI_ENABLE)
+GUICtrlSetState($g_hTxtEditGlobalMessages2, $GUI_ENABLE)
+Else
+$g_bChatGlobal = False
+GUICtrlSetState($g_hChkGlobalScramble, $GUI_DISABLE)
+GUICtrlSetState($g_hChkDelayTime, $GUI_DISABLE)
+GUICtrlSetState($g_hChkSwitchLang, $GUI_DISABLE)
+GUICtrlSetState($g_hCmbLang, $GUI_INDETERMINATE)
+GUICtrlSetState($g_hChkRusLang, $GUI_DISABLE)
+GUICtrlSetState($g_hTxtEditGlobalMessages1, $GUI_DISABLE)
+GUICtrlSetState($g_hTxtEditGlobalMessages2, $GUI_DISABLE)
+EndIf
+If GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED And GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED Then
+GUICtrlSetState($g_hCmbLang, $GUI_ENABLE)
+Else
+GUICtrlSetState($g_hCmbLang, $GUI_DISABLE)
+EndIf
+EndFunc
+Func chkDelayTime()
+GUICtrlSetState($g_hTxtDelayTime, GUICtrlRead($g_hChkDelayTime) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+EndFunc
+Func chkGlobalScramble()
+If GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED Then
+$g_bScrambleGlobal = True
+Else
+$g_bScrambleGlobal = False
+EndIf
+EndFunc
+Func chkSwitchLang()
+If GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED Then
+$g_bSwitchLang = True
+Else
+$g_bSwitchLang = False
+EndIf
+If GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED Then
+GUICtrlSetState($g_hCmbLang, $GUI_ENABLE)
+Else
+GUICtrlSetState($g_hCmbLang, $GUI_DISABLE)
+EndIf
+EndFunc
+Func chkClanChat()
+$g_bChatClan = True
+If GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED Then
+GUICtrlSetState($g_hChkUseResponses, $GUI_ENABLE)
+GUICtrlSetState($g_hChkUseGeneric, $GUI_ENABLE)
+GUICtrlSetState($g_hChkChatNotify, $GUI_ENABLE)
+GUICtrlSetState($g_hChkPbSendNewChats, $GUI_ENABLE)
+GUICtrlSetState($g_hChkCleverbot, $GUI_ENABLE)
+GUICtrlSetState($g_hTxtEditResponses, $GUI_ENABLE)
+GUICtrlSetState($g_hTxtEditGeneric, $GUI_ENABLE)
+Else
+$g_bChatClan = False
+GUICtrlSetState($g_hChkUseResponses, $GUI_DISABLE)
+GUICtrlSetState($g_hChkUseGeneric, $GUI_DISABLE)
+GUICtrlSetState($g_hChkChatNotify, $GUI_DISABLE)
+GUICtrlSetState($g_hChkPbSendNewChats, $GUI_DISABLE)
+GUICtrlSetState($g_hChkCleverbot, $GUI_DISABLE)
+GUICtrlSetState($g_hTxtEditResponses, $GUI_DISABLE)
+GUICtrlSetState($g_hTxtEditGeneric, $GUI_DISABLE)
+EndIf
+EndFunc
+Func chkUseResponses()
+If GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED Then
+$g_bClanUseResponses = True
+Else
+$g_bClanUseResponses = False
+EndIf
+EndFunc
+Func chkUseGeneric()
+If GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED Then
+$g_bClanAlwaysMsg = True
+Else
+$g_bClanAlwaysMsg = False
+EndIf
+EndFunc
+Func chkChatNotify()
+If GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED Then
+$g_bUseNotify = True
+Else
+$g_bUseNotify = False
+EndIf
+EndFunc
+Func chkPbSendNewChats()
+If GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED Then
+$g_bPbSendNew = True
+Else
+$g_bPbSendNew = False
+EndIf
+EndFunc
+Func chkCleverbot()
+If GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED Then
+$g_bCleverbot = True
+Else
+$g_bCleverbot = False
+EndIf
+EndFunc
+Func chkRusLang()
+If GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED Then
+$g_bRusLang = True
+Else
+$g_bRusLang = False
+EndIf
+EndFunc
+Func ChatGuiEditUpdate()
+$glb1 = StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages1), @CRLF, "|")
+$glb2 = StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages2), @CRLF, "|")
+$cResp = StringReplace(GUICtrlRead($g_hTxtEditResponses), @CRLF, "|")
+$cGeneric = StringReplace(GUICtrlRead($g_hTxtEditGeneric), @CRLF, "|")
+_StringRemoveBlanksFromSplit($glb1)
+_StringRemoveBlanksFromSplit($glb2)
+_StringRemoveBlanksFromSplit($cResp)
+_StringRemoveBlanksFromSplit($cGeneric)
+IniWrite($g_sProfileConfigPath, "Chatbot", "globalMsg1", $glb1)
+IniWrite($g_sProfileConfigPath, "Chatbot", "globalMsg2", $glb2)
+IniWrite($g_sProfileConfigPath, "Chatbot", "genericMsgClan", $cGeneric)
+IniWrite($g_sProfileConfigPath, "Chatbot", "responseMsgClan", $cResp)
+ChatbotReadSettings()
+EndFunc
+Func ChatbotChatOpen()
+ClickP($aAway, 1, 0, "#0000")
+If _Sleep(300) Then Return
+ForceCaptureRegion()
+If _CheckColorPixel($g_aButtonChatWindowOpen[2], $g_aButtonChatWindowOpen[3], $g_aButtonChatWindowOpen[4], $g_aButtonChatWindowOpen[5], $g_bCapturePixel, "ChatbotChatOpenChk") Then
+Click($g_aButtonChatWindowOpen[0], $g_aButtonChatWindowOpen[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatWindowClose[2], $g_aButtonChatWindowClose[3], $g_aButtonChatWindowClose[4], $g_aButtonChatWindowClose[5], 5000, "ChatbotChatOpen") = False Then
+SetLog("Chatbot: Sorry, Chat Window Did Not Opened.", $COLOR_ERROR)
+Return False
+EndIf
+SetLog("Chatbot: Chat Window Opened.", $COLOR_SUCCESS)
+If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1)
+SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
+EndIf
+Return True
+Else
+SetLog("Chatbot: Sorry, Unable To Find Chat Button In MainScreen.", $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func ChatbotSelectClanChat()
+Click($g_aButtonChatSelectTabClan[0], $g_aButtonChatSelectTabClan[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatSelectTabClan[2], $g_aButtonChatSelectTabClan[3], $g_aButtonChatSelectTabClan[4], $g_aButtonChatSelectTabClan[5], 5000, "ChatbotSelectClanChat") = False Then
+SetLog("Chatbot: Sorry, Clan Chat Tab Not Selected.", $COLOR_ERROR)
+Return False
+Else
+SetLog("Chatbot: Clan Chat Tab Selected.", $COLOR_SUCCESS)
+Return True
+EndIf
+EndFunc
+Func ChatbotCheckIfUserIsInClan()
+If _Wait4Pixel($g_aButtonChatJoinClan[0], $g_aButtonChatJoinClan[1], $g_aButtonChatJoinClan[2], $g_aButtonChatJoinClan[3], 1000, "ChatbotCheckIfUserIsInClan") = True Then
+SetLog("Chatbot: Sorry, You Are Not In A Clan You Can't Chat.", $COLOR_ERROR)
+Return False
+Else
+Return True
+EndIf
+EndFunc
+Func ChatbotSelectGlobalChat()
+Click($g_aButtonChatSelectTabGlobal[0], $g_aButtonChatSelectTabGlobal[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatSelectTabGlobal[2], $g_aButtonChatSelectTabGlobal[3], $g_aButtonChatSelectTabGlobal[4], $g_aButtonChatSelectTabGlobal[5], 5000, "ChatbotSelectGlobalChat") = False Then
+SetLog("Chatbot: Sorry, Global Tab Not Selected.", $COLOR_ERROR)
+Return False
+Else
+SetLog("Chatbot: Global Tab Selected.", $COLOR_SUCCESS)
+Return True
+EndIf
+EndFunc
+Func ChatbotChatClose()
+_Sleep(1500)
+Click($g_aButtonChatWindowClose[0], $g_aButtonChatWindowClose[1], 1)
+If _Sleep(300) Then Return
+If _Wait4PixelGone($g_aButtonChatWindowClose[2], $g_aButtonChatWindowClose[3], $g_aButtonChatWindowClose[4], $g_aButtonChatWindowClose[5], 5000, "ChatbotChatClose") Then
+SetLog("Chatbot: Close Chat Window.", $COLOR_INFO)
+waitMainScreen()
+Return True
+Else
+SetLog("Chatbot: Sorry, Unable To Close The Chat.", $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func ChatbotSelectChatInput($fromTab)
+Click($g_aButtonChatSelectTextBox[0], $g_aButtonChatSelectTextBox[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatSelectTextBox[2], $g_aButtonChatSelectTextBox[3], $g_aButtonChatSelectTextBox[4], $g_aButtonChatSelectTextBox[5], 3000, "ChatbotSelectChatInput") = False Then
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatSelectTextBoxBottomNav[2], $g_aButtonChatSelectTextBoxBottomNav[3], $g_aButtonChatSelectTextBoxBottomNav[4], $g_aButtonChatSelectTextBoxBottomNav[5], 3000, "ChatbotSelectChatInput") = False Then
+SetLog("Chatbot: Sorry, " & $fromTab & " Chat TextBox Is Not Opened.", $COLOR_ERROR)
+Return False
+Else
+SetLog("Chatbot: " & $fromTab & " Chat TextBox Appeared At Nav Bar Postion : Bottom.", $COLOR_INFO)
+Return True
+EndIf
+Else
+SetLog("Chatbot: " & $fromTab & " Chat TextBox Appeared.", $COLOR_INFO)
+Return True
+EndIf
+EndFunc
+Func ChatbotChatInput($g_sMessage)
+SetLog("Chatbot: Type MSG : " & $g_sMessage, $COLOR_SUCCESS)
+If _Sleep(1000) Then Return
+Click(33, 707, 1)
+If $g_bRusLang = True Then
+SetLog("Chat Send In Russia", $COLOR_BLUE)
+AutoItWinSetTitle('MyAutoItTitle')
+_WinAPI_SetKeyboardLayout(WinGetHandle(AutoItWinGetTitle()), 0x0419)
+_Sleep(500)
+ControlFocus($g_hAndroidWindow, "", "")
+SendKeepActive($g_hAndroidWindow)
+_Sleep(500)
+AutoItSetOption("SendKeyDelay", 50)
+_SendExEx($g_sMessage)
+SendKeepActive("")
+Else
+_Sleep(500)
+SendText($g_sMessage)
+EndIf
+Return True
+EndFunc
+Func ChatbotSendChat($fromTab)
+Click($g_aButtonChatSendButton[0], $g_aButtonChatSendButton[1], 1)
+If _Sleep(300) Then Return
+If _Wait4PixelGone($g_aButtonChatSendButton[2], $g_aButtonChatSendButton[3], $g_aButtonChatSendButton[4], $g_aButtonChatSendButton[5], 5000, 100, "ChatbotSendChat(" & $fromTab & ")") Then
+Return True
+Else
+SetLog("Chatbot: Sorry, " & $fromTab & " Chat Send Button Not Clicked.", $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func ChatbotStartTimer()
+$ChatbotStartTime = TimerInit()
+EndFunc
+Func ChatbotIsInterval()
+Local $Time_Difference = TimerDiff($ChatbotStartTime)
+If $Time_Difference > $ChatbotReadInterval * 1000 Then
+Return True
+Else
+Return False
+EndIf
+EndFunc
+Func ChatbotIsLastChatNew()
+_CaptureRegion()
+For $x = 38 To 261
+If _ColorCheck(_GetPixelColor($x, 129), Hex(0x78BC10, 6), 5) Then Return True
+Next
+Return False
+EndFunc
+Func ChatbotNotifySendChat()
+If Not $g_bUseNotify Then Return
+Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
+Local $Time = @HOUR & "." & @MIN & "." & @SEC
+_CaptureRegion(0, 0, 320, 675)
+Local $ChatFile = $Date & "__" & $Time & ".jpg"
+_GDIPlus_ImageSaveToFile($g_hBitmap, $g_sProfileLootsPath & $ChatFile)
+_GDIPlus_ImageDispose($g_hBitmap)
+SetLog("Chatbot: Sent chat image", $COLOR_GREEN)
+NotifyPushFileToTelegram($ChatFile, "Loots", "image/jpeg", $g_sNotifyOrigin & " | Last Clan Chats" & "\n" & $ChatFile)
+If _Sleep($DELAYPUSHMSG2) Then Return
+Local $iDelete = FileDelete($g_sProfileLootsPath & $ChatFile)
+If Not($iDelete) Then SetLog("Chatbot: Failed to delete temp file", $COLOR_RED)
+EndFunc
+Func ChangeLanguageLifeCycle($lButtonLanguage, $lngMsg)
+If Not ChatbotSettingOpen() Then Return False
+If Not ChatbotClickLanguageButton() Then Return False
+If Not ChangeLanguageForChatBot($lButtonLanguage, $lngMsg) Then Return False
+If Not ChangeLanguagePressOk($lngMsg) Then
+ClickP($aAway, 1, 0, "#0000")
+Return False
+Else
+Sleep(3000)
+checkMainScreen()
+Return True
+EndIf
+EndFunc
+Func ChatbotSettingOpen()
+ClickP($aAway, 1, 0, "#0000")
+If _Sleep(300) Then Return
+ForceCaptureRegion()
+If _CheckColorPixel($g_aButtonLangSetting[2], $g_aButtonLangSetting[3], $g_aButtonLangSetting[4], $g_aButtonLangSetting[5], $g_bCapturePixel, "ChatbotSettingOpenChk") Then
+Click($g_aButtonLangSetting[0], $g_aButtonLangSetting[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonLangSettingClose[2], $g_aButtonLangSettingClose[3], $g_aButtonLangSettingClose[4], $g_aButtonLangSettingClose[5], 5000, "ChatbotSettingOpen") = False Then
+SetLog("Chatbot: Sorry, Settings Did Not Opened.", $COLOR_ERROR)
+Return False
+EndIf
+SetLog("Chatbot: Main Settings Opened.", $COLOR_SUCCESS)
+Return True
+Else
+SetLog("Chatbot: Sorry, Unable To Find Settings Button In MainScreen.", $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func ChatbotClickLanguageButton()
+Click($g_aButtonLangSettingSelectLang[0], $g_aButtonLangSettingSelectLang[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonLangSettingBackLang[2], $g_aButtonLangSettingBackLang[3], $g_aButtonLangSettingBackLang[4], $g_aButtonLangSettingBackLang[5], 5000, "ChatbotClickLanguageButton") = False Then
+SetLog("Chatbot: Sorry, Language Screen Not Opened.", $COLOR_ERROR)
+Return False
+Else
+SetLog("Chatbot: Language Settings Opened", $COLOR_SUCCESS)
+Return True
+EndIf
+EndFunc
+Func ChatbotSettingClose()
+_Sleep(1000)
+Click($g_aButtonLangSettingClose[0], $g_aButtonLangSettingClose[1], 1)
+If _Sleep(300) Then Return
+If _Wait4PixelGone($g_aButtonLangSettingClose[2], $g_aButtonLangSettingClose[3], $g_aButtonLangSettingClose[4], $g_aButtonLangSettingClose[5], 5000, "ChatbotSettingClose") Then
+SetLog("Chatbot: Close Language Settings Window.", $COLOR_SUCCESS)
+Return True
+Else
+SetLog("Chatbot: Sorry, Unable To Close The Settings.", $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func ChangeLanguageForChatBot($lButtonLanguage, $lngMsg)
+SetLog("Chatbot: Switching Language To " & $lngMsg, $COLOR_GREEN)
+If _Sleep(500) Then Return
+If $lngMsg == "EN" Then
+ClickDrag(775, 180, 775, 440)
+If _Sleep(1500) Then Return
+EndIf
+Click($lButtonLanguage[0], $lButtonLanguage[1], 1)
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonLangSettingOk[2], $g_aButtonLangSettingOk[3], $g_aButtonLangSettingOk[4], $g_aButtonLangSettingOk[5], 5000, "ChangeLanguageForChatBot") = False Then
+SetLog("Chatbot: Sorry, Language Change Dialog Does Not Appear May Be You Are Already In : " & $lngMsg, $COLOR_SUCCESS)
+Return True
+EndIf
+Return True
+EndFunc
+Func ChangeLanguagePressOk($lngMsg)
+Click($g_aButtonLangSettingOk[0], $g_aButtonLangSettingOk[1], 1)
+If _Sleep(300) Then Return
+If _Wait4PixelGone($g_aButtonLangSettingOk[2], $g_aButtonLangSettingOk[3], $g_aButtonLangSettingOk[4], $g_aButtonLangSettingOk[5], 5000, "ChangeLanguagePressOk") Then
+SetLog("Chatbot: Language Successfully Changed To : " & $lngMsg, $COLOR_SUCCESS)
+Return True
+Else
+SetLog("Chatbot: Sorry, Unable To Change Language : " & $lngMsg, $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func DelayTime($chatType)
+If $chatType = "GLOBAL" Then
+If $g_sGlobalChatLastMsgSentTime = "" Then
+Return True
+Else
+Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sGlobalChatLastMsgSentTime, _NowCalc()) / 60
+SetDebugLog("$g_iTxtDelayTime = " & $g_iTxtDelayTime)
+SetDebugLog("$g_sGlobalChatLastMsgSentTime = " & $g_sGlobalChatLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
+If $sDateTimeDiffOfLastMsgInMin > $g_iTxtDelayTime Then
+Return True
+Else
+Local $hour = 0, $min = 0, $sec = 0
+Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_iTxtDelayTime, $g_sGlobalChatLastMsgSentTime))
+SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
+_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
+SetLog("Chatbot: Skip Sending Chats To Global Chat", $COLOR_INFO)
+SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new msg.", $COLOR_INFO)
+Return False
+EndIf
+EndIf
+EndIf
+EndFunc
+Func ChatbotMessage()
+If $g_bDelayTime = False And $g_bChatGlobal Then
+ChatGlobal()
+EndIf
+If $g_bDelayTime = True And $g_bChatGlobal Then
+Local $iSendChatGlobalDelay = DelayTime("GLOBAL")
+If $iSendChatGlobalDelay = True Then
+ChatGlobal()
+$g_sGlobalChatLastMsgSentTime = _NowCalc()
+EndIf
+EndIf
+If $g_bChatClan Then ChatClan()
+EndFunc
+Func ChatClan()
+If Not $g_bChatClan Then Return
+While 1
+SetLog("Chatbot: Will Send Clan Chat", $COLOR_INFO)
+If Not ChatbotChatOpen() Then ExitLoop
+If Not ChatbotSelectClanChat() Then ExitLoop
+If Not ChatbotCheckIfUserIsInClan() Then ExitLoop
+Local $SentClanChat = False
+_Sleep(2000)
+If $ChatbotReadQueued Then
+ChatbotNotifySendChat()
+$ChatbotReadQueued = False
+$SentClanChat = True
+ElseIf $ChatbotIsOnInterval Then
+If ChatbotIsInterval() Then
+ChatbotStartTimer()
+ChatbotNotifySendChat()
+$SentClanChat = True
+EndIf
+EndIf
+If UBound($ChatbotQueuedChats) > 0 Then
+SetLog("Chatbot: Sending Notify Chats", $COLOR_GREEN)
+For $a = 0 To UBound($ChatbotQueuedChats) - 1
+Local $ChatToSend = $ChatbotQueuedChats[$a]
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput(_Encoding_JavaUnicodeDecode($ChatToSend)) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+Next
+Dim $Tmp[0]
+$ChatbotQueuedChats = $Tmp
+_Sleep(2000)
+ChatbotNotifySendChat()
+ExitLoop
+EndIf
+If Not ChatbotIsLastChatNew() Then
+Local $sLastChat = ReadChat()
+Local $ChatMsg = StringStripWS($sLastChat, 7)
+SetLog("Found Chat Message : " & $ChatMsg, $COLOR_GREEN)
+Local $SentMessage = False
+If $ChatMsg = "" Or $ChatMsg = " " Then
+If $g_bClanAlwaysMsg Then
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($g_iChkClanMessages[Random(0, UBound($g_iChkClanMessages) - 1, 1)]) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+$SentMessage = True
+EndIf
+EndIf
+If $g_bClanUseResponses And Not $SentMessage Then
+For $a = 0 To UBound($g_iChkClanResponses) - 1
+If StringInStr($ChatMsg, $g_iChkClanResponses[$a][0]) Then
+Local $Response = $g_iChkClanResponses[$a][1]
+SetLog("Sending Response : " & $Response, $COLOR_GREEN)
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($Response) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+$SentMessage = True
+ExitLoop
+EndIf
+Next
+EndIf
+If($g_bCleverbot = 1) And Not $SentMessage Then
+Local $Response = runHelper($ChatMsg, $g_bCleverbot)
+If Not $Response = False Or Not $ChatMsg = "" Or Not $ChatMsg = " " Then
+SetLog("Got Cleverbot Response : " & $Response, $COLOR_GREEN)
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($Response) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+$SentMessage = True
+EndIf
+EndIf
+If Not $SentMessage Then
+If $g_bClanAlwaysMsg Then
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($g_iChkClanMessages[Random(0, UBound($g_iChkClanMessages) - 1, 1)]) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+EndIf
+EndIf
+If $g_bUseNotify And $g_bPbSendNew Then
+If Not $SentClanChat Then ChatbotNotifySendChat()
+EndIf
+ElseIf $g_bClanAlwaysMsg Then
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($g_iChkClanMessages[Random(0, UBound($g_iChkClanMessages) - 1, 1)]) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+EndIf
+ExitLoop
+WEnd
+ChatbotChatClose()
+SetLog("Chatbot: Clan Chatting Done", $COLOR_GREEN)
+EndFunc
+Func ChatGlobal()
+If Not $g_bChatGlobal Then Return
+While 1
+SetLog("Chatbot: Sending Chats To Global", $COLOR_INFO)
+If $g_bSwitchLang = True Then
+Local $lButtonLanguage = $g_aButtonLanguageEN
+Local $lngMsg = GUICtrlRead($g_hCmbLang)
+Switch GUICtrlRead($g_hCmbLang)
+Case "FR"
+$lButtonLanguage = $g_aButtonLanguageFRA
+Case "DE"
+$lButtonLanguage = $g_aButtonLanguageDE
+Case "ES"
+$lButtonLanguage = $g_aButtonLanguageES
+Case "IT"
+$lButtonLanguage = $g_aButtonLanguageITA
+Case "NL"
+$lButtonLanguage = $g_aButtonLanguageNL
+Case "NO"
+$lButtonLanguage = $g_aButtonLanguageNO
+Case "PR"
+$lButtonLanguage = $g_aButtonLanguagePR
+Case "TR"
+$lButtonLanguage = $g_aButtonLanguageTR
+Case "RU"
+$lButtonLanguage = $g_aButtonLanguageRU
+EndSwitch
+If Not ChangeLanguageLifeCycle($lButtonLanguage, $lngMsg) Then
+ChatbotSettingClose()
+SetLog("Chatbot: Global Chatting Done", $COLOR_GREEN)
+Return
+EndIf
+EndIf
+If Not ChatbotChatOpen() Then ExitLoop
+Global $g_sMessage[2]
+$g_sMessage[0] = $g_iChkGlobalMessages1[Random(0, UBound($g_iChkGlobalMessages1) - 1, 1)]
+$g_sMessage[1] = $g_iChkGlobalMessages2[Random(0, UBound($g_iChkGlobalMessages2) - 1, 1)]
+If $g_bScrambleGlobal Then
+_ArrayShuffle($g_sMessage)
+EndIf
+If Not ChatbotSelectGlobalChat() Then ExitLoop
+If Not ChatbotSelectChatInput("Global") Then ExitLoop
+If Not ChatbotChatInput(_ArrayToString($g_sMessage, " ")) Then ExitLoop
+If Not ChatbotSendChat("Global") Then ExitLoop
+ExitLoop
+WEnd
+ChatbotChatClose()
+If $g_bSwitchLang = True Then
+Local $iReHere = 0
+While $iReHere < 3
+If Not $g_bRunState Then Return
+$iReHere += 1
+If Not ChangeLanguageLifeCycle($g_aButtonLanguageEN, "EN") Then
+ChatbotSettingClose()
+SetLog("Chatbot: Sorry, Unable To Switch Back To English Try Again : (" & $iReHere & "/3)", $COLOR_ERROR)
+If _Sleep(500) Then Return
+ContinueLoop
+EndIf
+ExitLoop
+WEnd
+EndIf
+SetLog("Chatbot: Global Chatting Done", $COLOR_GREEN)
+EndFunc
+Func runHelper($msg, $g_iChkCleverbot)
+Local $command, $DOS, $HelperStartTime, $Time_Difference, $sString
+Dim $DOS, $g_sMessage = ''
+$command = ' /c "phantomjs.exe phantom-cleverbot-helper.js '
+$DOS = Run(@ComSpec & $command & $msg & '"', "", @SW_HIDE, 8)
+$HelperStartTime = TimerInit()
+SetLog("Waiting for chatbot helper...")
+While ProcessExists($DOS)
+ProcessWaitClose($DOS, 10)
+SetLog("Still waiting for chatbot helper...")
+$Time_Difference = TimerDiff($HelperStartTime)
+If $Time_Difference > 50000 Then
+SetLog("Chatbot helper is taking too long!", $COLOR_RED)
+ProcessClose($DOS)
+_RunDos("taskkill -f -im phantomjs.exe")
+Return ""
+EndIf
+WEnd
+$g_sMessage = ''
+While 1
+$g_sMessage &= StdoutRead($DOS)
+If @error Then
+ExitLoop
+EndIf
+WEnd
+Return StringStripWS($g_sMessage, 7)
+EndFunc
+Func _Encoding_JavaUnicodeDecode($sString)
+Local $iOld_Opt_EVS = Opt('ExpandVarStrings', 0)
+Local $iOld_Opt_EES = Opt('ExpandEnvStrings', 0)
+Local $sOut = "", $aString = StringRegExp($sString, "(\\\\|\\'|\\u[[:xdigit:]]{4}|[[:ascii:]])", 3)
+For $i = 0 To UBound($aString) - 1
+Switch StringLen($aString[$i])
+Case 1
+$sOut &= $aString[$i]
+Case 2
+$sOut &= StringRight($aString[$i], 1)
+Case 6
+$sOut &= ChrW(Dec(StringRight($aString[$i], 4)))
+EndSwitch
+Next
+Opt('ExpandVarStrings', $iOld_Opt_EVS)
+Opt('ExpandEnvStrings', $iOld_Opt_EES)
+Return $sOut
+EndFunc
+Func ReadChat()
+Local $g_iChatDebug = 0
+Local $g_bChkExtraAlphabets = True, $g_bChkExtraChinese = True, $g_bChkExtraKorean = True
+Setlog("Checking Clan Chat", $COLOR_INFO)
+Local $iLoopCount = 0
+Local $iCount = 0
+While 1
+ForceCaptureRegion()
+_CaptureRegion()
+If _ColorCheck(_GetPixelColor(189, 24, False), Hex(0x706C50, 6), 20) Then
+ExitLoop
+EndIf
+If _ColorCheck(_GetPixelColor(189, 24, False), Hex(0x383828, 6), 20) Then
+ClickP($aClanTab, 1, 0, "#0169")
+EndIf
+$iLoopCount += 1
+If $iLoopCount >= 5 Then
+SetLog("Cannot switch to Clan Chat Tab")
+AndroidPageError("Chat read")
+Local $aButtonChatClose[4] = [330, 352 + $g_iMidOffsetY, 0xFFFFFF, 20]
+If _ColorCheck(_GetPixelColor($aButtonChatClose[0], $aButtonChatClose[1], True), Hex($aButtonChatClose[2], 6), $aButtonChatClose[3]) Then
+Click($aButtonChatClose[0], $aButtonChatClose[1], 1)
+waitMainScreen()
+EndIf
+Return False
+EndIf
+If _Sleep($DELAYDONATECC1) Then Return
+WEnd
+ForceCaptureRegion()
+_CaptureRegion2(260,85,272,624)
+Local $aLastResult[1][2]
+Local $sDirectory = @ScriptDir & "\imgxml\Chat\"
+Local $returnProps="objectpoints"
+Local $aCoor
+Local $aPropsValues
+Local $aCoorXY
+Local $result
+Local $iMax = 0
+Local $i, $j, $k
+Local $ClanString
+Local $hHBitmapDivider = GetHHBitmapArea($g_hHBitmap2,0,0,10,539)
+Local $result = findMultiImage($hHBitmapDivider, $sDirectory ,"FV" ,"FV", 0, 0, 0 , $returnProps)
+If $hHBitmapDivider <> 0 Then GdiDeleteHBitmap($hHBitmapDivider)
+$iCount = 0
+If IsArray($result) then
+$iMax = UBound($result) -1
+For $i = 0 To $iMax
+$aPropsValues = $result[$i]
+If UBound($aPropsValues) = 1 then
+If $g_iChatDebug = 1 Then SetLog("$aPropsValues[0]: " & $aPropsValues[0], $COLOR_DEBUG)
+$aCoor = StringSplit($aPropsValues[0],"|",$STR_NOCOUNT)
+If IsArray($aCoor) Then
+For $j = 0 to UBound($aCoor) - 1
+$aCoorXY = StringSplit($aCoor[$j],",",$STR_NOCOUNT)
+ReDim $aLastResult[$iCount + 1][2]
+$aLastResult[$iCount][0] = Int($aCoorXY[0])
+$aLastResult[$iCount][1] = Int($aCoorXY[1]) + 82
+$iCount += 1
+Next
+EndIf
+EndIf
+Next
+If $iCount >= 1 Then
+_ArraySort($aLastResult, 1, 0, 0, 1)
+$iMax = UBound($aLastResult) -1
+If $g_iChatDebug = 1 Then SetLog("Total Chat Message: " & $iMax + 1, $COLOR_ERROR)
+_CaptureRegion2(0,0,287,732)
+For $i = 0 To $iMax
+If $g_bChkExtraAlphabets Then
+If $g_iChatDebug = 1 Then Setlog("Using OCR to read Latin and Cyrillic derived alphabets..", $COLOR_ACTION)
+$ClanString = ""
+$ClanString = getOcrAndCapture("coc-latin-cyr", 30, $aLastResult[$i][1] + 17, 280, 17, Default, Default, False)
+If $ClanString = "" Then
+$ClanString = getOcrAndCapture("coc-latin-cyr", 30, $aLastResult[$i][1] + 31, 280, 17, Default, Default, False)
+Else
+$ClanString &= " " & getOcrAndCapture("coc-latin-cyr", 30, $aLastResult[$i][1] + 31, 280, 17, Default, Default, False)
+EndIf
+If $ClanString = "" Or $ClanString = " " Then
+$ClanString = getOcrAndCapture("coc-latin-cyr", 30, $aLastResult[$i][1] + 44, 280, 17, Default, Default, False)
+Else
+$ClanString &= " " & getOcrAndCapture("coc-latin-cyr", 30, $aLastResult[$i][1] + 44, 280, 17, Default, Default, False)
+EndIf
+If _Sleep($DELAYDONATECC2) Then ExitLoop
+Else
+If $g_iChatDebug = 1 Then Setlog("Using OCR to read Latin derived alphabets..", $COLOR_ACTION)
+$ClanString = ""
+$ClanString = getOcrAndCapture("coc-latinA", 30, $aLastResult[$i][1] + 17, 280, 17, Default, Default, False)
+If $ClanString = "" Then
+$ClanString = getOcrAndCapture("coc-latinA", 30, $aLastResult[$i][1] + 31, 280, 17, Default, Default, False)
+Else
+$ClanString &= " " & getOcrAndCapture("coc-latinA", 30, $aLastResult[$i][1] + 31, 280, 17, Default, Default, False)
+EndIf
+If $ClanString = "" Or $ClanString = " " Then
+$ClanString = getOcrAndCapture("coc-latinA", 30, $aLastResult[$i][1] + 44, 280, 17, Default, Default, False)
+Else
+$ClanString &= " " & getOcrAndCapture("coc-latinA", 30, $aLastResult[$i][1] + 44, 280, 17, Default, Default, False)
+EndIf
+If _Sleep($DELAYDONATECC2) Then ExitLoop
+EndIf
+If $g_bChkExtraChinese Then
+If $g_iChatDebug = 1 Then Setlog("Using OCR to read the Chinese alphabet..", $COLOR_ACTION)
+If $ClanString = "" Then
+$ClanString = getOcrAndCapture("chinese-bundle", 30, $aLastResult[$i][1] + 43, 160, 15, Default, True, False)
+Else
+$ClanString &= " " & getOcrAndCapture("chinese-bundle", 30, $aLastResult[$i][1] + 43, 160, 15, Default, True, False)
+EndIf
+If _Sleep($DELAYDONATECC2) Then ExitLoop
+EndIf
+If $g_bChkExtraKorean Then
+If $g_iChatDebug = 1 Then Setlog("Using OCR to read the Korean alphabet..", $COLOR_ACTION)
+If $ClanString = "" Then
+$ClanString = getOcrAndCapture("korean-bundle", 30, $aLastResult[$i][1] + 43, 160, 15, Default, True, False)
+Else
+$ClanString &= " " & getOcrAndCapture("korean-bundle", 30, $aLastResult[$i][1] + 43, 160, 15, Default, True, False)
+EndIf
+If _Sleep($DELAYDONATECC2) Then ExitLoop
+EndIf
+If $ClanString = "" Or $ClanString = " " Then
+If $g_iChatDebug = 1 Then SetLog("Unable to read Chat!", $COLOR_ERROR)
+ExitLoop
+Else
+SetLog("Chat: " & $ClanString)
+ExitLoop
+EndIf
+Next
+EndIf
+Else
+If $g_iChatDebug = 1 Then SetLog("divide not found.", $COLOR_DEBUG)
+EndIf
+If $g_hHBitmap2 <> 0 Then GdiDeleteHBitmap($g_hHBitmap2)
+Return $ClanString
+EndFunc
+Func _SendExEx($sKeys, $iFlag = 0)
+If @KBLayout = 0419 Then
+Local $sANSI_Chars = "ёйцукенгшщзхъфывапролджэячсмитьбю.?"
+Local $sASCII_Chars = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./&"
+Local $aSplit_Keys = StringSplit($sKeys, "")
+Local $sKey
+$sKeys = ""
+For $i = 1 To $aSplit_Keys[0]
+$sKey = StringMid($sANSI_Chars, StringInStr($sASCII_Chars, $aSplit_Keys[$i]), 1)
+If $sKey <> "" Then
+$sKeys &= $sKey
+Else
+$sKeys &= $aSplit_Keys[$i]
+EndIf
+Next
+EndIf
+Return Send($sKeys, $iFlag)
+EndFunc
+Global $g_iSamM0dDebugImage = 0, $g_iSamM0dDebugOCR = 0, $g_iSamM0dDebug = 0
+Func findMultiImage($hBitmap4Find, $directory, $sCocDiamond, $redLines, $minLevel = 0, $maxLevel = 1000, $maxReturnPoints = 0, $returnProps = "objectname,objectlevel,objectpoints")
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then
+SetLog("******** findMultiImage *** START ***", $COLOR_ORANGE)
+SetLog("findMultiImage : directory : " & $directory, $COLOR_ORANGE)
+SetLog("findMultiImage : sCocDiamond : " & $sCocDiamond, $COLOR_ORANGE)
+SetLog("findMultiImage : redLines : " & $redLines, $COLOR_ORANGE)
+SetLog("findMultiImage : minLevel : " & $minLevel, $COLOR_ORANGE)
+SetLog("findMultiImage : maxLevel : " & $maxLevel, $COLOR_ORANGE)
+SetLog("findMultiImage : maxReturnPoints : " & $maxReturnPoints, $COLOR_ORANGE)
+SetLog("findMultiImage : returnProps : " & $returnProps, $COLOR_ORANGE)
+SetLog("******** findMultiImage *** START ***", $COLOR_ORANGE)
+EndIf
+Local $error, $extError
+Local $aCoords = ""
+Local $returnData = StringSplit($returnProps, ",", $STR_NOCOUNT)
+Local $returnLine[UBound($returnData)]
+Local $returnValues[0]
+Local $result = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $hBitmap4Find, "str", $directory, "str", $sCocDiamond, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
+$error = @error
+$extError = @extended
+If $error Then
+_logErrorDLLCall($g_sLibMyBotPath, $error)
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog(" imgloc DLL Error : " & $error & " --- " & $extError)
+SetError(2, $extError, $aCoords)
+Return ""
+EndIf
+If checkImglocError($result, "findMultiImage") = True Then
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("findMultiImage Returned Error or No values : ", $COLOR_DEBUG)
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("******** findMultiImage *** END ***", $COLOR_ORANGE)
+Return ""
+Else
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("findMultiImage found : " & $result[0])
+EndIf
+If $result[0] <> "" Then
+Local $resultArr = StringSplit($result[0], "|", $STR_NOCOUNT)
+ReDim $returnValues[UBound($resultArr)]
+For $rs = 0 To UBound($resultArr) - 1
+For $rD = 0 To UBound($returnData) - 1
+$returnLine[$rD] = RetrieveImglocProperty($resultArr[$rs], $returnData[$rD])
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("findMultiImage : " & $resultArr[$rs] & "->" & $returnData[$rD] & " -> " & $returnLine[$rD])
+Next
+$returnValues[$rs] = $returnLine
+Next
+If $redLines = "" Then
+$g_sImglocRedline = RetrieveImglocProperty("redline", "")
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("findMultiImage : Redline argument is emty, seting global Redlines")
+EndIf
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("******** findMultiImage *** END ***", $COLOR_ORANGE)
+Return $returnValues
+Else
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog(" ***  findMultiImage has no result **** ", $COLOR_ORANGE)
+If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("******** findMultiImage *** END ***", $COLOR_ORANGE)
+Return ""
+EndIf
 EndFunc
 Func GetTranslatedParsedText($sText, $var1 = Default, $var2 = Default, $var3 = Default)
 Local $s = StringReplace(StringReplace($sText, "\r\n", @CRLF), "\n", @CRLF)
@@ -74503,6 +75577,9 @@ CheckAndroidReboot()
 NotifyPendingActions()
 If _Sleep($DELAYIDLE1) Then Return
 If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
+If $g_bChatGlobal = True Or $g_bChatClan = True Then
+ChatbotMessage()
+EndIf
 Local $hTimer = __TimerInit()
 BotHumanization()
 If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -74628,6 +75705,9 @@ SetDebugLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[
 SetDebugLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
 EndIf
 _ClanGames()
+If $g_bChatGlobal = True Or $g_bChatClan = True Then
+ChatbotMessage()
+EndIf
 ClickP($aAway, 1, 0, "#0000")
 PrepareSearch()
 If Not $g_bRunState Then Return
@@ -74733,6 +75813,10 @@ Case "DonateCC"
 If $g_iActiveDonate And $g_bChkDonate Then
 If SkipDonateNearFullTroops(True) = False And BalanceDonRec(True) Then DonateCC()
 If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
+EndIf
+Case "SendChat"
+If $g_bChatGlobal = True Or $g_bChatClan = True Then
+ChatbotMessage()
 EndIf
 Case "DonateCC,Train"
 If $g_iActiveDonate And $g_bChkDonate Then

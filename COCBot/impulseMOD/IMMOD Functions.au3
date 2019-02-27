@@ -13,6 +13,8 @@
 ; Example .......: ---
 ; ===============================================================================================================================
 
+#include "IM Extra.au3"
+
 ; Bot Humanization - Added by IMMOD
 #include "IM Bot Humanization\BotHumanization.au3"
 #include "IM Bot Humanization\AttackNDefenseActions.au3"
@@ -26,3 +28,9 @@
 ;#include "IM Debug GUI Control.au3"
 
 #include "IM Config.au3"
+
+; ChatBot - Added by IMMOD
+#include "IM Chatbot\Chatbot.au3"
+#include "IM Chatbot\ChatFunc.au3"
+#include "IM Chatbot\Multy Lang.au3"
+#include "IM OCR\getMyOcr.au3"

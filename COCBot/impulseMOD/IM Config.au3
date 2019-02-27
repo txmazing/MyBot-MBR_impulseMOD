@@ -35,6 +35,22 @@ Func ReadConfig_IMMod()
 	Next
 	IniReadS($g_iCmbMaxActionsNumber, $g_sProfileConfigPath, "Bot Humanization", "cmbMaxActionsNumber", $g_iCmbMaxActionsNumber, "int")
 	IniReadS($g_iTxtChallengeMessage, $g_sProfileConfigPath, "Bot Humanization", "challengeMessage", $g_iTxtChallengeMessage)
+	
+	; ================================================== ChatBot - by IMMOD ================================= ;
+
+	IniReadS($g_bChatGlobal, $g_sProfileConfigPath, "Chatbot", "ChkChatGlobal", False, "Bool")
+	IniReadS($g_bScrambleGlobal, $g_sProfileConfigPath, "Chatbot", "ChkScrambleGlobal", False, "Bool")
+	IniReadS($g_bDelayTime, $g_sProfileConfigPath, "Chatbot", "ChkDelayTime", False, "Bool")
+	IniReadS($g_iTxtDelayTime, $g_sProfileConfigPath, "Chatbot", "TxtDelayTime", $g_iTxtDelayTime)
+	IniReadS($g_bSwitchLang, $g_sProfileConfigPath, "Chatbot", "ChkSwitchLang", False, "Bool")
+	IniReadS($g_iCmbLang, $g_sProfileConfigPath, "Chatbot", "CmbLang", $g_iCmbLang, "int")
+	IniReadS($g_bRusLang, $g_sProfileConfigPath, "Chatbot", "ChkRusLang", False, "Bool")
+	IniReadS($g_bChatClan, $g_sProfileConfigPath, "Chatbot", "ChkChatClan", False, "Bool")
+	IniReadS($g_bClanUseResponses, $g_sProfileConfigPath, "Chatbot", "ChkUseResponses", False, "Bool")
+	IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "Chatbot", "ChkUseGeneric", False, "Bool")
+	IniReadS($g_bCleverbot, $g_sProfileConfigPath, "Chatbot", "ChkCleverbot", False, "Bool")
+	IniReadS($g_bUseNotify, $g_sProfileConfigPath, "Chatbot", "ChkChatNotify", False, "Bool")
+	IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "Chatbot", "ChkPbSendNewChats", False, "Bool")
 
 EndFunc   ;==>ReadConfig_IMMod
 
@@ -61,6 +77,28 @@ Func SaveConfig_IMMod() ; due to mini mode no guitCtrols Reads in this function
 	Next
 	_Ini_Add("Bot Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_hCmbMaxActionsNumber))
 	_Ini_Add("Bot Humanization", "challengeMessage", GUICtrlRead($g_hChallengeMessage))
+	
+	; ================================================== ChatBot - by IMMOD ================================= ;
+
+	_Ini_Add("Chatbot", "ChkChatGlobal", $g_bChatGlobal ? True : False)
+	_Ini_Add("Chatbot", "ChkScrambleGlobal", $g_bScrambleGlobal ? True : False)
+	_Ini_Add("Chatbot", "ChkDelayTime", $g_bDelayTime ? True : False)
+	_Ini_Add("Chatbot", "TxtDelayTime", $g_iTxtDelayTime)
+	_Ini_Add("Chatbot", "ChkSwitchLang", $g_bSwitchLang ? True : False)
+	_Ini_Add("Chatbot", "CmbLang", _GUICtrlComboBox_GetCurSel($g_hCmbLang))
+	_Ini_Add("Chatbot", "ChkRusLang", $g_bRusLang ? True : False)
+	_Ini_Add("Chatbot", "ChkChatClan", $g_bChatClan ? True : False)
+
+	_Ini_Add("Chatbot", "ChkUseResponses", $g_bClanUseResponses ? True : False)
+	_Ini_Add("Chatbot", "ChkUseGeneric", $g_bClanAlwaysMsg ? True : False)
+	_Ini_Add("Chatbot", "ChkCleverbot", $g_bCleverbot ? True : False)
+	_Ini_Add("Chatbot", "ChkChatNotify", $g_bUseNotify ? True : False)
+	_Ini_Add("Chatbot", "ChkPbSendNewChats", $g_bPbSendNew ? True : False)
+
+	_Ini_Add("Chatbot", "globalMsg1", $glb1)
+	_Ini_Add("Chatbot", "globalMsg2", $glb2)
+	_Ini_Add("Chatbot", "genericMsgClan", $cGeneric)
+	_Ini_Add("Chatbot", "responseMsgClan", $cResp)
 
 EndFunc   ;==>SaveConfig_IMMod
 
@@ -90,6 +128,22 @@ Func ApplyConfig_IMMod($TypeReadSave)
 			Next
 			$g_iCmbMaxActionsNumber = _GUICtrlComboBox_GetCurSel($g_iCmbMaxActionsNumber)
 			$g_iTxtChallengeMessage = GUICtrlRead($g_hChallengeMessage)
+			
+			; ================================================== ChatBot - by IMMOD ================================= ;
+
+			$g_bChatGlobal = (GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED)
+			$g_bScrambleGlobal = (GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED)
+			$g_bDelayTime = (GUICtrlRead($g_hChkDelayTime) = $GUI_CHECKED)
+			$g_iTxtDelayTime = GUICtrlRead($g_hTxtDelayTime)
+			$g_bSwitchLang = (GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED)
+			$g_iCmbLang = _GUICtrlComboBox_GetCurSel($g_hCmbLang)
+			$g_bRusLang = (GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED)
+			$g_bChatClan = (GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED)
+			$g_bClanUseResponses = (GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED)
+			$g_bClanAlwaysMsg = (GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
+			$g_bCleverbot = (GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
+			$g_bUseNotify = (GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
+			$g_bPbSendNew = (GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
 
 		Case "Read"
 
@@ -116,6 +170,34 @@ Func ApplyConfig_IMMod($TypeReadSave)
 			GUICtrlSetData($g_hChallengeMessage, $g_iTxtChallengeMessage)
 			cmbStandardReplay()
 			cmbWarReplay()
+			
+			; ================================================== ChatBot - by IMMOD ======================================== ;
+
+			GUICtrlSetState($g_hChkGlobalChat, $g_bChatGlobal ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkGlobalScramble, $g_bScrambleGlobal ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkDelayTime, $g_bDelayTime ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtDelayTime, $g_iTxtDelayTime)
+			GUICtrlSetState($g_hChkSwitchLang, $g_bSwitchLang ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbLang, $g_iCmbLang)
+			GUICtrlSetState($g_hChkRusLang, $g_bRusLang ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkClanChat, $g_bChatClan ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseResponses, $g_bClanUseResponses ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseGeneric, $g_bClanAlwaysMsg ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkCleverbot, $g_bCleverbot ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkChatNotify, $g_bUseNotify ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkPbSendNewChats, $g_bPbSendNew ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkRusLang()
+			chkGlobalChat()
+			chkGlobalScramble()
+			chkCleverbot()
+			chkSwitchLang()
+			chkClanChat()
+			chkUseResponses()
+			chkUseGeneric()
+			chkChatNotify()
+			chkPbSendNewChats()
+			ChatGuiEditUpdate()
+			chkDelayTime()
 
 	EndSwitch
 

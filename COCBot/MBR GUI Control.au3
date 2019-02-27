@@ -1943,7 +1943,9 @@ Func tabMOD($lParam = "")
 	Select
 		Case $tabidx = 0 ; Humanization Tab
 
-;		Case $tabidx = 7 ; IM Debug Tab
+		Case $tabidx = 1 ; ChatBot Tab
+
+;		Case $tabidx = - ; IM Debug Tab
 
 	EndSelect
 EndFunc   ;==>tabMOD
@@ -2096,7 +2098,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 			;----------- ADDED BY IMMOD Starts----------------
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex = [$eIcnHumanization]
+			Local $aIconIndex = [$eIcnHumanization, $eIcnModChatBot]
 			;----------- ADDED BY IMMOD END ----------------
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab
