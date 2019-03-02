@@ -27,7 +27,7 @@ Global $g_hTxtSALog = 0
 
 Func CreateBotTab()
 	$g_hGUI_BOT = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
-	GUISetBkColor($COLOR_WHITE, $g_hGUI_BOT)
+	;GUISetBkColor($COLOR_WHITE, $g_hGUI_BOT)
 
 	$g_hGUI_LOG_SA = _GUICreate("", 205, 200, 235, 225, BitOR($WS_CHILD, 0), -1, $g_hGUI_BOT)
 

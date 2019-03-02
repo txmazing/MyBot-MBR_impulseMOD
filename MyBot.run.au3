@@ -609,6 +609,8 @@ Func FinalInitialization(Const $sAI)
 
 	UpdateMainGUI()
 
+	ForumAuthentication()
+
 EndFunc   ;==>FinalInitialization
 
 ; #FUNCTION# ====================================================================================================================

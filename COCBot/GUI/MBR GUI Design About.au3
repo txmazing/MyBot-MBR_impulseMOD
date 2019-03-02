@@ -20,7 +20,7 @@ Global $g_hGUI_CommandLineHelp = 0
 
 Func CreateAboutTab()
 	$g_hGUI_ABOUT = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
-	 ;GUISetBkColor($COLOR_WHITE, $g_hGUI_ABOUT)
+	; GUISetBkColor($COLOR_WHITE, $g_hGUI_ABOUT)
 
 	Local $sText = ""
 	Local $x = 18, $y = 10 + $_GUI_MAIN_TOP

@@ -39,7 +39,6 @@ Global $g_hLblRemainTime = 0 , $g_hLblYourScore = 0
 
 Func CreateVillageMisc()
 	$g_hGUI_MISC = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)
-	;GUISetBkColor($COLOR_WHITE, $g_hGUI_MISC)
 
 	GUISwitch($g_hGUI_MISC)
 	$g_hGUI_MISC_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))

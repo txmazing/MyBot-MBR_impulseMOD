@@ -105,7 +105,7 @@ Func CreateRequestSubTab()
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_RequestCC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	; ;GUISetBkColor($COLOR_WHITE)
+	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	Local $x = $xStart
 	Local $y = $yStart
@@ -298,7 +298,7 @@ EndFunc   ;==>CreateRequestSubTab
 Func CreateDonateSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_DONATECC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	; ;GUISetBkColor($COLOR_WHITE)
+	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	;~ -------------------------------------------------------------
 	;~ Language Variables used a lot
@@ -2115,7 +2115,7 @@ EndFunc   ;==>CreateDonateSubTab
 Func CreateScheduleSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_ScheduleCC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	; ;GUISetBkColor($COLOR_WHITE)
+	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	Local $x = $xStart
 	Local $y = $yStart
