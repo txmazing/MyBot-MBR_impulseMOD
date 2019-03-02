@@ -1781,4 +1781,6 @@ Func _ArrayIndexValid(Const ByRef $a, Const $idx)
 	Return $idx >= 0 And $idx < UBound($a)
 EndFunc
 
+Global $XS_n
+
 #include "impulseMOD\IMMOD Global Variables.au3" ; ADDED By IMMOD

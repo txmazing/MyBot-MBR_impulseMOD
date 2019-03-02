@@ -14,9 +14,9 @@
 ; ===============================================================================================================================
 #include-once
 ; ================================================== IM Debug ================================================== ;
-;Global $g_hBtnTestBuilderTimeOCR = 0, $g_hBtnTestGlobalChatBot = 0, $g_hBtnTestClanChatBot = 0, $g_hBtnTestTNRQT = 0
-;Global $g_hBtnTestGoblinXP = 0, $g_hBtnForceStopBot = 0, $g_hBtnTestWardenMode = 0, $g_hBtnTestBotHumanization = 0, $g_hBtnDragNDropQueue = 0, $g_hBtnTestLabUpgrade = 0
-;Global $g_hBtnTestBuilderBaseAtk = 0, $g_hBtnTestBuilderBaseObs = 0, $g_hBtnTestGTFO = 0, $g_hBtnTestStopForWar = 0
+Global $g_hBtnTestBuilderTimeOCR = 0, $g_hBtnTestGlobalChatBot = 0, $g_hBtnTestClanChatBot = 0, $g_hBtnTestTNRQT = 0
+Global $g_hBtnTestGoblinXP = 0, $g_hBtnForceStopBot = 0, $g_hBtnTestWardenMode = 0, $g_hBtnTestBotHumanization = 0, $g_hBtnDragNDropQueue = 0, $g_hBtnTestLabUpgrade = 0
+Global $g_hBtnTestBuilderBaseAtk = 0, $g_hBtnTestBuilderBaseObs = 0, $g_hBtnTestGTFO = 0, $g_hBtnTestStopForWar = 0
 
 ; ================================================== Humanization PART ================================================== ;
 
@@ -52,7 +52,7 @@ Global $g_hChkGoldSwitchMax = 0, $g_hCmbGoldMaxProfile = 0, $g_hTxtMaxGoldAmount
 Global $g_hGUI_MOD = 0
 
 
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0, $g_hGUI_MOD_TAB_IM_DEBUG = 0
 
 Func CreateMODTab()
 
@@ -64,8 +64,8 @@ Func CreateMODTab()
 	TabHumanizationGUI()
 	$g_hGUI_MOD_TAB_CHATBOT = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_02", "ChatBot"))
 	TabChatBotGUI()
-;	$g_hGUI_MOD_TAB_IM_DEBUG = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_08", "IM Debug"))
-;	TabIMDebugGUI()
+	$g_hGUI_MOD_TAB_IM_DEBUG = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_08", "IM Debug"))
+	TabIMDebugGUI()
 
 	GUICtrlCreateTabItem("")
 
@@ -282,3 +282,61 @@ Func TabChatBotGUI()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 EndFunc   ;==>TabChatBotGUI
+
+Func TabIMDebugGUI()
+	Local $x = 5, $y = 45 ;For Border
+	Local $yNext = 30
+	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design MOD - SM Debug", "Group_01", "IM Debug"), $x, $y, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2)
+	$x = 300
+	$y += 17
+;	$g_hBtnTestBuilderTimeOCR = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBuilderTimeOCR", "Check Builder Time OCR"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestBuilderTimeOCR")
+	$y += $yNext
+;	$g_hBtnTestWardenMode = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestWardenMode", "Check Warden Mode"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestWardenMode")
+	$y += $yNext
+	$g_hBtnTestGlobalChatBot = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGlobalChatBot", "Test Global Chat Bot"), $x, $y, 140, 25)
+	GUICtrlSetOnEvent(-1, "btnTestGlobalChatBot")
+	$y += $yNext
+	$g_hBtnTestClanChatBot = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestClanChatBot", "Test Clan Chat Bot"), $x, $y, 140, 25)
+	GUICtrlSetOnEvent(-1, "btnTestClanChatBot")
+	$y += $yNext
+;	$g_hBtnTestTNRQT = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestTNRQT", "Test TNRQT"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestTNRQT")
+	$y += $yNext
+;	$g_hBtnTestClanChatBot = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestCheckOneGem", "Test Check Gem Boost"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestCheckOneGem")
+	$y += $yNext
+;	$g_hBtnTestGoblinXP = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGoblinXP", "Test Goblin XP"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestGoblinXP")
+	$y += $yNext
+	$g_hBtnTestBotHumanization = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBotHumanization", "Test Bot Humanization"), $x, $y, 140, 25)
+	GUICtrlSetOnEvent(-1, "btnTestBotHumanization")
+	$y += $yNext
+;	$g_hBtnDragNDropQueue = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnDragNDropQueue", "Test DragNDropQueue"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnDragNDropQueue")
+	$y += $yNext
+;	$g_hBtnTestLabUpgrade = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestLabUpgrade", "Test Lab Upgrade"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestLabUpgrade")
+	$y += $yNext
+;	$g_hBtnTestGTFO = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGTFO", "Test GTFO"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestGTFO")
+	$y += $yNext
+;	$g_hBtnTestBuilderBaseAtk = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBuilderBaseAtk", "Test BB Attack Now"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestBuilderBaseAtk")
+
+	$x -= 145
+	$y = 62
+
+;	$g_hBtnTestBuilderBaseObs = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBuilderBaseObs", "Test BB Remove Obstacles"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestBuilderBaseObs")
+	$y += $yNext
+;	$g_hBtnTestStopForWar = 0 = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestStopForWar", "Test Stop For War"), $x, $y, 140, 25)
+;	GUICtrlSetOnEvent(-1, "btnTestStopForWar")
+
+	;$x = 145
+	;$y = 13 * $yNext
+	;$g_hBtnForceStopBot = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnForceStopBot", "Force Stop BOT"), $x - 135, $y + 10, 140, 25)
+	;GUICtrlSetOnEvent(-1, "btnForceStopBot")
+
+EndFunc   ;==>TabIMDebugGUI

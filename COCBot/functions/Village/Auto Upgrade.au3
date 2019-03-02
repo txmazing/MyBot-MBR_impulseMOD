@@ -183,14 +183,25 @@ Func _AutoUpgrade()
 		; initiate a False boolean, that firstly says that there is no sufficent resource to launch upgrade
 		Local $bSufficentResourceToUpgrade = False
 		; if Cost of upgrade + Value set in settings to be kept after upgrade > Current village resource, make boolean True and can continue
-		Switch $g_aUpgradeResourceCostDuration[0]
-			Case "Gold"
-				If $g_aiCurrentLoot[$eLootGold] >= ($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinGold) Then $bSufficentResourceToUpgrade = True
-			Case "Elixir"
-				If $g_aiCurrentLoot[$eLootElixir] >= ($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinElixir) Then $bSufficentResourceToUpgrade = True
-			Case "Dark Elixir"
-				If $g_aiCurrentLoot[$eLootDarkElixir] >= ($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinDark) Then $bSufficentResourceToUpgrade = True
-		EndSwitch
+			;------------------EDITED By IMMOD - START------------------
+			Switch $g_aUpgradeResourceCostDuration[0]
+				Case "Gold"
+					If ((($g_aiCurrentLoot[$eLootGold] >= ($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinGold)) And ($g_aUpgradeResourceCostDuration[1] < $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinGold)) Or _
+					   (($g_aiCurrentLoot[$eLootGold] >= $g_aUpgradeResourceCostDuration[1]) And ($g_aUpgradeResourceCostDuration[1] >= $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinGold))) Then
+					   $bSufficentResourceToUpgrade = True
+					EndIf
+				Case "Elixir"
+					If ((($g_aiCurrentLoot[$eLootElixir] >= ($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinElixir)) And ($g_aUpgradeResourceCostDuration[1] < $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinElixir)) Or _
+					   (($g_aiCurrentLoot[$eLootElixir] >= $g_aUpgradeResourceCostDuration[1]) And ($g_aUpgradeResourceCostDuration[1] >= $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinElixir))) Then
+						$bSufficentResourceToUpgrade = True
+					EndIf
+				Case "Dark Elixir"
+					If ((($g_aiCurrentLoot[$eLootDarkElixir] >= ($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinDark)) And ($g_aUpgradeResourceCostDuration[1] < $g_iLimitBreakDE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinDark)) Or _
+					   (($g_aiCurrentLoot[$eLootDarkElixir] >= $g_aUpgradeResourceCostDuration[1]) And ($g_aUpgradeResourceCostDuration[1] >= $g_iLimitBreakDE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinDark))) Then
+					   $bSufficentResourceToUpgrade = True
+					EndIf
+			EndSwitch
+			;------------------EDITED By IMMOD - END------------------
 		; if boolean still False, we can't launch upgrade, exiting...
 		If Not $bSufficentResourceToUpgrade Then
 			SetLog("Unsufficent " & $g_aUpgradeResourceCostDuration[0] & " to launch this upgrade, looking Next...", $COLOR_WARNING)
@@ -214,6 +225,8 @@ Func _AutoUpgrade()
 		SetLog("Launched upgrade of " & $g_aUpgradeNameLevel[1] & " to level " & $g_aUpgradeNameLevel[2] + 1 & " successfully !", $COLOR_SUCCESS)
 		SetLog(" - Cost : " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & " " & $g_aUpgradeResourceCostDuration[0], $COLOR_SUCCESS)
 		SetLog(" - Duration : " & $g_aUpgradeResourceCostDuration[2], $COLOR_SUCCESS)
+
+		PushMsg("BuildingUpgrading") ; ADDED BY IMMOD
 
 		_GUICtrlEdit_AppendText($g_hTxtAutoUpgradeLog, _
 				@CRLF & _NowDate() & " " & _NowTime() & _

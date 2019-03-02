@@ -26,3 +26,17 @@ Func _StringRemoveBlanksFromSplit(ByRef $strMsg) ;Remove empty string pipes from
 	If ($strMsg <> "") Then $strMsg = StringTrimRight($strMsg, 1) ;Remove last extra pipe from string
 
 EndFunc   ;==>_StringRemoveBlanksFromSplit
+
+Func XPStyleToggle($OnOff = 1)
+    If Not StringInStr(@OSTYPE, "WIN32_NT") Then Return 0
+    If $OnOff Then
+        $XS_n = DllCall("uxtheme.dll", "int", "GetThemeAppProperties")
+        DllCall("uxtheme.dll", "none", "SetThemeAppProperties", "int", 0)
+        Return 1
+    ElseIf IsArray($XS_n) Then
+        DllCall("uxtheme.dll", "none", "SetThemeAppProperties", "int", $XS_n[0])
+        $XS_n = ""
+        Return 1
+    EndIf
+    Return 0
+EndFunc

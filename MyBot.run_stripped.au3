@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7"
-Global $g_sModversion = "v1.0.2"
+Global $g_sModversion = "v1.0.3"
 Global $g_sModSupportUrl = "https://github.com/txmazing/MyBot-MBR_impulseMOD/releases"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
@@ -6939,6 +6939,7 @@ Global $g_sStarsEarned = Null
 Func _ArrayIndexValid(Const ByRef $a, Const $idx)
 Return $idx >= 0 And $idx < UBound($a)
 EndFunc
+Global $XS_n
 Global $g_sLastModversion = ""
 Global $g_sLastModmessage = ""
 Global $g_sOldModversmessage = ""
@@ -7004,6 +7005,11 @@ Global $cResp
 Global $cGeneric
 Global $ChatbotStartTime
 Global $g_sMessage = ""
+Global $g_iChkUpgrPriority = 0, $g_iCmbUpgrdPriority = 0
+Global Const $g_iLimitBreakGE[12] = [2500, 7000, 100000, 500000, 1000000, 2000000, 4000000, 6000000, 8000000, 8500000, 10000000, 12000000]
+Global Const $g_iLimitBreakDE[12] = [0, 0, 0, 0, 0, 0, 20000, 80000, 190000, 200000, 20000, 240000]
+Global $g_iLabUpgradeProgress = 0
+Global $g_iWallWarden = 0
 Global Const $DELAYSLEEP = 100
 Global Const $DELAYWAITFORPOPUP = 1500
 Global Const $DELAYCLOUDSCLEARED = 1000
@@ -7277,9 +7283,12 @@ GUICtrlSetOnEvent(-1, "MoveSplashScreen")
 $g_lSplashTitle = GUICtrlCreateLabel($g_sBotTitle, 15, $iY + $iT + $iB + 3, $iX - 30, 15, $SS_CENTER)
 GUICtrlSetColor(-1, 0xA6A7A8)
 GUICtrlSetOnEvent(-1, "MoveSplashScreen")
+XPStyleToggle(1)
 $g_hSplashProgress = GUICtrlCreateProgress(15, $iY + $iT + $iB + 20, $iX - 30, 10, $PBS_SMOOTH, BitOR($WS_EX_TOPMOST, $WS_EX_WINDOWEDGE, $WS_EX_TOOLWINDOW))
+GUICtrlSetColor(-1, $COLOR_RED)
 $g_lSplashStatus = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_Loading", "Loading..."), 15, $iY + $iT + $iB + 38, $iX - 30, 15, $SS_CENTER)
 GUICtrlSetColor(-1, 0xA6A7A8)
+XPStyleToggle(0)
 GUICtrlSetOnEvent(-1, "MoveSplashScreen")
 _GDIPlus_BitmapDispose($hSplashImg)
 GUISetState($iGuiState, $g_hSplash)
@@ -14401,6 +14410,7 @@ Global $g_hChkAutoUpgrade = 0, $g_hLblAutoUpgrade = 0, $g_hTxtAutoUpgradeLog = 0
 Global $g_hTxtSmartMinGold = 0, $g_hTxtSmartMinElixir = 0, $g_hTxtSmartMinDark = 0
 Global $g_hChkResourcesToIgnore[3] = [0, 0, 0]
 Global $g_hChkUpgradesToIgnore[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_hChkUpgrPriority = 0, $g_hCmbUpgrdPriority = 0
 Func CreateVillageUpgrade()
 InitTranslatedTextUpgradeTab()
 $g_hGUI_UPGRADE = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)
@@ -14591,7 +14601,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 Func CreateWallsSubTab()
 Local $x = 25, $y = 45
-GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "Group_01", "Walls"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 120)
+GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "Group_01", "Walls"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 140)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWall, $x - 12, $y - 6, 24, 24)
 $g_hChkWalls = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "ChkWalls", "Auto Wall Upgrade"), $x + 18, $y - 2, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "ChkWalls_Info_01", "Check this to upgrade Walls if there are enough resources."))
@@ -14618,6 +14628,11 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_
 GUICtrlSetState(-1, $GUI_ENABLE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 GUICtrlSetOnEvent(-1, "chkSaveWallBldr")
+$g_hChkUpgrPriority = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Upgrade_Walls", "ChkUpgrPriority", "Upgrading Priority") & ": ", $x + 18, $y + 95, -1, -1)
+GUICtrlSetOnEvent(-1, "chkUpgrPriority")
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Upgrade_Walls", "UpgrPriority_Info_01", "Enable this function to select update priorities"))
+$g_hCmbUpgrdPriority = GUICtrlCreateCombo("", $x + 135, $y + 95, 64, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+GUICtrlSetData(-1, "Walls |Building  ", "Walls ")
 $x += 225
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "LblSearchforWalls", "Search for Walls level") & ":", $x, $y + 2, -1, -1)
 $g_hCmbWalls = GUICtrlCreateCombo("", $x + 110, $y, 61, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL), $WS_EX_RIGHT)
@@ -14642,7 +14657,7 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_
 GUICtrlSetLimit(-1, 7)
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Local $x = 25, $y = 175
+Local $x = 25, $y = 185
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "Group_02", "Walls counter"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 95)
 $g_ahWallsCurrentCount[4] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", "Input number of Walls level") & " 4 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", "you have."))
@@ -21083,6 +21098,7 @@ Global $g_hGUI_BOT_TAB = 0, $g_hGUI_BOT_TAB_ITEM1 = 0, $g_hGUI_BOT_TAB_ITEM2 = 0
 Global $g_hTxtSALog = 0
 Func CreateBotTab()
 $g_hGUI_BOT = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
+GUISetBkColor($COLOR_WHITE, $g_hGUI_BOT)
 $g_hGUI_LOG_SA = _GUICreate("", 205, 200, 235, 225, BitOR($WS_CHILD, 0), -1, $g_hGUI_BOT)
 $g_hGUI_STATS = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_BOT)
 GUISwitch($g_hGUI_BOT)
@@ -21108,6 +21124,8 @@ Local $activeHWnD1 = WinGetHandle("")
 $g_hTxtSALog = _GUICtrlRichEdit_Create($g_hGUI_LOG_SA, "", $x, $y, 205, 200, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL, $WS_HSCROLL, $ES_UPPERCASE, $ES_AUTOHSCROLL, $ES_AUTOVSCROLL, $ES_NUMBER, 0x200), $WS_EX_STATICEDGE)
 WinActivate($activeHWnD1)
 EndFunc
+Global $g_hBtnTestBuilderTimeOCR = 0, $g_hBtnTestGlobalChatBot = 0, $g_hBtnTestClanChatBot = 0, $g_hBtnTestTNRQT = 0
+Global $g_hBtnTestGoblinXP = 0, $g_hBtnForceStopBot = 0, $g_hBtnTestWardenMode = 0, $g_hBtnTestBotHumanization = 0, $g_hBtnDragNDropQueue = 0, $g_hBtnTestLabUpgrade = 0
 Global $g_hChkUseBotHumanization = 0, $g_hChkUseAltRClick = 0, $g_acmbPriority = 0, $g_hChallengeMessage = 0, $g_ahumanMessage
 Global $g_hLabel1 = 0, $g_hLabel2 = 0, $g_hLabel3 = 0, $g_hLabel4 = 0
 Global $g_hLabel5 = 0, $g_hLabel6 = 0, $g_hLabel7 = 0, $g_hLabel8 = 0
@@ -21126,7 +21144,7 @@ Global $g_hTxtEditGlobalMessages1 = "", $g_hTxtEditGlobalMessages2 = ""
 Global $g_hTxtEditResponses = 0, $g_hTxtEditGeneric = 0, $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False, $TmpResp
 Global $g_alblAinGlobal, $g_alblSGchats, $g_alblSwitchlang, $g_alblChatclan, $g_alblUsecustomresp, $g_alblUsegenchats, $g_alblNotifyclanchat, $g_alblSwitchlang, $g_alblUseremotechat
 Global $g_hGUI_MOD = 0
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0, $g_hGUI_MOD_TAB_IM_DEBUG = 0
 Func CreateMODTab()
 $g_hGUI_MOD = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
 GUISwitch($g_hGUI_MOD)
@@ -21135,6 +21153,8 @@ $g_hGUI_MOD_TAB_HUMANIZATION = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Ma
 TabHumanizationGUI()
 $g_hGUI_MOD_TAB_CHATBOT = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_02", "ChatBot"))
 TabChatBotGUI()
+$g_hGUI_MOD_TAB_IM_DEBUG = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_08", "IM Debug"))
+TabIMDebugGUI()
 GUICtrlCreateTabItem("")
 EndFunc
 Func TabHumanizationGUI()
@@ -21316,6 +21336,33 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Chat", "chkPbSendN
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 GUICtrlSetOnEvent(-1, "chkPbSendNewChats")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
+EndFunc
+Func TabIMDebugGUI()
+Local $x = 5, $y = 45
+Local $yNext = 30
+GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design MOD - SM Debug", "Group_01", "IM Debug"), $x, $y, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2)
+$x = 300
+$y += 17
+$y += $yNext
+$y += $yNext
+$g_hBtnTestGlobalChatBot = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGlobalChatBot", "Test Global Chat Bot"), $x, $y, 140, 25)
+GUICtrlSetOnEvent(-1, "btnTestGlobalChatBot")
+$y += $yNext
+$g_hBtnTestClanChatBot = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestClanChatBot", "Test Clan Chat Bot"), $x, $y, 140, 25)
+GUICtrlSetOnEvent(-1, "btnTestClanChatBot")
+$y += $yNext
+$y += $yNext
+$y += $yNext
+$y += $yNext
+$g_hBtnTestBotHumanization = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBotHumanization", "Test Bot Humanization"), $x, $y, 140, 25)
+GUICtrlSetOnEvent(-1, "btnTestBotHumanization")
+$y += $yNext
+$y += $yNext
+$y += $yNext
+$y += $yNext
+$x -= 145
+$y = 62
+$y += $yNext
 EndFunc
 Global $g_hGUI_ABOUT = 0
 Global $g_hLblCreditsBckGrnd = 0, $g_hLblMyBotURL = 0, $g_hLblForumURL = 0
@@ -61788,11 +61835,17 @@ EndIf
 Local $bSufficentResourceToUpgrade = False
 Switch $g_aUpgradeResourceCostDuration[0]
 Case "Gold"
-If $g_aiCurrentLoot[$eLootGold] >=($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinGold) Then $bSufficentResourceToUpgrade = True
+If((($g_aiCurrentLoot[$eLootGold] >=($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinGold)) And($g_aUpgradeResourceCostDuration[1] < $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinGold)) Or(($g_aiCurrentLoot[$eLootGold] >= $g_aUpgradeResourceCostDuration[1]) And($g_aUpgradeResourceCostDuration[1] >= $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinGold))) Then
+$bSufficentResourceToUpgrade = True
+EndIf
 Case "Elixir"
-If $g_aiCurrentLoot[$eLootElixir] >=($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinElixir) Then $bSufficentResourceToUpgrade = True
+If((($g_aiCurrentLoot[$eLootElixir] >=($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinElixir)) And($g_aUpgradeResourceCostDuration[1] < $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinElixir)) Or(($g_aiCurrentLoot[$eLootElixir] >= $g_aUpgradeResourceCostDuration[1]) And($g_aUpgradeResourceCostDuration[1] >= $g_iLimitBreakGE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinElixir))) Then
+$bSufficentResourceToUpgrade = True
+EndIf
 Case "Dark Elixir"
-If $g_aiCurrentLoot[$eLootDarkElixir] >=($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinDark) Then $bSufficentResourceToUpgrade = True
+If((($g_aiCurrentLoot[$eLootDarkElixir] >=($g_aUpgradeResourceCostDuration[1] + $g_iTxtSmartMinDark)) And($g_aUpgradeResourceCostDuration[1] < $g_iLimitBreakDE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinDark)) Or(($g_aiCurrentLoot[$eLootDarkElixir] >= $g_aUpgradeResourceCostDuration[1]) And($g_aUpgradeResourceCostDuration[1] >= $g_iLimitBreakDE[$g_iTownHallLevel - 1] - $g_iTxtSmartMinDark))) Then
+$bSufficentResourceToUpgrade = True
+EndIf
 EndSwitch
 If Not $bSufficentResourceToUpgrade Then
 SetLog("Unsufficent " & $g_aUpgradeResourceCostDuration[0] & " to launch this upgrade, looking Next...", $COLOR_WARNING)
@@ -61810,6 +61863,7 @@ $iLoopMax += 1
 SetLog("Launched upgrade of " & $g_aUpgradeNameLevel[1] & " to level " & $g_aUpgradeNameLevel[2] + 1 & " successfully !", $COLOR_SUCCESS)
 SetLog(" - Cost : " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & " " & $g_aUpgradeResourceCostDuration[0], $COLOR_SUCCESS)
 SetLog(" - Duration : " & $g_aUpgradeResourceCostDuration[2], $COLOR_SUCCESS)
+PushMsg("BuildingUpgrading")
 _GUICtrlEdit_AppendText($g_hTxtAutoUpgradeLog, @CRLF & _NowDate() & " " & _NowTime() & " - Upgrading " & $g_aUpgradeNameLevel[1] & " to level " & $g_aUpgradeNameLevel[2] + 1 & " for " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & " " & $g_aUpgradeResourceCostDuration[0] & " - Duration : " & $g_aUpgradeResourceCostDuration[2])
 _FileWriteLog($g_sProfileLogsPath & "\AutoUpgradeHistory.log", "Upgrading " & $g_aUpgradeNameLevel[1] & " to level " & $g_aUpgradeNameLevel[2] + 1 & " for " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & " " & $g_aUpgradeResourceCostDuration[0] & " - Duration : " & $g_aUpgradeResourceCostDuration[2])
 WEnd
@@ -61819,8 +61873,16 @@ SetLog("Auto Upgrade finished", $COLOR_INFO)
 ClickP($aAway, 1, 0, "#0000")
 EndFunc
 Func UpgradeWall()
+Local $MinWallGold = Number($g_aiCurrentLoot[$eLootGold] - $g_iWallCost) > Number($g_iUpgradeWallMinGold)
+Local $MinWallElixir = Number($g_aiCurrentLoot[$eLootElixir] - $g_iWallCost) > Number($g_iUpgradeWallMinElixir)
+If IniRead($g_sProfileConfigPath, "Walls", "Wall13", 0) = 200 Then
+SetLog("All walls are maxed", $COLOR_SUCCESS)
+$g_bAutoUpgradeWallsEnable = False
+$g_bUpgradeWallSaveBuilder = 0
+Return
+EndIf
 If $g_bAutoUpgradeWallsEnable = True Then
-SetLog("Checking Upgrade Walls", $COLOR_INFO)
+SetLog("Wall Upgrade in Progress.", $COLOR_INFO)
 If SkipWallUpgrade() Then Return
 If $g_iFreeBuilderCount > 0 Then
 ClickP($aAway, 1, 0, "#0313")
@@ -61912,6 +61974,9 @@ checkMainScreen(False)
 EndFunc
 Func UpgradeWallGold()
 If _Sleep($DELAYRESPOND) Then Return
+If GoldPriority() Then
+Sleep($DELAYUPGRADEWALL1)
+SetLog("Gold Priority Verified", $COLOR_INFO)
 Local $offColors[3][3] = [[0xD6714B, 47, 37], [0xF0E850, 70, 0], [0xF4F8F2, 79, 0]]
 Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 670, 650 + $g_iBottomOffsetY, 1, 1, Hex(0xF3F3F1, 6), $offColors, 30)
 If IsArray($ButtonPixel) Then
@@ -61952,9 +62017,15 @@ SetLog("No Upgrade Gold Button", $COLOR_ERROR)
 Pushmsg("NowUpgradeGoldButton")
 Return False
 EndIf
+Else
+Return False
+EndIf
 EndFunc
 Func UpgradeWallElixir()
 If _Sleep($DELAYRESPOND) Then Return
+If ElixirPriority() Then
+Sleep($DELAYUPGRADEWALL1)
+SetLog("Elixir Priority Verified", $COLOR_INFO)
 Local $offColors[3][3] = [[0xBC5B31, 38, 32], [0xF84CF9, 72, 0], [0xF5F9F2, 79, 0]]
 Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 670, 650 + $g_iBottomOffsetY, 1, 1, Hex(0xF4F7F2, 6), $offColors, 30)
 If IsArray($ButtonPixel) Then
@@ -61991,8 +62062,12 @@ SetLog("No Upgrade Elixir Button", $COLOR_ERROR)
 Pushmsg("NowUpgradeElixirButton")
 Return False
 EndIf
+Else
+Return False
+Endif
 EndFunc
 Func SkipWallUpgrade()
+If $g_iCmbUpgrdPriority = 0 Then
 IniReadS($g_iUpgradeWallLootType, $g_sProfileConfigPath, "upgrade", "use-storage", "0")
 Local $iUpgradeAction = 0
 Local $iBuildingsNeedGold = 0
@@ -62045,9 +62120,9 @@ SetLog("Skip Wall upgrade - insufficient elixir for selected upgrades", $COLOR_W
 Return True
 EndIf
 Case 2
-If $g_aiCurrentLoot[$eLootGold] -($iBuildingsNeedGold + $g_iWallCost + Number($g_iUpgradeWallMinGold)) < 0 Then
+If($g_aiCurrentLoot[$eLootGold] -($iBuildingsNeedGold + $g_iWallCost + Number($g_iUpgradeWallMinGold)) < 0) Then
 SetLog("Wall upgrade: insufficient gold for selected upgrades", $COLOR_WARNING)
-If $g_aiCurrentLoot[$eLootElixir] -($iBuildingsNeedElixir + $g_iWallCost + Number($g_iUpgradeWallMinElixir)) >= 0 Then
+If($g_aiCurrentLoot[$eLootElixir] -($iBuildingsNeedElixir + $g_iWallCost + Number($g_iUpgradeWallMinElixir)) >= 0) And($g_iCmbUpgrdPriority = 0 Or($g_iCmbUpgrdPriority = 1 And($g_iFreeBuilderCount = 1 Or $iBuildingsNeedElixir <= 0))) Then
 SetLog("Using Elixir only for wall Upgrade", $COLOR_SUCCESS1)
 $g_iUpgradeWallLootType = 1
 Else
@@ -62055,9 +62130,9 @@ SetLog("Skip Wall upgrade -insufficient resources for selected upgrades", $COLOR
 Return True
 EndIf
 EndIf
-If $g_aiCurrentLoot[$eLootElixir] -($iBuildingsNeedElixir + $g_iWallCost + Number($g_iUpgradeWallMinElixir)) < 0 Then
+If($g_aiCurrentLoot[$eLootElixir] -($iBuildingsNeedElixir + $g_iWallCost + Number($g_iUpgradeWallMinElixir) < 0)) Then
 SetLog("Wall upgrade: insufficient elixir for selected upgrades", $COLOR_WARNING)
-If $g_aiCurrentLoot[$eLootGold] -($iBuildingsNeedGold + $g_iWallCost + Number($g_iUpgradeWallMinGold)) >= 0 Then
+If($g_aiCurrentLoot[$eLootGold] -($iBuildingsNeedGold + $g_iWallCost + Number($g_iUpgradeWallMinGold) >= 0)) And($g_iCmbUpgrdPriority = 0 Or($g_iCmbUpgrdPriority = 1 And($g_iFreeBuilderCount = 1 Or $iBuildingsNeedGold <= 0))) Then
 SetLog("Using Gold only for Wall Upgrade", $COLOR_SUCCESS1)
 $g_iUpgradeWallLootType = 0
 Else
@@ -62085,20 +62160,26 @@ EndSwitch
 EndIf
 EndIf
 Local $bMinWallElixir = Number($g_aiCurrentLoot[$eLootElixir]) >($g_iWallCost + Number($g_iLaboratoryElixirCost) + Number($g_iUpgradeWallMinElixir))
-If $g_bAutoLabUpgradeEnable And $g_iLaboratoryElixirCost > 0 And Not $bMinWallElixir Then
+If $g_bAutoLabUpgradeEnable And $g_iCmbLaboratory >= 1 And Not($g_iCmbLaboratory >= 20 And $g_iCmbLaboratory <= 30) And Not $bMinWallElixir Then
+Local $sName = $g_avLabTroops[$g_iCmbLaboratory][3]
+Local $LabElixirNeeded = $g_iLaboratoryElixirCost
+If $LabElixirNeeded = 0 Then $LabElixirNeeded = "unknown"
 Switch $g_iUpgradeWallLootType
 Case 0
 Case 1
-SetLog("Laboratory needs Elixir to Upgrade :  " & $g_iLaboratoryElixirCost, $COLOR_SUCCESS1)
+SetLog("Laboratory needs " & $LabElixirNeeded & " Elixir to Upgrade :  " & $sName, $COLOR_SUCCESS1)
 SetLog("Skipping Wall Upgrade", $COLOR_SUCCESS1)
 Return True
 Case 2
-SetLog("Laboratory needs Elixir to Upgrade :  " & $g_iLaboratoryElixirCost, $COLOR_SUCCESS1)
+SetLog("Laboratory needs " & $LabElixirNeeded & " Elixir to Upgrade :  " & $sName, $COLOR_SUCCESS1)
 SetLog("Using Gold only for Wall Upgrade", $COLOR_SUCCESS1)
 $g_iUpgradeWallLootType = 0
 EndSwitch
 EndIf
 Return False
+ElseIf $g_iCmbUpgrdPriority = 1 Then
+Return False
+EndIf
 EndFunc
 Func SwitchToNextWallLevel()
 If $g_aiWallsCurrentCount[$g_iCmbUpgradeWallsLevel + 4] = 0 And $g_iCmbUpgradeWallsLevel < 8 Then
@@ -62114,6 +62195,111 @@ DisableGuiControls()
 Return True
 EndIf
 Return False
+EndFunc
+Func GoldPriority()
+Local $iBuildingsNeedGold = 0
+Local $iGoldBuildings = 0
+Local $iUpgradeAction = 0
+Local $iDecision = 0
+Local $iMinWallGold = Number($g_aiCurrentLoot[$eLootGold] - $g_iWallCost) > Number($g_iUpgradeWallMinGold)
+If $g_iCmbUpgrdPriority = 1 Then
+SetLog("Gold Priority is enabled.", $COLOR_INFO)
+For $iz = 0 To UBound($g_avBuildingUpgrades, 1) - 1
+If $g_abBuildingUpgradeEnable[$iz] = True Then $iUpgradeAction += 1
+Next
+For $iz = 0 To UBound($g_avBuildingUpgrades, 1) - 1
+If $iUpgradeAction > 0 And $g_abBuildingUpgradeEnable[$iz] = True And $g_avBuildingUpgrades[$iz][7] = "" Then
+Switch $g_avBuildingUpgrades[$iz][3]
+Case "Gold"
+$iBuildingsNeedGold += Number($g_avBuildingUpgrades[$iz][2])
+$iGoldBuildings += 1
+EndSwitch
+EndIf
+Next
+If($iUpgradeAction = 0) Or($iUpgradeAction > 0 And $iGoldBuildings = 0) Or($iUpgradeAction > 0 And $iGoldBuildings > 0 And $g_iFreeBuilderCount =($g_iHeroReservedBuilder + 1)) Then
+SetLog("Building: Priority Pass.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Building: Priority Failure.", $COLOR_ERROR)
+Return False
+EndIf
+If($g_bAutoUpgradeEnabled = 0) Or($g_bAutoUpgradeEnabled = 1 And $g_iChkResourcesToIgnore[0] = 1) Or($g_bAutoUpgradeEnabled = 1 And($g_iFreeBuilderCount <=($g_iHeroReservedBuilder + 1) And $g_iFreeBuilderCount > 0)) Then
+SetLog("Auto Upgrade: Priority Pass.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Auto Upgrade: Priority Failure.", $COLOR_ERROR)
+Return False
+EndIf
+If $iMinWallGold Then
+SetLog("Enough gold to continue with upgrade.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Not enough gold to continue with upgrade.", $COLOR_ERROR)
+Return False
+EndIf
+If $iDecision = 3 Then
+Return True
+EndIf
+ElseIf $g_iCmbUpgrdPriority = 0 Then
+SetLog("Gold Priority is disabled.", $COLOR_INFO)
+Return True
+EndIf
+EndFunc
+Func ElixirPriority()
+Local $iBuildingsNeedElixir = 0
+Local $iElixirBuildings = 0
+Local $iUpgradeAction = 0
+Local $iDecision = 0
+Local $MinWallElixir = Number($g_aiCurrentLoot[$eLootElixir] - $g_iWallCost) > Number($g_iUpgradeWallMinElixir)
+If $g_iCmbUpgrdPriority = 1 Then
+SetLog("Elixir Priority is enabled.", $COLOR_INFO)
+For $iz = 0 To UBound($g_avBuildingUpgrades, 1) - 1
+If $g_abBuildingUpgradeEnable[$iz] = True Then $iUpgradeAction += 1
+Next
+For $iz = 0 To UBound($g_avBuildingUpgrades, 1) - 1
+If $iUpgradeAction > 0 And $g_abBuildingUpgradeEnable[$iz] = True And $g_avBuildingUpgrades[$iz][7] = "" Then
+Switch $g_avBuildingUpgrades[$iz][3]
+Case "Elixir"
+$iBuildingsNeedElixir += Number($g_avBuildingUpgrades[$iz][2])
+$iElixirBuildings += 1
+EndSwitch
+EndIf
+Next
+If($iUpgradeAction = 0) Or($iUpgradeAction > 0 And $iElixirBuildings = 0) Or($iUpgradeAction > 0 And $iElixirBuildings > 0 And(($g_bUpgradeWardenEnable = True And($g_iFreeBuilderCount =($g_iHeroReservedBuilder + 1) And $g_iWallWarden = 1)) Or($g_bUpgradeWardenEnable = True And($g_iFreeBuilderCount = 1 And $g_iWallWarden = 0)) Or($g_bUpgradeWardenEnable = False And($g_iFreeBuilderCount =($g_iHeroReservedBuilder + 1))))) Then
+SetLog("Building: Priority Pass.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Building: Priority Failure.", $COLOR_ERROR)
+Return False
+EndIf
+If($g_bAutoUpgradeEnabled = 0) Or($g_bAutoUpgradeEnabled = 1 And $g_iChkResourcesToIgnore[1] = 1) Or($g_bAutoUpgradeEnabled = 1 And($g_bUpgradeWardenEnable = True And($g_iFreeBuilderCount <=($g_iHeroReservedBuilder + 1) And $g_iFreeBuilderCount > 0) And $g_iWallWarden = 1) Or($g_bUpgradeWardenEnable = True And($g_iFreeBuilderCount = 1 And $g_iWallWarden = 0)) Or($g_bUpgradeWardenEnable = False And($g_iFreeBuilderCount <=($g_iHeroReservedBuilder + 1) And $g_iFreeBuilderCount > 0))) Then
+SetLog("Auto Upgrade: Priority Pass.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Auto Upgrade: Priority Failure.", $COLOR_ERROR)
+Return False
+EndIf
+If($g_bAutoLabUpgradeEnable = False) Or($g_bAutoLabUpgradeEnable = True And(($g_iCmbLaboratory >= 20 And $g_iCmbLaboratory <= 30) Or $g_iCmbLaboratory = 0)) Or($g_iLabUpgradeProgress = 1) Then
+SetLog("Laboratory: Priority Pass.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Laboratory: Priority Failure.", $COLOR_ERROR)
+Return False
+EndIf
+If $MinWallElixir Then
+SetLog("Enough elixir to continue with upgrade.", $COLOR_SUCCESS)
+$iDecision += 1
+Else
+SetLog("Not enough elixir to continue with upgrade.", $COLOR_ERROR)
+Return False
+EndIf
+If $iDecision = 4 Then
+Return True
+Endif
+ElseIf $g_iCmbUpgrdPriority = 0 Then
+SetLog("Elixir Priority is disabled.", $COLOR_INFO)
+Return True
+EndIf
 EndFunc
 Global Const $TELEGRAM_URL = "https://api.telegram.org/bot"
 Global Const $HTTP_STATUS_OK = 200
@@ -67807,6 +67993,10 @@ GUICtrlSetState($g_hRdoUseElixirGold, $GUI_CHECKED)
 EndSwitch
 GUICtrlSetState($g_hChkSaveWallBldr, $g_bUpgradeWallSaveBuilder ? $GUI_CHECKED : $GUI_UNCHECKED)
 _GUICtrlComboBox_SetCurSel($g_hCmbWalls, $g_iCmbUpgradeWallsLevel)
+GUICtrlSetState($g_hChkUpgrPriority, $g_iChkUpgrPriority = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+_GUICtrlComboBox_SetCurSel($g_hCmbUpgrdPriority, $g_iCmbUpgrdPriority)
+chkUpgrPriority()
+UpgrdPriority()
 For $i = 4 To 13
 GUICtrlSetData($g_ahWallsCurrentCount[$i], $g_aiWallsCurrentCount[$i])
 Next
@@ -67825,6 +68015,8 @@ $g_iUpgradeWallLootType = 2
 EndIf
 $g_bUpgradeWallSaveBuilder =(GUICtrlRead($g_hChkSaveWallBldr) = $GUI_CHECKED)
 $g_iCmbUpgradeWallsLevel = _GUICtrlComboBox_GetCurSel($g_hCmbWalls)
+$g_iChkUpgrPriority = GUICtrlRead($g_hChkUpgrPriority) = $GUI_CHECKED ? 1 : 0
+$g_iCmbUpgrdPriority = _GUICtrlComboBox_GetCurSel($g_hCmbUpgrdPriority)
 For $i = 4 To 13
 $g_aiWallsCurrentCount[$i] = Number(GUICtrlRead($g_ahWallsCurrentCount[$i]))
 Next
@@ -69738,6 +69930,8 @@ IniReadS($g_iUpgradeWallMinElixir, $g_sProfileConfigPath, "upgrade", "minwalleli
 IniReadS($g_iUpgradeWallLootType, $g_sProfileConfigPath, "upgrade", "use-storage", 0, "int")
 IniReadS($g_bUpgradeWallSaveBuilder, $g_sProfileConfigPath, "upgrade", "savebldr", False, "Bool")
 IniReadS($g_iCmbUpgradeWallsLevel, $g_sProfileConfigPath, "upgrade", "walllvl", 6, "int")
+IniReadS($g_iChkUpgrPriority, $g_sProfileConfigPath, "Priority upgrade", "chkUpgrPriority", $g_iChkUpgrPriority, "Int")
+IniReadS($g_iCmbUpgrdPriority, $g_sProfileConfigPath, "Priority upgrade", "cmbUpgrdPriority", 0, "int")
 For $i = 4 To 13
 IniReadS($g_aiWallsCurrentCount[$i], $g_sProfileConfigPath, "Walls", "Wall" & StringFormat("%02d", $i), 0, "int")
 Next
@@ -70727,6 +70921,8 @@ _Ini_Add("upgrade", "minwallelixir", $g_iUpgradeWallMinElixir)
 _Ini_Add("upgrade", "use-storage", $g_iUpgradeWallLootType)
 _Ini_Add("upgrade", "savebldr", $g_bUpgradeWallSaveBuilder ? 1 : 0)
 _Ini_Add("upgrade", "walllvl", $g_iCmbUpgradeWallsLevel)
+_Ini_Add("Priority upgrade", "chkUpgrPriority", $g_iChkUpgrPriority ? 1 : 0)
+_Ini_Add("Priority upgrade", "cmbUpgrdPriority", _GUICtrlComboBox_GetCurSel($g_hCmbUpgrdPriority))
 For $i = 4 To 13
 _Ini_Add("Walls", "Wall" & StringFormat("%02d", $i), $g_aiWallsCurrentCount[$i])
 Next
@@ -71345,6 +71541,19 @@ $strMsg = $strMsg & $strArray[$i] & "|"
 EndIf
 Next
 If($strMsg <> "") Then $strMsg = StringTrimRight($strMsg, 1)
+EndFunc
+Func XPStyleToggle($OnOff = 1)
+If Not StringInStr(@OSTYPE, "WIN32_NT") Then Return 0
+If $OnOff Then
+$XS_n = DllCall("uxtheme.dll", "int", "GetThemeAppProperties")
+DllCall("uxtheme.dll", "none", "SetThemeAppProperties", "int", 0)
+Return 1
+ElseIf IsArray($XS_n) Then
+DllCall("uxtheme.dll", "none", "SetThemeAppProperties", "int", $XS_n[0])
+$XS_n = ""
+Return 1
+EndIf
+Return 0
 EndFunc
 Func Click($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 If $g_bUseAltRClick = True Then
@@ -72366,6 +72575,48 @@ $aPixelColor = _GDIPlus_BitmapGetPixel($g_hBitmap, 1, 1)
 EndIf
 Return Hex($aPixelColor, 6)
 EndFunc
+Func btnTestGlobalChatBot()
+SetLog("Test Global Chat Bot Started", $COLOR_DEBUG)
+Local $wasRunState = $g_bRunState
+Local $wasChkChatGlobal = $g_bChatGlobal
+Local $wasChkChatClan = $g_bChatClan
+$g_bRunState = True
+$g_bChatGlobal = True
+$g_bChatClan = False
+ChatbotMessage()
+$g_bRunState = $wasRunState
+$g_bChatGlobal = $wasChkChatGlobal
+$g_bChatClan = $wasChkChatClan
+SetLog("Test Global Chat Bot Ended", $COLOR_DEBUG)
+EndFunc
+Func btnTestClanChatBot()
+SetLog("Test Global Chat Bot Started", $COLOR_DEBUG)
+Local $wasRunState = $g_bRunState
+Local $wasChkChatGlobal = $g_bChatGlobal
+Local $wasChkChatClan = $g_bChatClan
+Local $wasClanAlwaysMsg = $g_bClanAlwaysMsg
+$g_bRunState = True
+$g_bChatGlobal = False
+$g_bChatClan = True
+$g_bClanAlwaysMsg = True
+ChatbotMessage()
+$g_bClanAlwaysMsg = $wasClanAlwaysMsg
+$g_bRunState = $wasRunState
+$g_bChatGlobal = $wasChkChatGlobal
+$g_bChatClan = $wasChkChatClan
+SetLog("Test Global Chat Bot Ended", $COLOR_DEBUG)
+EndFunc
+Func btnTestBotHumanization()
+SetLog("Test Bot Humanization Started", $COLOR_DEBUG)
+Local $wasRunState = $g_bRunState
+Local $wasUseBotHumanization = $g_bUseBotHumanization
+$g_bRunState = True
+$g_bUseBotHumanization = True
+BotHumanization()
+$g_bRunState = $wasRunState
+$g_bUseBotHumanization = $wasUseBotHumanization
+SetLog("Test Bot Humanization Ended", $COLOR_DEBUG)
+EndFunc
 Func ReadConfig_IMMod()
 IniReadS($g_bUseBotHumanization, $g_sProfileConfigPath, "Bot Humanization", "chkUseBotHumanization", $g_bUseBotHumanization, "Bool")
 IniReadS($g_bUseAltRClick, $g_sProfileConfigPath, "Bot Humanization", "chkUseAltRClick", $g_bUseAltRClick, "Bool")
@@ -73334,6 +73585,21 @@ If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog(" ***  findMultiIm
 If $g_iSamM0dDebug = 1 And $g_iSamM0dDebugOCR = 1 Then SetLog("******** findMultiImage *** END ***", $COLOR_ORANGE)
 Return ""
 EndIf
+EndFunc
+Func chkUpgrPriority()
+If GUICtrlRead($g_hChkUpgrPriority) = $GUI_CHECKED Then
+$g_iChkUpgrPriority = 1
+Else
+$g_iChkUpgrPriority = 0
+EndIf
+EndFunc
+Func UpgrdPriority()
+Switch _GUICtrlComboBox_GetCurSel($g_hCmbUpgrdPriority)
+Case "Walls"
+$g_iCmbUpgrdPriority = 0
+Case "Building"
+$g_iCmbUpgrdPriority = 1
+EndSwitch
 EndFunc
 Func GetTranslatedParsedText($sText, $var1 = Default, $var2 = Default, $var3 = Default)
 Local $s = StringReplace(StringReplace($sText, "\r\n", @CRLF), "\n", @CRLF)

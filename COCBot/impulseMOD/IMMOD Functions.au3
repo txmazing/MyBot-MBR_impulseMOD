@@ -25,7 +25,7 @@
 
 #include "IM Other\_Wait4Pixel.au3"
 
-;#include "IM Debug GUI Control.au3"
+#include "IM Debug GUI Control.au3"
 
 #include "IM Config.au3"
 
@@ -34,3 +34,5 @@
 #include "IM Chatbot\ChatFunc.au3"
 #include "IM Chatbot\Multy Lang.au3"
 #include "IM OCR\getMyOcr.au3"
+; Wall/Building Upgrading Priority
+#include "IM Upgrading Priority.au3"

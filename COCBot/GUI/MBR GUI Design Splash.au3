@@ -71,7 +71,7 @@ Func CreateSplashScreen($iSteps = Default)
 			Local $iTop = $iCenterY - $iHeight / 2
 		EndIf
 		Local $iLeft = $iCenterX - $iX / 2 ; position splash UI centered on width
-
+		
 		; Create Splash container
 		$g_hSplash = GUICreate("", $iX, $iHeight, $iLeft, $iTop, BitOR($WS_POPUP, $WS_BORDER), BitOR($WS_EX_TOPMOST, $WS_EX_WINDOWEDGE, $WS_EX_TOOLWINDOW))
 		GUISetBkColor(0x2F3136, $g_hSplash)
@@ -80,9 +80,12 @@ Func CreateSplashScreen($iSteps = Default)
 		$g_lSplashTitle = GUICtrlCreateLabel($g_sBotTitle, 15, $iY + $iT + $iB + 3, $iX - 30, 15, $SS_CENTER) ; Splash Title
 		GUICtrlSetColor(-1, 0xA6A7A8)
 		GUICtrlSetOnEvent(-1, "MoveSplashScreen")
+		XPStyleToggle(1)
 		$g_hSplashProgress = GUICtrlCreateProgress(15, $iY + $iT + $iB + 20, $iX - 30, 10, $PBS_SMOOTH, BitOR($WS_EX_TOPMOST, $WS_EX_WINDOWEDGE, $WS_EX_TOOLWINDOW)) ; Splash Progress
+		GUICtrlSetColor(-1, $COLOR_RED)
 		$g_lSplashStatus = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_Loading", "Loading..."), 15, $iY + $iT + $iB + 38, $iX - 30, 15, $SS_CENTER) ; Splash Title
 		GUICtrlSetColor(-1, 0xA6A7A8)
+		XPStyleToggle(0)
 		GUICtrlSetOnEvent(-1, "MoveSplashScreen")
 
 		; Cleanup GDI resources
