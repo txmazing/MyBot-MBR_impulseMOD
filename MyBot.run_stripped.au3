@@ -10,8 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.1"
-Global $g_sModversion = "v1.0.3"
-Global $g_sModSupportUrl = "https://github.com/txmazing/MyBot-MBR_impulseMOD/releases"
+Global $g_sModversion = "v1.0.4"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -6948,9 +6947,6 @@ Func _ArrayIndexValid(Const ByRef $a, Const $idx)
 Return $idx >= 0 And $idx < UBound($a)
 EndFunc
 Global $XS_n
-Global $g_sLastModversion = ""
-Global $g_sLastModmessage = ""
-Global $g_sOldModversmessage = ""
 Global $g_iacmbPriority[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_iacmbMaxSpeed[2] = [1, 1]
 Global $g_iacmbPause[2] = [0, 0]
@@ -7018,6 +7014,9 @@ Global Const $g_iLimitBreakGE[12] = [2500, 7000, 100000, 500000, 1000000, 200000
 Global Const $g_iLimitBreakDE[12] = [0, 0, 0, 0, 0, 0, 20000, 80000, 190000, 200000, 20000, 240000]
 Global $g_iLabUpgradeProgress = 0
 Global $g_iWallWarden = 0
+Global $g_bChkBB_DropTrophies = False
+Global $g_bChkBB_OnlyWithLoot = False
+Global $g_iTxtBB_DropTrophies = 0
 Global Const $DELAYSLEEP = 100
 Global Const $DELAYWAITFORPOPUP = 1500
 Global Const $DELAYCLOUDSCLEARED = 1000
@@ -7089,7 +7088,6 @@ Global Const $DELAYWAITMAINSCREEN1 = 2000
 Global Const $DELAYZOOMOUT1 = 1500
 Global Const $DELAYZOOMOUT2 = 200
 Global Const $DELAYZOOMOUT3 = 1000
-Global Const $DELAYCHECKVERSIONHTML1 = 250
 Global Const $DELAYDOWNLOADLICENSE = 250
 Global Const $DELAYTOGGLEPAUSE1 = 100
 Global Const $DELAYTOGGLEPAUSE2 = 250
@@ -12136,6 +12134,9 @@ Global $g_alblBldBaseStats[4] = ["", "", ""]
 Global $g_hChkCollectBuilderBase = 0, $g_hChkStartClockTowerBoost = 0, $g_hChkCTBoostBlderBz = 0, $g_hChkCleanBBYard = 0
 Global $g_hChkBBSuggestedUpgrades = 0, $g_hChkBBSuggestedUpgradesIgnoreGold = 0 , $g_hChkBBSuggestedUpgradesIgnoreElixir , $g_hChkBBSuggestedUpgradesIgnoreHall = 0
 Global $g_hChkPlacingNewBuildings = 0
+Global $g_hChkBB_DropTrophies = 0
+Global $g_hTxtBB_DropTrophies = 0
+Global $g_hChkBB_OnlyWithLoot = 0
 Global $g_hChkClanGamesAir = 0, $g_hChkClanGamesGround = 0, $g_hChkClanGamesMisc = 0
 Global $g_hChkClanGamesEnabled = 0 , $g_hChkClanGames60 = 0
 Global $g_hChkClanGamesLoot = 0 , $g_hChkClanGamesBattle =0 , $g_hChkClanGamesDestruction = 0 , $g_hChkClanGamesAirTroop = 0 , $g_hChkClanGamesGroundTroop = 0 , $g_hChkClanGamesMiscellaneous = 0
@@ -12337,7 +12338,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 Func CreateMiscBuilderBaseSubTab()
 Local $x = 15, $y = 45
-GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "Group_05", "Builders Base Stats"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 50)
+GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "Group_05", "Builders Base Stats"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 122)
 _GUICtrlCreatePic($g_sIcnBldGold, $x, $y - 2, 24, 24)
 $g_alblBldBaseStats[$eLootGoldBB] = GUICtrlCreateLabel("---", $x + 35, $y + 2, 100, -1)
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
@@ -12347,8 +12348,16 @@ GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 _GUICtrlCreatePic($g_sIcnBldTrophy, $x + 280, $y - 2, 24, 24)
 $g_alblBldBaseStats[$eLootTrophyBB] = GUICtrlCreateLabel("---", $x + 315, $y + 2, 100, -1)
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
+$g_hChkBB_DropTrophies = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBB_DropTrophies", "Drop Trophies and limit it to:"), $x + 100, $y + 46, -1, -1)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBB_DropTrophies_Info_01", "Currently trained army will be used for attacks.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBB_DropTrophies_Info_02", "Loss of Trophies below threshold will automatically disable attacking.") )
+GUICtrlSetOnEvent(-1, "ChkBB_DropTrophies")
+$g_hTxtBB_DropTrophies = GUICtrlCreateInput("0", $x + 260, $y + 48, 32, 18, BitOR($SS_RIGHT, $ES_NUMBER))
+GUICtrlSetOnEvent(-1, "TxtBB_DropTrophies")
+GUICtrlSetLimit(-1, 6000)
+$g_hChkBB_OnlyWithLoot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBB_OnlyWithLoot", "Attack Only if Loot available"), $x + 100, $y + 68, -1, -1)
+GUICtrlSetOnEvent(-1, "ChkBB_OnlyWithLoot")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Local $x = 15, $y = 100
+Local $x = 15, $y = 172
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "Group_04", "Collect && Activate"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 80)
 GUICtrlCreateIcon($g_sLibIconPath, $eIcnGoldMineL5, $x + 7, $y, 24, 24)
 GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixirCollectorL5, $x + 32, $y, 24, 24)
@@ -12367,7 +12376,7 @@ $g_hChkCTBoostBlderBz = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Desi
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkCTBoostBlderBz_Info_01", "boost only when the builder is busy"))
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Local $x = 15, $y = 190
+Local $x = 15, $y = 262
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "Group_06", "Suggested Upgrades"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 233)
 _GUICtrlCreatePic($g_sIcnMBisland, $x , $y , 64, 64)
 $g_hChkBBSuggestedUpgrades = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBBSuggestedUpgrades", "Suggested Upgrades"), $x + 70, $y + 25, -1, -1)
@@ -12378,7 +12387,7 @@ $g_hChkBBSuggestedUpgradesIgnoreElixir = GUICtrlCreateCheckbox(GetTranslatedFile
 GUICtrlSetOnEvent(-1, "chkActivateBBSuggestedUpgradesElixir")
 $g_hChkBBSuggestedUpgradesIgnoreHall = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBBSuggestedUpgradesIgnore_03", "Ignore Builder Hall"), $x + 315, $y + 28, -1, -1)
 GUICtrlSetOnEvent(-1, "chkActivateBBSuggestedUpgradesGold")
-Local $x = 15, $y = 200
+Local $x = 15, $y = 272
 $g_hChkPlacingNewBuildings = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkPlacingNewBuildings", "Build 'New' tagged buildings"), $x + 70, $y + 60, -1, -1)
 GUICtrlSetOnEvent(-1, "chkPlacingNewBuildings")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -53738,124 +53747,48 @@ For $i = 0 To UBound($a) - 1
 $a[$i] = 0
 Next
 EndFunc
-Global $g_sLastModversion = ""
-Global $g_sLastModmessage = ""
-Global $g_sOldModversmessage = ""
 Func CheckVersion()
-If $g_bCheckVersion Then
-CheckVersionHTML()
-If $g_sLastModversion = "" Then
-SetLog("WE CANNOT OBTAIN IM MOD VERSION AT THIS TIME", $COLOR_ACTION)
-CheckModVersion()
-ElseIf VersionNumFromVersionTXT($g_sModversion) < VersionNumFromVersionTXT($g_sLastModversion) Then
-SetLog("WARNING, YOUR impulseMOD VERSION (" & $g_sModversion & ") IS OUT OF DATE.", $COLOR_ERROR)
-SetLog("CHIEF, PLEASE DOWNLOAD THE LATEST (" & $g_sLastModversion & ")", $COLOR_ERROR)
-SetLog("FROM https://github.com/txmazing/MyBot-MBR_impulseMOD/releases", $COLOR_ERROR)
-SetLog(" ")
-_PrintLogVersion($g_sOldModversmessage)
-CheckModVersion()
-ElseIf VersionNumFromVersionTXT($g_sModversion) > VersionNumFromVersionTXT($g_sLastModversion) Then
-SetLog("YOU ARE USING A FUTURE VERSION OF impulseMOD CHIEF!", $COLOR_SUCCESS)
-SetLog("YOUR impulseMOD VERSION: " & $g_sModversion, $COLOR_SUCCESS)
-SetLog("OFFICIAL impulseMOD VERSION: " & $g_sLastModversion, $COLOR_SUCCESS)
-SetLog(" ")
+If not $g_bCheckVersion Then Return
+Local $g_sBotGitVersion = ""
+Local $sCorrectStdOut = InetRead("https://api.github.com/repos/txmazing/MyBot-MBR_impulseMOD/releases/latest")
+If @error Or $sCorrectStdOut = "" Then Return
+Local $Temp = BinaryToString($sCorrectStdOut)
+If $Temp <> "" And Not @error Then
+Local $g_aBotVersionN = StringSplit($g_sModversion, " ", 2)
+If @error Then
+Local $g_iBotVersionN = StringReplace($g_sModversion, "v", "")
 Else
-SetLog("WELCOME CHIEF, YOU HAVE THE LATEST MOD VERSION", $COLOR_SUCCESS)
-SetLog(" ")
-_PrintLogVersion($g_sLastModmessage)
+Local $g_iBotVersionN = StringReplace($g_aBotVersionN[0], "v", "")
 EndIf
-EndIf
-EndFunc
-Func CheckVersionHTML()
-Local $versionfile = @ScriptDir & "\LastVersion.txt"
-If FileExists(@ScriptDir & "\TestVersion.txt") Then
-FileCopy(@ScriptDir & "\TestVersion.txt", $versionfile, 1)
-Else
-Local $hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-MBR_impulseMOD/master/LastVersion.txt", $versionfile, 0, 1)
-Local $i = 0
-Do
-Sleep($DELAYCHECKVERSIONHTML1)
-$i += 1
-Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE) Or $i > 25
-InetClose($hDownload)
-EndIf
-Local $line, $line2, $Casesense = 0, $chkvers = False, $chkmsg = False, $chkmsg2 = False, $i = 0
-$g_sLastModversion = ""
-If FileExists($versionfile) Then
-$g_sLastModversion = IniRead($versionfile, "mod", "version", "")
-Local $versionfilelocalized = @ScriptDir & "\LastVersion_" & $g_sLanguage & ".txt"
-If FileExists(@ScriptDir & "\TestVersion_" & $g_sLanguage & ".txt") Then
-FileCopy(@ScriptDir & "\TestVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 1)
-Else
-$hDownload = InetGet("https://raw.githubusercontent.com/txmazing/MyBot-MBR_impulseMOD/master/LastVersion_" & $g_sLanguage & ".txt", $versionfilelocalized, 0, 1)
-Local $i = 0
-Do
-Sleep($DELAYCHECKVERSIONHTML1)
-$i += 1
-Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE) Or $i > 25
-InetClose($hDownload)
-EndIf
-If FileExists($versionfilelocalized) Then
-$g_sLastModmessage = IniRead($versionfilelocalized, "mod", "messagenew", "")
-$g_sOldModversmessage = IniRead($versionfilelocalized, "mod", "messageold", "")
-FileDelete($versionfilelocalized)
-Else
-$g_sLastModmessage = IniRead($versionfilelocalized, "mod", "messagenew", "")
-$g_sOldModversmessage = IniRead($versionfilelocalized, "mod", "messageold", "")
-EndIf
-FileDelete($versionfile)
-EndIf
-EndFunc
-Func VersionNumFromVersionTXT($versionTXT)
-Local $versionTXT_clean
-If StringInStr($versionTXT, " ") Then
-$versionTXT_clean = StringLeft($versionTXT, StringInStr($versionTXT, " ") - 1)
-Else
-$versionTXT_clean = $versionTXT
-EndIf
-Local $resultnumber = 0
-If StringLeft($versionTXT_clean, 1) = "v" Then
-Local $versionTXT_Vector = StringSplit(StringMid($versionTXT_clean, 2, -1), ".")
-Local $multiplier = 1000000
-If UBound($versionTXT_Vector) > 0 Then
-For $i = 1 To UBound($versionTXT_Vector) - 1
-$resultnumber = $resultnumber + Number($versionTXT_Vector[$i]) * $multiplier
-$multiplier = $multiplier / 1000
+Local $version = GetLastVersion($Temp)
+$g_sBotGitVersion = StringReplace($version[0], "v", "")
+SetDebugLog("Last GitHub version is " & $g_sBotGitVersion )
+SetDebugLog("Your version is " & $g_iBotVersionN )
+If _VersionCompare($g_iBotVersionN, $g_sBotGitVersion) = -1 Then
+SetLog("WARNING, YOUR VERSION (" & $g_iBotVersionN & ") IS OUT OF DATE.", $COLOR_INFO)
+Local $ChangelogTXT = GetLastChangeLog($Temp)
+Local $Changelog = StringSplit($ChangelogTXT[0], '\r\n', $STR_ENTIRESPLIT + $STR_NOCOUNT)
+For $i = 0 To UBound($Changelog) - 1
+SetLog($Changelog[$i] )
 Next
+PushMsg("Update")
+ElseIf _VersionCompare($g_iBotVersionN, $g_sBotGitVersion) = 0 Then
+SetLog("WELCOME CHIEF, YOU HAVE THE LATEST impulseMOD VERSION", $COLOR_SUCCESS)
+SetLog("Version is " & $g_iBotVersionN, $COLOR_ACTION)
 Else
-$resultnumber = Number($versionTXT_Vector) * $multiplier
+SetLog("YOU ARE USING A FUTURE VERSION CHIEF!", $COLOR_ACTION)
+SetLog("Last GitHub version is " & $g_sBotGitVersion, $COLOR_ACTION)
+SetLog("Your version is " & $g_iBotVersionN, $COLOR_ACTION)
 EndIf
+Else
+SetDebugLog($Temp)
 EndIf
-Return $resultnumber
 EndFunc
-Func _PrintLogVersion($message)
-Local $messagevet = StringSplit($message, "\n", 1)
-If Not(IsArray($messagevet)) Then
-SetLog($message)
-Else
-For $i = 1 To $messagevet[0]
-If StringLen($messagevet[$i]) <= 53 Then
-SetLog($messagevet[$i], $COLOR_BLACK, "Lucida Console", 8.5)
-Else
-While StringLen($messagevet[$i]) > 53
-Local $sp = StringInStr(StringLeft($messagevet[$i], 53), " ", 0, -1)
-If $sp = 0 Then
-Local $sp = StringInStr($messagevet[$i], " ", 0)
-If $sp = 0 Then
-SetLog($messagevet[$i], $COLOR_BLACK, "Lucida Console", 8.5)
-Else
-SetLog(StringLeft($messagevet[$i], $sp), $COLOR_BLACK, "Lucida Console", 8.5)
-$messagevet[$i] = StringMid($messagevet[$i], $sp + 1, -1)
-EndIf
-Else
-SetLog(StringLeft($messagevet[$i], $sp), $COLOR_BLACK, "Lucida Console", 8.5)
-$messagevet[$i] = StringMid($messagevet[$i], $sp + 1, -1)
-EndIf
-WEnd
-If StringLen($messagevet[$i]) > 0 Then SetLog($messagevet[$i], $COLOR_BLACK, "Lucida Console", 8.5)
-EndIf
-Next
-EndIf
+Func GetLastVersion($txt)
+Return _StringBetween($txt, '_impulseMOD_', '",')
+EndFunc
+Func GetLastChangeLog($txt)
+Return _StringBetween($txt, '"body":"', '"}')
 EndFunc
 Func GetVersionNormalized($VersionString, $Chars = 5)
 If StringLeft($VersionString, 1) = "v" Then $VersionString = StringMid($VersionString, 2)
@@ -53865,19 +53798,6 @@ For $i = 0 To UBound($a) - 1
 If StringLen($a[$i]) < $Chars Then $a[$i] = _StringRepeat("0", $Chars - StringLen($a[$i])) & $a[$i]
 Next
 Return _ArrayToString($a, ".")
-EndFunc
-Func CheckModVersion()
-If $g_sLastModversion = "" Then
-MsgBox($MB_ICONWARNING, "", "WE CANNOT OBTAIN MOD VERSION AT THIS TIME" & @CRLF & "BAD CONNECTION", 10)
-ElseIf VersionNumFromVersionTXT($g_sModversion) < VersionNumFromVersionTXT($g_sLastModversion) Then
-PushMsg("Update")
-If MsgBox(BitOR($MB_ICONWARNING, $MB_YESNO), "BOT Update Detected", "Chief, there is a new version of the bot available (" & $g_sLastModversion & ")" & @CRLF & @CRLF & "Do you want to download the latest version ?", 30) = $IDYES Then
-ShellExecute($g_sModSupportUrl)
-Return False
-EndIf
-Else
-MsgBox($MB_ICONINFORMATION, "Notify", "You Are Using The Latest Version Of by impulseMOD" & @CRLF & "Thanks..", 15)
-EndIf
 EndFunc
 Func CloseRunningBot($sBotWindowTitle = $g_sBotTitle, $bCheckOnly = False, $bGuiInitialized = IsHWnd($g_hFrmBot))
 Local $param = ""
@@ -67906,10 +67826,16 @@ GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreGold, $g_iChkBBSuggestedUpgrades
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreElixir, $g_iChkBBSuggestedUpgradesIgnoreElixir = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreHall, $g_iChkBBSuggestedUpgradesIgnoreHall = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkPlacingNewBuildings, $g_iChkPlacingNewBuildings = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkBB_DropTrophies, $g_bChkBB_DropTrophies = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetData($g_hTxtBB_DropTrophies, $g_iTxtBB_DropTrophies)
+GUICtrlSetState($g_hChkBB_OnlyWithLoot, $g_bChkBB_OnlyWithLoot = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 chkActivateBBSuggestedUpgrades()
 chkActivateBBSuggestedUpgradesGold()
 chkActivateBBSuggestedUpgradesElixir()
 chkPlacingNewBuildings()
+ChkBB_DropTrophies()
+TxtBB_DropTrophies()
+ChkBB_OnlyWithLoot()
 GUICtrlSetState($g_hChkClanGamesAir, $g_bChkClanGamesAir ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkClanGamesGround, $g_bChkClanGamesGround ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkClanGamesMisc, $g_bChkClanGamesMisc ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -70013,6 +69939,9 @@ IniReadS($g_iChkBBSuggestedUpgradesIgnoreGold, $g_sProfileConfigPath, "other", "
 IniReadS($g_iChkBBSuggestedUpgradesIgnoreElixir, $g_sProfileConfigPath, "other", "ChkBBSuggestedUpgradesIgnoreElixir", $g_iChkBBSuggestedUpgradesIgnoreElixir, "Int")
 IniReadS($g_iChkBBSuggestedUpgradesIgnoreHall, $g_sProfileConfigPath, "other", "ChkBBSuggestedUpgradesIgnoreHall", $g_iChkBBSuggestedUpgradesIgnoreHall, "Int")
 IniReadS($g_iChkPlacingNewBuildings, $g_sProfileConfigPath, "other", "ChkPlacingNewBuildings", $g_iChkPlacingNewBuildings, "Int")
+IniReadS($g_bChkBB_DropTrophies, $g_sProfileConfigPath, "other", "ChkBB_DropTrophies", $g_bChkBB_DropTrophies, "Int")
+IniReadS($g_iTxtBB_DropTrophies, $g_sProfileConfigPath, "other", "TxtBB_DropTrophies", $g_iTxtBB_DropTrophies, "Int")
+IniReadS($g_bChkBB_OnlyWithLoot, $g_sProfileConfigPath, "other", "ChkBB_OnlyWithLoot", $g_bChkBB_OnlyWithLoot, "Int")
 IniReadS($g_bChkClanGamesAir, $g_sProfileConfigPath, "other", "ChkClanGamesAir", False, "Bool")
 IniReadS($g_bChkClanGamesGround, $g_sProfileConfigPath, "other", "ChkClanGamesGround", False, "Bool")
 IniReadS($g_bChkClanGamesMisc, $g_sProfileConfigPath, "other", "ChkClanGamesMisc", False, "Bool")
@@ -71099,6 +71028,9 @@ _Ini_Add("other", "ChkBBSuggestedUpgradesIgnoreGold", $g_iChkBBSuggestedUpgrades
 _Ini_Add("other", "ChkBBSuggestedUpgradesIgnoreElixir", $g_iChkBBSuggestedUpgradesIgnoreElixir)
 _Ini_Add("other", "ChkBBSuggestedUpgradesIgnoreHall", $g_iChkBBSuggestedUpgradesIgnoreHall)
 _Ini_Add("other", "ChkPlacingNewBuildings", $g_iChkPlacingNewBuildings)
+_Ini_Add("other", "ChkBB_DropTrophies", $g_bChkBB_DropTrophies)
+_Ini_Add("other", "TxtBB_DropTrophies", $g_iTxtBB_DropTrophies)
+_Ini_Add("other", "ChkBB_OnlyWithLoot", $g_bChkBB_OnlyWithLoot)
 _Ini_Add("other", "ChkClanGamesAir", $g_bChkClanGamesAir ? 1 : 0)
 _Ini_Add("other", "ChkClanGamesGround", $g_bChkClanGamesGround ? 1 : 0)
 _Ini_Add("other", "ChkClanGamesMisc", $g_bChkClanGamesMisc ? 1 : 0)
@@ -73929,6 +73861,359 @@ Case "Building"
 $g_iCmbUpgrdPriority = 1
 EndSwitch
 EndFunc
+Func BB_DropTrophies()
+Local $i = 0
+Local $j = 0
+Local $iSide = 1
+Local $iBM_Pos = -1
+Local $cPixColor = ''
+Local $cSideNames = "TR|TL"
+Local $bDegug = True
+Local $bContinue = True
+Local $aOkButtom[4] = [ 400, 495 + $g_iBottomOffsetY, 0xE2F98B, 20 ]
+Local $aOkButtomColor[2] = [ 0xE2F98B, 0xE2FA8C ]
+Local $aOkBatleEnd[4] = [ 630, 400 + $g_iBottomOffsetY, 0xDDF685, 20 ]
+Local $aOkBatleEndColor[2] = [ 0xDDF685, 0xE2FA8C ]
+Local $aOkWaitBattle[4] = [ 400, 500 + $g_iBottomOffsetY, 0xF0F0F0, 20 ]
+Local $aTroopSlot[4] = [ 78, 580 + $g_iBottomOffsetY, 0x404040, 20 ]
+Local $aSlotActive[8] = [0x4C92D3, 0x5198E0, 0x5298E0, 0x5498E0, 0x5598E0, 0x65ADEC, 0x66ADEC, 0x6AB4F1]
+Local $aSlotOff[2] = [0x464646, 0x454545]
+Local $iTroopsTo = 0
+Local $iWait64 = 64
+Local $iWait128 = 128
+Local $aAux[2] = [ 0, 0]
+If $g_bChkBB_DropTrophies Then
+If $g_iTxtBB_DropTrophies > 0 Then
+$i = $g_aiCurrentLootBB[$eLootTrophyBB] - $g_iTxtBB_DropTrophies
+EndIf
+If $i > 0 Then
+If _Sleep($DELAYRUNBOT1) Then Return
+If BB_PrepareAttack() Then
+If _Sleep($DELAYRUNBOT1*12) Then Return
+Setlog(" ====== BB Attack ====== ", $COLOR_INFO)
+SetLog("BB: Attacking on a single side", $COLOR_INFO)
+Setlog("BB: Look for Battle Machine [If Exists]", $COLOR_GREEN)
+$iBM_Pos = BB_Mach_Slot()
+For $i = 0 To 5
+If($i > 0) Then
+$aTroopSlot[0] += 72
+Else
+If $iBM_Pos < 0 Then $aTroopSlot[0] += 9
+EndIf
+$cPixColor = _GetPixelColor($aTroopSlot[0], $aTroopSlot[1], True)
+If _Sleep($DELAYRUNBOT1) Then Return
+IF BB_ColorCheck( $aTroopSlot, $aSlotActive ) Then
+If $bDegug Then SetLog("BB: Click Next Slot, color: " & $cPixColor & " [ " & String( $i + 1 ) & " ]", $COLOR_DEBUG)
+ClickP($aTroopSlot, 1, 0, "#0000")
+Else
+SetLog("BB: Can't verify slot, color: " & $cPixColor & " [ " & String( $i + 1 ) & " ]", $COLOR_DEBUG)
+IF Not BB_ColorCheck( $aTroopSlot, $aSlotOff ) Then
+If($i > 0) Then $bContinue = False
+EndIf
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+If $bContinue Then
+$j = 0
+$iTroopsTo = Number(getTroopCountBig($aTroopSlot[0], $aTroopSlot[1]-7))
+If $iTroopsTo < 4 Then $iTroopsTo = 4
+If $bDegug Then SetLog("BB: Drop Troops - Slot[ " & String( $i + 1 ) & " ], color: " & $cPixColor & " [ " & String( $j ) & " ] Num:[ " & $iTroopsTo & " ]", $COLOR_DEBUG)
+While Not BB_ColorCheck( $aTroopSlot, $aSlotOff )
+If _Sleep($DELAYRUNBOT1) Then Return
+If $j < 5 Then
+PureClickP($aTroopSlot, 1, 0, "#0000")
+Else
+$aAux[0] = $aTroopSlot[0] + 16
+$aAux[1] = $aTroopSlot[1] + 16
+ClickP($aAux, 1, 0, "#0000")
+EndIf
+BB_Attack($iSide, $cSideNames, $iTroopsTo)
+$j += 1
+If $j > 8 Then ExitLoop
+$cPixColor = _GetPixelColor($aTroopSlot[0], $aTroopSlot[1], True)
+WEnd
+If $bDegug Then SetLog("BB: Last Slot, color: " & $cPixColor & " [ " & String( $i + 1 ) & " ]", $COLOR_DEBUG)
+EndIf
+Next
+BB_Mach_Deploy( $iBM_Pos )
+Setlog("BB: Confirm Battle End [ok]", $COLOR_INFO)
+$j = 0
+While $j < $iWait64
+If _Sleep($DELAYRUNBOT1) Then Return
+$cPixColor = _GetPixelColor($aOkWaitBattle[0], $aOkWaitBattle[1], True)
+If _ColorCheck( $cPixColor, Hex($aOkWaitBattle[2], 6), 20) Then $j = 32
+If _Sleep($DELAYRUNBOT1) Then Return
+$cPixColor = _GetPixelColor($aOkButtom[0], $aOkButtom[1], True)
+If _ColorCheck( $cPixColor, Hex($aOkButtom[2], 6), 20) Then
+$j = $iWait64
+Else
+$j += 1
+Endif
+BB_StatusMsg("Wait for Battle End" & " [ " & String( $j ) & " ]")
+WEnd
+If _Sleep($DELAYRUNBOT1) Then Return
+$cPixColor = _GetPixelColor($aOkWaitBattle[0], $aOkWaitBattle[1], True)
+If _ColorCheck( $cPixColor, Hex($aOkWaitBattle[2], 6), 20) Then
+If $bDegug Then SetLog("BB: Okay Buttom [no wait battle end], color: " & $cPixColor, $COLOR_DEBUG)
+ClickP($aOkWaitBattle, 1, 0, "#0000")
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+$j = 0
+$cPixColor = _GetPixelColor($aOkButtom[0], $aOkButtom[1], True)
+While Not BB_ColorCheck( $aOkButtom, $aOkButtomColor )
+If $bDegug Then BB_StatusMsg("Wait Okay Buttom. [Ok]. color: " & $cPixColor & " [ " & String( $j ) & " ]")
+If _Sleep($DELAYRUNBOT1) Then Return
+$j += 1
+If $j > $iWait128 Then ExitLoop
+$cPixColor = _GetPixelColor($aOkButtom[0], $aOkButtom[1], True)
+WEnd
+If $j < $iWait128 Then
+SetLog("BB: Click Buttom. [Ok]. color: " & $cPixColor & " [ " & String( $j ) & " ]", $COLOR_DEBUG)
+ClickP($aOkButtom, 1, 0, "#0000")
+Else
+SetLog("BB: Can't Find Buttom [Ok]. color: " & $cPixColor, $COLOR_ERROR)
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+If $j < $iWait64 Then
+$j = 0
+$cPixColor = _GetPixelColor($aOkBatleEnd[0], $aOkBatleEnd[1], True)
+While Not BB_ColorCheck( $aOkBatleEnd, $aOkBatleEndColor )
+If $bDegug Then BB_StatusMsg("Wait Okay Buttom. [end]. color: " & $cPixColor & " [ " & String( $j ) & " ]")
+If _Sleep($DELAYRUNBOT1) Then Return
+$j += 1
+If $j > $iWait64 Then ExitLoop
+$cPixColor = _GetPixelColor($aOkBatleEnd[0], $aOkBatleEnd[1], True)
+WEnd
+If $j < $iWait64 Then
+SetLog("BB: Click Buttom [end], color: " & $cPixColor & " [ " & String( $j ) & " ]", $COLOR_DEBUG)
+ClickP($aOkBatleEnd, 1, 0, "#0000")
+Else
+SetLog("BB: Can't Find Buttom [End]. color: " & $cPixColor, $COLOR_ERROR)
+EndIf
+Else
+If _Sleep($DELAYRUNBOT1) Then Return
+ClickP($aAway, 1, 0, "#0000")
+EndIf
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+ClickP($aAway, 1, 0, "#0000")
+Else
+Setlog("Ignore BB Drop Trophies: [Not Needed] [ " & String( $g_iTxtBB_DropTrophies ) & " ]", $COLOR_INFO)
+EndIf
+Else
+Setlog("Ignore BB Drop Trophies [ Disabled ]", $COLOR_INFO)
+EndIf
+_Sleep($DELAYRUNBOT1)
+EndFunc
+Func BB_ColorCheck( $aInfo, $aColors )
+Local $i
+Local $cPixel
+Local $bResult = False
+Local $iLoop = UBound( $aColors ) - 1
+$cPixel = _GetPixelColor($aInfo[0], $aInfo[1], True)
+For $i = 0 to $iLoop
+If _ColorCheck( $cPixel, Hex($aColors[$i], 6), 20) Then
+$bResult = True
+ExitLoop
+EndIf
+Next
+Return $bResult
+EndFunc
+Func BB_StatusMsg( $cTxt )
+_GUICtrlStatusBar_SetTextEx($g_hStatusBar, "BB Status: " & $cTxt )
+EndFunc
+Func ChkBB_DropTrophies()
+$g_bChkBB_DropTrophies =(GUICtrlRead($g_hChkBB_DropTrophies) = $GUI_CHECKED) ? 1 : 0
+EndFunc
+Func TxtBB_DropTrophies()
+$g_iTxtBB_DropTrophies = GUICtrlRead($g_hTxtBB_DropTrophies)
+EndFunc
+Func ChkBB_OnlyWithLoot()
+$g_bChkBB_OnlyWithLoot =(GUICtrlRead($g_hChkBB_OnlyWithLoot) = $GUI_CHECKED) ? 1 : 0
+EndFunc
+Func BB_PrepareAttack()
+Local $j = 0
+Local $iWait256 = 256
+Local $cPixColor = ""
+Local $Result = getAttackDisable(346, 182)
+Local $aTroopsOk[4] = [ 310, 355 + $g_iBottomOffsetY, 0xDAF482, 20 ]
+Local $aLootAvail[4] = [ 515, 620 + $g_iBottomOffsetY, 0x707371, 20 ]
+Local $aLootColor[2] = [ 0x707371, 0x585B5A ]
+Local $aBMachineWait[4] = [ 157, 337 + $g_iBottomOffsetY, 0xFFFFFF, 20 ]
+Local $aScrSearchEnd[4] = [ 390, 500 + $g_iBottomOffsetY, 0xCA8C94, 20 ]
+Local $aScrSearchClr[5] = [ 0xD98F95, 0xFD797D, 0xC38B93, 0xC58A93, 0xCA8C94 ]
+Local $bCanAttack
+Local $aBB_FindMatchButton[4] = [555, 240 + $g_iBottomOffsetY, 0xFFC346, 10]
+Local $bDegug = True
+SetLog("BH: Going to Attack... [ " & String( $g_iTxtBB_DropTrophies ) & " ]", $COLOR_INFO)
+If IsMainPageBuilderBase() Then
+ClickP($aAttackButton, 1, 0, "#0149")
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+$cPixColor = _GetPixelColor($aTroopsOk[0], $aTroopsOk[1], True)
+If _ColorCheck( $cPixColor, Hex($aTroopsOk[2], 6), 20) Then
+SetLog("BB: Troops Not Ready [Stop], code: " & $cPixColor, $COLOR_DEBUG)
+$bCanAttack = False
+Else
+SetLog("BB: Troops Ready, code: " & $cPixColor, $COLOR_DEBUG)
+$bCanAttack = True
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+If $bCanAttack Then
+If $g_bChkBB_OnlyWithLoot Then
+$cPixColor = _GetPixelColor($aLootAvail[0], $aLootAvail[1], True)
+If BB_ColorCheck( $aLootAvail, $aLootColor) Then
+If $bDegug Then SetLog("BB: Loot available [Continue], color: " & $cPixColor, $COLOR_DEBUG)
+Else
+If $bDegug Then SetLog("BB: No Loot available [Stop], color: " & $cPixColor, $COLOR_DEBUG)
+$bCanAttack = False
+EndIf
+EndIf
+EndIf
+If $bCanAttack Then
+If $g_bChkBB_OnlyWithLoot Then
+$cPixColor = _GetPixelColor($aBMachineWait[0], $aBMachineWait[1], True)
+If _ColorCheck( $cPixColor, Hex($aBMachineWait[2], 6), 20) Then
+If $bDegug Then SetLog("BB: BM not available [Wait] color: " & $cPixColor, $COLOR_DEBUG)
+$bCanAttack = False
+Else
+If $bDegug Then SetLog("BB: BMachine ok [or not exists] color: " & $cPixColor, $COLOR_DEBUG)
+EndIf
+EndIf
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+If $bCanAttack Then
+$cPixColor = _GetPixelColor($aBB_FindMatchButton[0], $aBB_FindMatchButton[1], True)
+If _ColorCheck( $cPixColor, Hex($aBB_FindMatchButton[2], 6), 20) Then
+If $bDegug Then SetLog("BB: Click Find Match Button, color: " & $cPixColor, $COLOR_DEBUG)
+If _Sleep($DELAYRUNBOT1) Then Return
+ClickP($aBB_FindMatchButton, 1, 0, "#0000")
+Else
+SetLog("BB: Can't Find Match Buttom [Stop] color: " & $cPixColor, $COLOR_ERROR)
+$bCanAttack = False
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+SetLog("BB: Screen Search for Match [Check for it]", $COLOR_DEBUG)
+If $bCanAttack Then
+While $j < $iWait256
+$cPixColor = _GetPixelColor($aScrSearchEnd[0], $aScrSearchEnd[1], True)
+If BB_ColorCheck( $aScrSearchEnd, $aScrSearchClr) Then
+$j += 1
+Else
+$j = $iWait256
+EndIf
+If _Sleep($DELAYRUNBOT2) Then Return
+BB_StatusMsg("Screen Search for Match [" & String( $j ) & "] Color: " & $cPixColor)
+WEnd
+EndIf
+If _Sleep($DELAYRUNBOT3) Then Return
+checkAttackDisable($g_iTaBChkAttack, $Result)
+If $g_bDebugSetlog Then SetDebugLog("BB: PrepareAttack exit check $g_bRestart= " & $g_bRestart, $COLOR_DEBUG)
+If $g_bRestart Then
+$g_bIsClientSyncError = False
+Return False
+EndIf
+EndIf
+Return $bCanAttack
+EndFunc
+Func BB_Attack($Nside = 1, $SIDESNAMES = "TR|TL", $iTroopToDeploy = 4 )
+Local $aBB_DiamondTop[4] = [430, 40 + $g_iBottomOffsetY, 0x294949, 10]
+Local $aBB_DiamondRight[4] = [820, 340 + $g_iBottomOffsetY, 0x2F5351, 10]
+Local $aBB_LineCenter[2] = [ 0, 0]
+Local $i = 0
+Local $iHalf = 0
+Local $iRest = 0
+Local $aDropCoord[2] = [ 0, 0]
+Local $aDropPointX[4] = [ 0, 0, 0x294949, 10]
+Local $aDropPointY[4] = [ 0, 0, 0x294949, 10]
+If $iTroopToDeploy < 4 Then $iTroopToDeploy = 4
+If $iTroopToDeploy > 8 Then $iTroopToDeploy = 8
+$iHalf = INT( $iTroopToDeploy / 2 )
+$iRest = $iTroopToDeploy -($iHalf * 2 )
+$iHalf += $iRest
+$aBB_LineCenter[0] = INT(($aBB_DiamondTop[0] + $aBB_DiamondRight[0] ) / 2 )
+$aBB_LineCenter[1] = INT(($aBB_DiamondTop[1] + $aBB_DiamondRight[1] ) / 2 )
+$aDropCoord[0] = INT((($aBB_LineCenter[0] - $aBB_DiamondTop[0] ) * 0.9 ) / $iHalf )
+$aDropCoord[1] = INT((($aBB_LineCenter[1] - $aBB_DiamondTop[1] ) * 0.9 ) / $iHalf )
+KeepClicks()
+For $i = $iHalf To 1 Step -1
+$aDropPointX[0] = $aBB_LineCenter[0] +($i * $aDropCoord[0] )
+$aDropPointX[1] = $aBB_LineCenter[1] +($i * $aDropCoord[1] )
+$aDropPointY[0] = $aBB_LineCenter[0] -($i * $aDropCoord[0] )
+$aDropPointY[1] = $aBB_LineCenter[1] -($i * $aDropCoord[1] )
+If _Sleep($DELAYDROPTROOP1) Then Return
+AttackClick($aDropPointX[0], $aDropPointX[1], 1, SetSleep(0), 0, "#0000")
+If _Sleep($DELAYDROPTROOP1) Then Return
+AttackClick($aDropPointY[0], $aDropPointY[1], 1, SetSleep(0), 0, "#0000")
+Next
+ReleaseClicks()
+If _Sleep($DELAYRUNBOT1) Then Return
+EndFunc
+Func BB_Mach_Slot()
+Local $i = 0
+Local $iSlot = -1
+Local $cPixColor = ''
+Local $bDegug = True
+Local $aBMachine[4] = [ 392, 580 + $g_iBottomOffsetY, 0x486E83, 20 ]
+Local $aBMachineColor[5] = [ 0x487188, 0x486E83, 0x486B7E, 0x486F81, 0x466F84 ]
+If _Sleep($DELAYRUNBOT3) Then Return
+For $i = 0 To 2
+If($i > 0) Then
+$aBMachine[0] += 72
+EndIf
+$cPixColor = _GetPixelColor($aBMachine[0], $aBMachine[1], True)
+If _Sleep($DELAYRUNBOT3) Then Return
+IF BB_ColorCheck( $aBMachine, $aBMachineColor ) Then
+If $bDegug Then SetLog("BB: BM Found, color: " & $cPixColor & " Slot:[ " & String( $i + 5 ) & " ]", $COLOR_DEBUG)
+$iSlot = $i
+$i = 2
+EndIf
+Next
+Return $iSlot
+EndFunc
+Func BB_Mach_Deploy( $iSlot = -1 )
+Local $j = 0
+Local $cPixColor = ''
+Local $cPixCheck = ''
+Local $bDegug = True
+Local $iWait128 = 128
+Local $aBMachine[4] = [ 395, 580 + $g_iBottomOffsetY, 0x486E83, 20 ]
+Local $aBatleEndColor[2] = [ 0x020202, 0x020202 ]
+Local $aDropBM[4] = [ 270, 150 + $g_iBottomOffsetY, 0x335255, 20 ]
+If _Sleep($DELAYRUNBOT3) Then Return
+If($iSlot + 1 ) > 0 Then
+$aBMachine[0] +=($iSlot * 72 )
+If $bDegug Then SetLog("BB: Click BM, color: " & $cPixColor & " Slot:[ " & String( $iSlot + 5 ) & " ]", $COLOR_DEBUG)
+KeepClicks()
+If _Sleep($DELAYDROPTROOP1) Then Return
+ClickP($aBMachine, 1, 0, "#0000")
+If _Sleep($DELAYDROPTROOP1) Then Return
+AttackClick($aDropBM[0], $aDropBM[1], 1, SetSleep(0), 0, "#0000")
+If _Sleep($DELAYDROPTROOP1) Then Return
+ReleaseClicks()
+If _Sleep($DELAYRUNBOT3) Then Return
+$cPixColor = _GetPixelColor($aBMachine[0], $aBMachine[1], True)
+$cPixCheck = $cPixColor
+If _Sleep($DELAYRUNBOT3) Then Return
+While $j < $iWait128
+$j += 1
+If _ColorCheck( $cPixColor, $cPixCheck, 20) Then
+ClickP($aBMachine, 1, 0, "#0000")
+BB_StatusMsg("Activate BM Power, color: " & $cPixCheck & " [ " & String( $j+1 ) & " ]")
+Else
+If _ColorCheck( $cPixCheck, Hex($aBatleEndColor[0], 6), 20) Then
+If $bDegug Then SetLog("BB: Battle end detected, color: " & $cPixCheck & " Slot:[ " & String( $iSlot + 5 ) & " ]", $COLOR_DEBUG)
+$j = $iWait128
+Else
+If Mod($j, 8) = 0 Then
+ClickP($aBMachine, 1, 0, "#0000")
+EndIf
+EndIf
+EndIf
+If _Sleep($DELAYRUNBOT1) Then Return
+$cPixCheck = _GetPixelColor($aBMachine[0], $aBMachine[1], True)
+WEnd
+EndIf
+EndFunc
 Func GetTranslatedParsedText($sText, $var1 = Default, $var2 = Default, $var3 = Default)
 Local $s = StringReplace(StringReplace($sText, "\r\n", @CRLF), "\n", @CRLF)
 If $var1 = Default Then Return $s
@@ -75916,13 +76201,14 @@ SetDebugLog("Linked to GUI Process " & $g_iGuiPID)
 EndIf
 EndIf
 SetLog(" ", $COLOR_SUCCESS)
-SetLog("____________" & " [  MyBot impulseMOD  ]" & "____________", $COLOR_IMPULSERED, "Berlin Sans FB", 14)
-SetLog("                                         » " & "Warning" & " «", $COLOR_TEAL, "Berlin Sans FB", 12)
-SetLog("                                               » " & "Make a Fresh Config" & " «", $COLOR_TEAL, "Berlin Sans FB", 9)
-SetLog("                                              » " & "Don't Use Old Profile" & " «", $COLOR_TEAL, "Berlin Sans FB", 9)
+SetLog("_________" & " [  MyBot impulseMOD  ]" & "________", $COLOR_IMPULSERED, "Impact", 14)
+SetLog("                                » " & "Warning" & " «", $COLOR_TEAL, "Segoe UI Semibold", 12)
+SetLog("                                   » " & "Make a Fresh Config" & " «", $COLOR_TEAL, "Segoe UI Semibold", 9)
+SetLog("                                  » " & "Don't Use Old Profile" & " «", $COLOR_TEAL, "Segoe UI Semibold", 9)
+SetLog("                   » " & "Set BOT Language to ENGLISH" & " «", $COLOR_TEAL, "Segoe UI Semibold", 10)
 SetLog("-----------------------------------------------------------------------", $COLOR_MONEYGREEN)
-SetLog("                                      » " & "Thanks To ALL MyBot Developer's" & " «", $COLOR_TEAL, "Berlin Sans FB", 9)
-SetLog("                                             » " & "Based On: MyBot" & " " & $g_sBotVersion & " «", $COLOR_TEAL, "Berlin Sans FB", 10)
+SetLog("            » " & "Thanks To ALL MyBot Developer's" & " «", $COLOR_TEAL, "Segoe Print", 9)
+SetLog("                         » " & "Based On: MyBot" & " " & $g_sBotVersion & " «", $COLOR_TEAL, "Segoe UI Semibold", 10)
 SetLog("-----------------------------------------------------------------------", $COLOR_MONEYGREEN)
 SetLog(" ", $COLOR_MEDGRAY)
 DestroySplashScreen()
@@ -76472,6 +76758,8 @@ Case "BuilderBase"
 If isOnBuilderBase() Or(($g_bChkCollectBuilderBase Or $g_bChkStartClockTowerBoost Or $g_iChkBBSuggestedUpgrades) And SwitchBetweenBases()) Then
 BuilderBaseReport()
 CollectBuilderBase()
+_Sleep($DELAYRUNBOT3)
+BB_DropTrophies()
 _Sleep($DELAYRUNBOT3)
 StartClockTowerBoost()
 _Sleep($DELAYRUNBOT3)

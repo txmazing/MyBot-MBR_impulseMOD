@@ -1,5 +1,0 @@
-﻿[mod]
-version = "v1.0.3"
-
-messagenew = "Основное обновление!"
-messageold = "impulseMOD 1.0.3 уже доступна!\nПожалуйста скачайте последнюю версию:\https://github.com/txmazing/MyBot-MBR_impulseMOD"

@@ -320,11 +320,21 @@ Func ApplyConfig_600_6($TypeReadSave)
 
 			GUICtrlSetState($g_hChkPlacingNewBuildings, $g_iChkPlacingNewBuildings = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 
+			; ================================================== BB Attack by IMMOD	========================;
+			GUICtrlSetState($g_hChkBB_DropTrophies, $g_bChkBB_DropTrophies = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtBB_DropTrophies, $g_iTxtBB_DropTrophies)
+			GUICtrlSetState($g_hChkBB_OnlyWithLoot, $g_bChkBB_OnlyWithLoot = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			
 			chkActivateBBSuggestedUpgrades()
 			chkActivateBBSuggestedUpgradesGold()
 			chkActivateBBSuggestedUpgradesElixir()
 			chkPlacingNewBuildings()
 
+			; ================================================== BB Attack by IMMOD	========================;
+			ChkBB_DropTrophies()
+			TxtBB_DropTrophies()
+			ChkBB_OnlyWithLoot()
+			
 			GUICtrlSetState($g_hChkClanGamesAir, $g_bChkClanGamesAir ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesGround, $g_bChkClanGamesGround ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesMisc, $g_bChkClanGamesMisc ? $GUI_CHECKED : $GUI_UNCHECKED)

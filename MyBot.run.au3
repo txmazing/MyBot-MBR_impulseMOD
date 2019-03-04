@@ -581,15 +581,17 @@ Func FinalInitialization(Const $sAI)
 
 	; Message - start
 	SetLog(" ", $COLOR_SUCCESS)
-	SetLog("____________" & " [  MyBot impulseMOD  ]" & "____________", $COLOR_IMPULSERED, "Berlin Sans FB", 14)
-	SetLog("                                         » " & "Warning" & " «", $COLOR_TEAL, "Berlin Sans FB", 12)
-	SetLog("                                               » " & "Make a Fresh Config" & " «", $COLOR_TEAL, "Berlin Sans FB", 9)
-	SetLog("                                              » " & "Don't Use Old Profile" & " «", $COLOR_TEAL, "Berlin Sans FB", 9)
+	SetLog("_________" & " [  MyBot impulseMOD  ]" & "________", $COLOR_IMPULSERED, "Impact", 14)
+	SetLog("                                » " & "Warning" & " «", $COLOR_TEAL, "Segoe UI Semibold", 12)
+	SetLog("                                   » " & "Make a Fresh Config" & " «", $COLOR_TEAL, "Segoe UI Semibold", 9)
+	SetLog("                                  » " & "Don't Use Old Profile" & " «", $COLOR_TEAL, "Segoe UI Semibold", 9)
+	SetLog("                   » " & "Set BOT Language to ENGLISH" & " «", $COLOR_TEAL, "Segoe UI Semibold", 10)
 	SetLog("-----------------------------------------------------------------------", $COLOR_MONEYGREEN)
-	SetLog("                                      » " & "Thanks To ALL MyBot Developer's" & " «", $COLOR_TEAL, "Berlin Sans FB", 9)
-	SetLog("                                             » " & "Based On: MyBot" & " " & $g_sBotVersion & " «", $COLOR_TEAL, "Berlin Sans FB", 10)
+	SetLog("            » " & "Thanks To ALL MyBot Developer's" & " «", $COLOR_TEAL, "Segoe Print", 9)
+	SetLog("                         » " & "Based On: MyBot" & " " & $g_sBotVersion & " «", $COLOR_TEAL, "Segoe UI Semibold", 10)
 	SetLog("-----------------------------------------------------------------------", $COLOR_MONEYGREEN)
 	SetLog(" ", $COLOR_MEDGRAY)
+
 	; Message - end
 
 	; destroy splash screen here (so we witness the 100% ;)
@@ -1239,6 +1241,8 @@ Func _RunFunction($action)
 			If isOnBuilderBase() Or (($g_bChkCollectBuilderBase Or $g_bChkStartClockTowerBoost Or $g_iChkBBSuggestedUpgrades) And SwitchBetweenBases()) Then
 				BuilderBaseReport()
 				CollectBuilderBase()
+				_Sleep($DELAYRUNBOT3)
+				BB_DropTrophies();ADDED by IMMOD
 				_Sleep($DELAYRUNBOT3)
 				StartClockTowerBoost()
 				_Sleep($DELAYRUNBOT3)

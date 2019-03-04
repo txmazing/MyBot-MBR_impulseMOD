@@ -34,5 +34,10 @@
 #include "IM Chatbot\ChatFunc.au3"
 #include "IM Chatbot\Multy Lang.au3"
 #include "IM OCR\getMyOcr.au3"
+
 ; Wall/Building Upgrading Priority
 #include "IM Upgrading Priority.au3"
+
+; BB Attack
+#include "IM BB Attack\BB_DropTrophies.au3"
+#include "IM BB Attack\BB_PrepareAttack.au3"
