@@ -206,10 +206,6 @@ Func ChatbotChatOpen() ; open the chat area
 			Return False
 		EndIf
 		SetLog("Chatbot: Chat Window Opened.", $COLOR_SUCCESS)
-		If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-			Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
-			SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
-		EndIf
 		Return True
 	Else
 		SetLog("Chatbot: Sorry, Unable To Find Chat Button In MainScreen.", $COLOR_ERROR)
@@ -219,6 +215,11 @@ EndFunc   ;==>ChatbotChatOpen
 
 Func ChatbotSelectClanChat() ; select clan tab
 	Click($g_aButtonChatSelectTabClan[0], $g_aButtonChatSelectTabClan[1], 1) ; switch to Clan chat
+	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+	If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+		Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+		SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
+	EndIf
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
 	If _Wait4Pixel($g_aButtonChatSelectTabClan[2], $g_aButtonChatSelectTabClan[3], $g_aButtonChatSelectTabClan[4], $g_aButtonChatSelectTabClan[5], 5000, "ChatbotSelectClanChat") = False Then ;Wait for clan chat tab to be selected if it is not opened in 3 sec show error
 		SetLog("Chatbot: Sorry, Clan Chat Tab Not Selected.", $COLOR_ERROR)
@@ -240,6 +241,11 @@ EndFunc   ;==>ChatbotCheckIfUserIsInClan
 
 Func ChatbotSelectGlobalChat() ; select global tab
 	Click($g_aButtonChatSelectTabGlobal[0], $g_aButtonChatSelectTabGlobal[1], 1) ; switch to global
+	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+	If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+		Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+		SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
+	EndIf
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
 	If _Wait4Pixel($g_aButtonChatSelectTabGlobal[2], $g_aButtonChatSelectTabGlobal[3], $g_aButtonChatSelectTabGlobal[4], $g_aButtonChatSelectTabGlobal[5], 5000, "ChatbotSelectGlobalChat") = False Then ;Wait for global tab to be selected if it is not opened in 5 sec show error
 		SetLog("Chatbot: Sorry, Global Tab Not Selected.", $COLOR_ERROR)

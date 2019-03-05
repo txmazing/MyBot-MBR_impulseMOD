@@ -1,4 +1,9 @@
-﻿* **V1.0.4**
+﻿* **V1.0.5**
+* Added GTFO (I currently have no account to test the feature in detail. Please report bugs in the forum or on github)
+* Fixed Humanization (Accept Fiendrequest and click "I UNDERSTAND" Button in Globalchat & Clanchat)
+* Fixed ChatBot (Click "I UNDERSTAND" Button in Globalchat & Clanchat)
+
+* **V1.0.4**
 * Added BB Attack
 * Improved CheckVersion
 
@@ -16,4 +21,4 @@
 
 * **V1.0.**
 * Added impusleMOD
-* Added Huminization
+* Added Humanization

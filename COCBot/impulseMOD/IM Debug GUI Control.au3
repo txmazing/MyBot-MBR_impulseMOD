@@ -76,6 +76,25 @@ Func btnTestBotHumanization()
 
 EndFunc   ;==>btnTestBotHumanization
 
+Func btnTestGTFO()
+	SetLog("Test GTFO Started", $COLOR_DEBUG)
+
+	Local $wasRunState = $g_bRunState
+	Local $wasUseGTFO = $g_bChkUseGTFO
+	;For Debug Purpose set run state to true temporarily
+	$g_bRunState = True
+	$g_bChkUseGTFO = True
+
+	MainGTFO()
+
+	;Reset to orignal state
+	$g_bChkUseGTFO = $wasUseGTFO
+	$g_bRunState = $wasRunState
+
+	SetLog("Test GTFO Ended", $COLOR_DEBUG)
+
+EndFunc   ;==>btnTestGTFO
+
 Func btnForceStopBot()
 	SetLog("Going to force stop the bot.", $COLOR_DEBUG)
 	If $g_bRunState Then

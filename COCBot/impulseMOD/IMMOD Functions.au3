@@ -14,6 +14,15 @@
 ; ===============================================================================================================================
 
 #include "IM Extra.au3"
+#include "IM Other\_Wait4Pixel.au3"
+
+; BB Attack - Added by IMMOD
+#include "IM BB Attack\BB_DropTrophies.au3"
+#include "IM BB Attack\BB_PrepareAttack.au3"
+
+; GTFO - Added by IMMOD
+#include "IM GTFO\GTFO.au3"
+#include "IM GTFO\KickOut.au3"
 
 ; Bot Humanization - Added by IMMOD
 #include "IM Bot Humanization\BotHumanization.au3"
@@ -23,21 +32,15 @@
 #include "IM Bot Humanization\ClanActions.au3"
 #include "IM Bot Humanization\ClanWarActions.au3"
 
-#include "IM Other\_Wait4Pixel.au3"
-
-#include "IM Debug GUI Control.au3"
-
-#include "IM Config.au3"
-
 ; ChatBot - Added by IMMOD
 #include "IM Chatbot\Chatbot.au3"
 #include "IM Chatbot\ChatFunc.au3"
 #include "IM Chatbot\Multy Lang.au3"
 #include "IM OCR\getMyOcr.au3"
 
-; Wall/Building Upgrading Priority
+; Wall/Building Upgrading Priority - Added by IMMOD
 #include "IM Upgrading Priority.au3"
 
-; BB Attack
-#include "IM BB Attack\BB_DropTrophies.au3"
-#include "IM BB Attack\BB_PrepareAttack.au3"
+; Debug/Config - Added by IMMOD
+#include "IM Debug GUI Control.au3"
+#include "IM Config.au3"

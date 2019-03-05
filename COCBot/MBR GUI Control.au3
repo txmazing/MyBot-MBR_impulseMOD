@@ -2118,7 +2118,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 			;----------- ADDED BY IMMOD Starts----------------
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex = [$eIcnHumanization, $eIcnModChatBot]
+			Local $aIconIndex = [$eIcnHumanization, $eIcnModChatBot, $eIcnModGTFO]
 			;----------- ADDED BY IMMOD END ----------------
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab

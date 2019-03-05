@@ -447,9 +447,9 @@ Func LookAtRedNotifications()
 		randomSleep(2000)
 
 		If IsClanOverview() Then
-			If _ColorCheck(_GetPixelColor(772, 70, True), "D00818", 20) Then
+			If _ColorCheck(_GetPixelColor(603, 69, True), "D00818", 20) Then
 				SetLog("It's confirmed, you have a new friend request, lemme check...", $COLOR_ACTION1)
-				Click(700, 80)
+				Click(530, 80)
 				randomSleep(2000)
 				If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 720, 165, 780, 600) Then
 					Click($g_iQuickMISX + 720, $g_iQuickMISY + 165)

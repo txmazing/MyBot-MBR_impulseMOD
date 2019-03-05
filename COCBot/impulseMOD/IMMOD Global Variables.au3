@@ -93,6 +93,16 @@ Global $cGeneric
 Global $ChatbotStartTime
 Global $g_sMessage = ""
 
+; ================================================== GTFO - Added by IMMOD ================================== ;
+
+Global $g_bChkUseGTFO = False, $g_bChkUseKickOut = False, $g_bChkKickOutSpammers = False
+Global $g_iTxtMinSaveGTFO_Elixir = 200000, $g_iTxtMinSaveGTFO_DE = 2000, _
+		$g_iTxtDonatedCap = 8, $g_iTxtReceivedCap = 35, _
+		$g_iTxtKickLimit = 6
+Global $g_hTxtClanID, $g_sTxtClanID, $g_iTxtCyclesGTFO
+Global $g_bChkGTFOClanHop = False, $g_bChkGTFOReturnClan = False
+Global $g_iCycle = 0
+
 ; ================================================== Wall/Building Upgrading Priority/Management - Added by IMMOD ======================================== ;
 Global $g_iChkUpgrPriority = 0, $g_iCmbUpgrdPriority = 0
 Global Const $g_iLimitBreakGE[12] = [2500, 7000, 100000, 500000, 1000000, 2000000, 4000000, 6000000, 8000000, 8500000, 10000000, 12000000] ;Gold And Elixir Town Hall Level max resource storages at 90%

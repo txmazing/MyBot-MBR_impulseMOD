@@ -21,5 +21,5 @@
 
 Global $g_sBotVersion = "v7.7.1" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
 
-Global $g_sModversion = "v1.0.4" ;<== Just Change This to Version Number
+Global $g_sModversion = "v1.0.5" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl =  "https://github.com/txmazing/MyBot-MBR_impulseMOD/releases" ;<== Our Website Link Download

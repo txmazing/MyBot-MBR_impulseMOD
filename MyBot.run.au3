@@ -722,6 +722,10 @@ Func runBot() ;Bot that runs everything in order
 		chkShieldStatus()
 		If Not $g_bRunState Then Return
 		If $g_bRestart = True Then ContinueLoop
+		;------------------ADDED By IMMOD - START------------------
+		MainGTFO()
+		MainKickout()
+		;------------------ADDED By IMMOD - END------------------
 		checkObstacles() ; trap common error messages also check for reconnecting animation
 		If $g_bRestart = True Then ContinueLoop
 
@@ -1281,7 +1285,12 @@ Func FirstCheck()
 	$g_iCommandStop = -1
 
 	BotHumanization() ; Added By IMMOD
+	
+	;------------------CUSTOM LOGIC By IMMOD - START------------------
+	MainGTFO()
+	MainKickout()
 	VillageReport()
+	;------------------CUSTOM LOGIC By IMMOD - END------------------
 	If Not $g_bRunState Then Return
 
 	If $g_bOutOfGold = True And (Number($g_aiCurrentLoot[$eLootGold]) >= Number($g_iTxtRestartGold)) Then ; check if enough gold to begin searching again

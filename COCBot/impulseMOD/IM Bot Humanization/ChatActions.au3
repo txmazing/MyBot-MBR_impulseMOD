@@ -20,6 +20,11 @@ Func ReadClanChat()
 	If ChatOpen() Then
 		Click(230, 20) ; go to clan chat
 		randomSleep(1500)
+		If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+			Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+			SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+		EndIf
+		randomSleep(1500)
 		If Not IsClanChat() Then SetLog("Warning, we will scroll Global chat...", $COLOR_WARNING)
 		Local $MaxScroll = Random(0, 3, 1)
 		SetLog("Let's scrolling the Chat...", $COLOR_ACTION1)
@@ -42,6 +47,11 @@ Func ReadGlobalChat()
 
 	If ChatOpen() Then
 		Click(80, 20) ; go to global chat
+		randomSleep(1500)
+		If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+			Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+			SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+		EndIf
 		randomSleep(1500)
 		If Not IsGlobalChat() Then SetLog("Warning, we will scroll Clan chat...", $COLOR_WARNING)
 		Local $MaxScroll = Random(0, 3, 1)
