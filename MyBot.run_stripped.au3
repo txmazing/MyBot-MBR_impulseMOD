@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.1"
-Global $g_sModversion = "v1.0.5"
+Global $g_sModversion = "v1.0.6"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -2516,6 +2516,12 @@ Return $aResult[6]
 EndFunc
 Func _GDIPlus_BitmapCreateFromStream($pStream)
 Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromStream", "ptr", $pStream, "handle*", 0)
+If @error Then Return SetError(@error, @extended, 0)
+If $aResult[0] Then Return SetError(10, $aResult[0], 0)
+Return $aResult[2]
+EndFunc
+Func _GDIPlus_BitmapCreateHBITMAPFromBitmap($hBitmap, $iARGB = 0xFF000000)
+Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateHBITMAPFromBitmap", "handle", $hBitmap, "handle*", 0, "dword", $iARGB)
 If @error Then Return SetError(@error, @extended, 0)
 If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 Return $aResult[2]
@@ -6239,7 +6245,7 @@ Global Const $g_sIcnBldElixir = @ScriptDir & "\Images\elixir.png"
 Global Const $g_sIcnBldTrophy = @ScriptDir & "\Images\trophy.png"
 Global $g_iRedrawBotWindowMode = 2
 Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnGrayShield, $eIcnBlueShield, $eIcnGreenShield, $eIcnRedShield, $eIcnBattleB , $eIcnWallW, $eIcnSiegeCost, $eIcnBoostPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnModHumanization, $eIcnIMMod, $eIcnDebug, $eIcnBoostMagic, $eIcnClanHop, $eIcnBoostClMagic, $eIcnHumanization, $eIcnNEWChat, $eIcnNEWChat1, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnClanGames, $eIcnFarmingSchedule, $eIcnWarPreparation, _
-$eIcnSwitchAcc, $eIcnSwitchProfile, $eIcnModChatBot, $eIcnModGTFO
+$eIcnSwitchAcc, $eIcnSwitchProfile, $eIcnModChatBot, $eIcnModGTFO, $eIcnModGoblinXp
 Global $eIcnDonBlank = $eIcnDonBlacklist
 Global $eIcnOptions = $eIcnDonBlacklist
 Global $eIcnAchievements = $eIcnMain
@@ -6949,6 +6955,14 @@ Func _ArrayIndexValid(Const ByRef $a, Const $idx)
 Return $idx >= 0 And $idx < UBound($a)
 EndFunc
 Global $XS_n
+Global $g_bEnableSuperXP = False, $g_bSkipZoomOutXP = False, $g_bFastGoblinXP = False, $g_bSkipDragToEndXP = False, $g_bFastGoblinXP = False, $g_irbSXTraining = 1, $g_bSXBK = False, $g_bSXAQ = False, $g_bSXGW = False
+Global $g_iStartXP = 0, $g_iCurrentXP = 0, $g_iGainedXP = 0, $g_iGainedXPHour = 0, $g_iTxtMaxXPtoGain = 500, $g_iTxtXPRunTime = 0
+Global $g_bDebugSX = False
+Global $g_DpGoblinPicnic[3][4] = [[310, 200, 5, 5], [340, 140, 5, 5], [290, 220, 5, 5]]
+Global $g_BdGoblinPicnic[3] = [0, "5000-7000", "6000-8000"]
+Global $g_ActivatedHeroes[3] = [False, False, False]
+Global Const $g_minStarsToEnd = 1
+Global $g_canGainXP = False
 Global $g_iacmbPriority[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_iacmbMaxSpeed[2] = [1, 1]
 Global $g_iacmbPause[2] = [0, 0]
@@ -6967,10 +6981,11 @@ Global Const $g_aButtonChatWindowClose[6] = [321, 355, 330, 400, 0xC55115, 20]
 Global Const $g_aButtonChatSelectTabGlobal[6] = [74, 23, 20, 10, 0x79755B, 20]
 Global Const $g_aButtonChatSelectTabClan[6] = [222, 27, 170, 10, 0x79755B, 20]
 Global Const $g_aButtonChatSelectTextBox[6] = [277, 706, 100, 700, 0xFFFFFF, 20]
-Global Const $g_aButtonChatSendButton[6] = [840, 693, 840, 693, 0xFFFFFF, 20]
+Global Const $g_aButtonChatSendButton[6] = [825, 700, 835, 710, 0xFFFFFF, 20]
 Global Const $g_aButtonChatSelectTextBoxBottomNav[6] = [277, 706, 100, 690, 0xFFFFFF, 20]
 Global Const $g_aButtonChatJoinClan[4] = [157, 510, 0x6CBB1F, 20]
-Global Const $g_aButtonChatRules[6] = [ 155, 500, 70, 483, 0xDDF585, 20]
+Global Const $g_aButtonChatRulesGlobal[6] = [ 155, 500, 70, 483, 0xDDF585, 20]
+Global Const $g_aButtonChatRulesClan[6] = [ 155, 500, 70, 469, 0xDDF585, 20]
 Global Const $g_aButtonLangSetting[6] = [820, 585, 810, 584, 0xF5F5E0, 20]
 Global Const $g_aButtonLangSettingClose[6] = [777, 113, 777, 113, 0xFF8D8D, 20]
 Global Const $g_aButtonLangSettingSelectLang[2] = [210, 420]
@@ -7133,6 +7148,8 @@ Global Const $DELAYDONATEWINDOW1 = 1000
 Global Const $DELAYDONATEWINDOW2 = 100
 Global Const $DELAYDROPTROPHY1 = 1000
 Global Const $DELAYDROPTROPHY4 = 250
+Global Const $DELAYDROPSuperXP1= 500
+Global Const $DELAYDROPSuperXP3 = 250
 Global Const $DELAYGETTHLEVEL1 = 1000
 Global Const $DELAYGETTHLEVEL2 = 1500
 Global Const $DELAYGETTHLEVEL3 = 200
@@ -21286,6 +21303,10 @@ EndFunc
 Global $g_hBtnTestBuilderTimeOCR = 0, $g_hBtnTestGlobalChatBot = 0, $g_hBtnTestClanChatBot = 0, $g_hBtnTestTNRQT = 0
 Global $g_hBtnTestGoblinXP = 0, $g_hBtnForceStopBot = 0, $g_hBtnTestWardenMode = 0, $g_hBtnTestBotHumanization = 0, $g_hBtnDragNDropQueue = 0, $g_hBtnTestLabUpgrade = 0
 Global $g_hBtnTestBuilderBaseAtk = 0, $g_hBtnTestBuilderBaseObs = 0, $g_hBtnTestGTFO = 0, $g_hBtnTestStopForWar = 0
+Global $g_hGrpSuperXP = 0, $g_hChkEnableSuperXP = 0, $g_hChkSkipZoomOutXP = 0, $g_hChkSkipDragToEndXP = 0, $g_hChkFastGoblinXP = 0, $rbSXTraining = 0, $g_hLblLOCKEDSX = 0, $rbSXIAttacking = 0, $g_hTxtMaxXPtoGain = 0
+Global $g_hChkSXBK = 0, $g_hChkSXAQ = 0, $g_hChkSXGW = 0
+Global $DocXP1 = 0, $DocXP2 = 0, $DocXP3 = 0, $DocXP4 = 0, $DocXP5 = 0
+Global $g_hLblXPatStart = 0, $g_hLblXPCurrent = 0, $g_hLblXPSXWon = 0, $g_hLblXPSXWonHour = 0, $g_hLblXPRunTime = 0
 Global $g_hLblGFTO = 0, $g_hChkUseGTFO = 0, $g_hTxtMinSaveGTFO_Elixir = 0, $g_hTxtMinSaveGTFO_DE = 0, $g_hTxtCyclesGTFO = 0
 Global $g_hLblKickout = 0, $g_hChkUseKickOut = 0, $g_hTxtDonatedCap = 0, $g_hTxtReceivedCap = 0, $g_hChkKickOutSpammers = 0, $g_hTxtKickLimit = 0
 Global $g_hLblInitialDonated = 0, $g_hLblCurrentDonated = 0, $g_hGUI_GTFOMOD = 0
@@ -21308,7 +21329,7 @@ Global $g_hTxtEditGlobalMessages1 = "", $g_hTxtEditGlobalMessages2 = ""
 Global $g_hTxtEditResponses = 0, $g_hTxtEditGeneric = 0, $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False, $TmpResp
 Global $g_alblAinGlobal, $g_alblSGchats, $g_alblSwitchlang, $g_alblChatclan, $g_alblUsecustomresp, $g_alblUsegenchats, $g_alblNotifyclanchat, $g_alblSwitchlang, $g_alblUseremotechat
 Global $g_hGUI_MOD = 0
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0, $g_hGUI_MOD_TAB_GTFO = 0, $g_hGUI_MOD_TAB_IM_DEBUG = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0, $g_hGUI_MOD_TAB_GTFO = 0, $g_hGUI_MOD_TAB_GOBLIN_XP = 0, $g_hGUI_MOD_TAB_IM_DEBUG = 0
 Func CreateMODTab()
 $g_hGUI_MOD = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
 GUISwitch($g_hGUI_MOD)
@@ -21319,6 +21340,8 @@ $g_hGUI_MOD_TAB_CHATBOT = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GU
 TabChatBotGUI()
 $g_hGUI_MOD_TAB_GTFO = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_03", "GTFO"))
 TabGTFOGUI()
+$g_hGUI_MOD_TAB_GOBLIN_XP = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_04", "Goblin XP"))
+TabGoblinXPGUI()
 $g_hGUI_MOD_TAB_IM_DEBUG = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_08", "IM Debug"))
 TabIMDebugGUI()
 GUICtrlCreateTabItem("")
@@ -21609,6 +21632,86 @@ GUICtrlSetColor(-1, $COLOR_BLACK)
 GUICtrlSetOnEvent(-1, "ApplyKickLimits")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
+Func TabGoblinXPGUI()
+Local $x = 25, $y = 45, $xStart = 25, $yStart = 50
+$g_hGrpSuperXP = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP_Info_05", "Goblin XP"), $x - 20, $y, 440, 340)
+$y += 17
+$g_hChkEnableSuperXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP_Info_01", "Enable Goblin XP"), $x, $y, -1, -1)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP")
+$g_hChkSkipZoomOutXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipZoomOutXP", "Skip ZoomOut"), $x + 120, $y, -1, -1)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipZoomOutXP_01", "Skip ZoomOut after Attack Finsihed."))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$g_hChkFastGoblinXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkFastGoblinXP", "Fast GoblinXP"), $x + 215, $y, -1, -1)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkFastGoblinXP_01", "Skip Current Xp Check from main screen and make GoblinXP Fast."))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$g_hChkSkipDragToEndXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP", "Skip Drag To End"), $x + 310, $y, -1, -1)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP_01", "Skip End Drag To Start Finding Goblin Picnic From Current Mission.") & @CRLF & GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP_02", "Note: Uncheck When You Have Unlocked All Goblin Missions. It will be fast.") & @CRLF & GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP_03", "Note: Check When You Have New Missions Locked. It will be fast."))
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$rbSXTraining = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_01", "Farm XP during troops Training"), $x, $y + 25, 220, 17)
+GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$g_hLblLOCKEDSX = GUICtrlCreateLabel("LOCKED", $x + 210, $y + 35, 173, 50)
+GUICtrlSetFont(-1, 30, 800, 0, "Arial")
+GUICtrlSetColor(-1, 0xFF0000)
+GUICtrlSetState(-1, $GUI_HIDE)
+$rbSXIAttacking = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_02", "Farm XP instead of Attacking"), $x, $y + 45, 158, 17)
+GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_03", "Max XP to Gain") & ":", $x, $y + 78, -1, 17)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$g_hTxtMaxXPtoGain = GUICtrlCreateInput("500", $x + 85, $y + 75, 70, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetLimit(-1, 8)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$x += 129
+$y += 120
+GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_04", "Use"), $x - 35, $y + 13, 23, 17)
+_GUICtrlCreateIcon($g_sLibIconPath, $eIcnKing, $x, $y, 32, 32)
+_GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueen, $x + 40, $y, 32, 32)
+_GUICtrlCreateIcon($g_sLibIconPath, $eIcnWarden, $x + 80, $y, 32, 32)
+GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_05", "to gain XP"), $x + 123, $y + 13, 53, 17)
+$x += 10
+$g_hChkSXBK = GUICtrlCreateCheckbox("", $x, $y + 35, 13, 13)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$g_hChkSXAQ = GUICtrlCreateCheckbox("", $x + 40, $y + 35, 13, 13)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$g_hChkSXGW = GUICtrlCreateCheckbox("", $x + 80, $y + 35, 13, 13)
+GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+$x = $xStart + 7
+$y += 85
+$DocXP1 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_07", "XP at Start"), $x - 20, $y, 90, 19)
+GUICtrlSetBkColor(-1, 0xD8D8D8)
+$DocXP2 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_08", "Current XP"), $x + 65, $y, 90, 19)
+GUICtrlSetBkColor(-1, 0xD8D8D8)
+$DocXP3 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_09", "XP Won"), $x + 150, $y, 90, 19)
+GUICtrlSetBkColor(-1, 0xD8D8D8)
+$DocXP4 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_10", "XP Won/Hour"), $x + 240, $y, 75, 19)
+GUICtrlSetBkColor(-1, 0xD8D8D8)
+$DocXP5 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_11", "Runtime"), $x + 315, $y, 90, 19)
+GUICtrlSetBkColor(-1, 0xD8D8D8)
+$y += 15
+$g_hLblXPatStart = GUICtrlCreateLabel("0", $x - 20, $y + 7, 90, 32)
+GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+GUICtrlSetBkColor(-1, 0xbfdfff)
+$g_hLblXPCurrent = GUICtrlCreateLabel("0", $x + 65, $y + 7, 90, 32)
+GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+GUICtrlSetBkColor(-1, 0xbfdfff)
+$g_hLblXPSXWon = GUICtrlCreateLabel("0", $x + 150, $y + 7, 90, 32)
+GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+GUICtrlSetBkColor(-1, 0xbfdfff)
+$g_hLblXPSXWonHour = GUICtrlCreateLabel("0", $x + 240, $y + 7, 75, 32)
+GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+GUICtrlSetBkColor(-1, 0xbfdfff)
+$g_hLblXPRunTime = GUICtrlCreateLabel("00:00:00", $x + 315, $y + 7, 90, 32)
+GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+GUICtrlSetBkColor(-1, 0xbfdfff)
+$x = $xStart
+$y += 55
+GUICtrlCreateLabel( GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "Label_03", "Goblin XP attack continuously the TH of Goblin Picnic to farm XP."), $x - 13, $y, 312, 17)
+GUICtrlCreateLabel( GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "Label_04", "At each attack, you win 5 XP"), $x - 13, $y + 20, 306, 17)
+chkEnableSuperXP()
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+EndFunc
 Func TabIMDebugGUI()
 Local $x = 5, $y = 45
 Local $yNext = 30
@@ -21625,6 +21728,8 @@ GUICtrlSetOnEvent(-1, "btnTestClanChatBot")
 $y += $yNext
 $y += $yNext
 $y += $yNext
+$g_hBtnTestGoblinXP = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGoblinXP", "Test Goblin XP"), $x, $y, 140, 25)
+GUICtrlSetOnEvent(-1, "btnTestGoblinXP")
 $y += $yNext
 $g_hBtnTestBotHumanization = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBotHumanization", "Test Bot Humanization"), $x, $y, 140, 25)
 GUICtrlSetOnEvent(-1, "btnTestBotHumanization")
@@ -30085,7 +30190,7 @@ Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnSilverStar]
 Case $g_hGUI_ATTACKOPTION_TAB
 Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
 Case $g_hGUI_MOD_TAB
-Local $aIconIndex = [$eIcnHumanization, $eIcnModChatBot, $eIcnModGTFO]
+Local $aIconIndex = [$eIcnHumanization, $eIcnModChatBot, $eIcnModGTFO, $eIcnModGoblinXp]
 Case $g_hGUI_BOT_TAB
 Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnProfile, $eIcnProfile, $eIcnGold]
 Case $g_hGUI_STRATEGIES_TAB
@@ -42636,15 +42741,12 @@ SetLog("End......OpenArmy Window.....")
 $g_bDebugOcr = False
 $g_bRunState = False
 EndFunc
-Func _ArryRemoveBlanks(ByRef $aArray)
-Local $iCounter = 0
-For $i = 0 To UBound($aArray) - 1
-If $aArray[$i] <> "" Then
-$aArray[$iCounter] = $aArray[$i]
-$iCounter += 1
+Func IIf($Condition, $IfTrue, $IfFalse)
+If $Condition = True Then
+Return $IfTrue
+Else
+Return $IfFalse
 EndIf
-Next
-ReDim $aArray[$iCounter]
 EndFunc
 Func CheckValuesCost($Troop = "Arch", $troopQuantity = 1, $DebugLogs = 0)
 Local $TempColorToCheck = ""
@@ -72028,6 +72130,1109 @@ $aPixelColor = _GDIPlus_BitmapGetPixel($g_hBitmap, 1, 1)
 EndIf
 Return Hex($aPixelColor, 6)
 EndFunc
+Func SetStatsGoblinsXP()
+If Not ProfileSwitchAccountEnabled() Then Return
+Static $FirstRun = True
+Static $StatsAccounts[9][4]
+If $FirstRun Then
+For $i = 0 To UBound($StatsAccounts) - 1
+$StatsAccounts[$i][0] = 0
+$StatsAccounts[$i][1] = 0
+$StatsAccounts[$i][2] = 0
+$StatsAccounts[$i][3] = 0
+Next
+EndIf
+Static $CurrentAccountGoblinsXP = -1
+If $g_bDebugSX Then
+SetDebugLog("$CurrentAccountGoblinsXP:" & $CurrentAccountGoblinsXP, $COLOR_DEBUG)
+SetDebugLog("$g_iCurAccount:" & $g_iCurAccount, $COLOR_DEBUG)
+SetDebugLog("$g_iStartXP:" & $g_iStartXP, $COLOR_DEBUG)
+EndIf
+If $g_iCurAccount = $CurrentAccountGoblinsXP Then
+If $g_bDebugSX Then SetDebugLog("'Same' account Update Values!", $COLOR_DEBUG)
+$StatsAccounts[$g_iCurAccount][0] = $g_iStartXP
+$StatsAccounts[$g_iCurAccount][1] = $g_iCurrentXP
+$StatsAccounts[$g_iCurAccount][2] = $g_iGainedXP
+$StatsAccounts[$g_iCurAccount][3] = $g_iGainedXPHour
+Else
+If $g_bDebugSX Then SetDebugLog("'Other' account Update Values!", $COLOR_DEBUG)
+$g_iStartXP = $StatsAccounts[$g_iCurAccount][0]
+$g_iCurrentXP = $StatsAccounts[$g_iCurAccount][1]
+$g_iGainedXP = $StatsAccounts[$g_iCurAccount][2]
+$g_iGainedXPHour = $StatsAccounts[$g_iCurAccount][3]
+$CurrentAccountGoblinsXP = $g_iCurAccount
+EndIf
+$FirstRun = False
+EndFunc
+Func DisableSX()
+GUICtrlSetState($g_hChkEnableSuperXP, $GUI_UNCHECKED)
+$g_bEnableSuperXP = False
+For $i = $g_hGrpSuperXP To $g_hLblXPSXWonHour
+GUICtrlSetState($i, $GUI_DISABLE)
+Next
+GUICtrlSetState($g_hLblLOCKEDSX, BitOR($GUI_SHOW, $GUI_ENABLE))
+EndFunc
+Func SXSetXP($toSet = "")
+SetStatsGoblinsXP()
+If $toSet = "S" Or $toSet = "" Then GUICtrlSetData($g_hLblXPatStart, $g_iStartXP)
+If $toSet = "C" Or $toSet = "" Then GUICtrlSetData($g_hLblXPCurrent, $g_iCurrentXP)
+If $toSet = "W" Or $toSet = "" Then GUICtrlSetData($g_hLblXPSXWon, $g_iGainedXP)
+$g_iGainedXPHour = Round($g_iGainedXP /(Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)
+If $toSet = "H" Or $toSet = "" Then GUICtrlSetData($g_hLblXPSXWonHour, $g_iGainedXPHour)
+If $g_iTxtXPRunTime <> 0 And _DateIsValid($g_iTxtXPRunTime) Then
+Local $hour = 0, $min = 0, $sec = 0
+Local $sDateTimeDiffOfXPRunTimeInSec = _DateDiff("s", $g_iTxtXPRunTime, _NowCalc())
+_TicksToTime($sDateTimeDiffOfXPRunTimeInSec * 1000, $hour, $min, $sec)
+GUICtrlSetData($g_hLblXPRunTime, StringFormat("%02i:%02i:%02i", $hour, $min, $sec))
+EndIf
+EndFunc
+Func chkEnableSuperXP()
+$g_bEnableSuperXP = True
+If GUICtrlRead($g_hChkEnableSuperXP) = $GUI_CHECKED Then
+GUICtrlSetState($rbSXTraining, $GUI_ENABLE)
+GUICtrlSetState($rbSXIAttacking, $GUI_ENABLE)
+GUICtrlSetState($g_hChkSkipZoomOutXP, $GUI_ENABLE)
+GUICtrlSetState($g_hChkFastGoblinXP, $GUI_ENABLE)
+GUICtrlSetState($g_hChkSkipDragToEndXP, $GUI_ENABLE)
+GUICtrlSetState($g_hChkSXBK, $GUI_ENABLE)
+GUICtrlSetState($g_hChkSXAQ, $GUI_ENABLE)
+GUICtrlSetState($g_hChkSXGW, $GUI_ENABLE)
+GUICtrlSetState($g_hTxtMaxXPtoGain, $GUI_ENABLE)
+Else
+$g_bEnableSuperXP = False
+GUICtrlSetState($rbSXTraining, $GUI_DISABLE)
+GUICtrlSetState($rbSXIAttacking, $GUI_DISABLE)
+GUICtrlSetState($g_hChkSkipZoomOutXP, $GUI_DISABLE)
+GUICtrlSetState($g_hChkFastGoblinXP, $GUI_DISABLE)
+GUICtrlSetState($g_hChkSkipDragToEndXP, $GUI_DISABLE)
+GUICtrlSetState($g_hChkSXBK, $GUI_DISABLE)
+GUICtrlSetState($g_hChkSXAQ, $GUI_DISABLE)
+GUICtrlSetState($g_hChkSXGW, $GUI_DISABLE)
+GUICtrlSetState($g_hTxtMaxXPtoGain, $GUI_DISABLE)
+EndIf
+EndFunc
+Func chkEnableSuperXP2()
+$g_bEnableSuperXP =(GUICtrlRead($g_hChkEnableSuperXP) = $GUI_CHECKED)
+$g_bSkipZoomOutXP =(GUICtrlRead($g_hChkSkipZoomOutXP) = $GUI_CHECKED)
+$g_bFastGoblinXP =(GUICtrlRead($g_hChkFastGoblinXP) = $GUI_CHECKED)
+$g_bSkipDragToEndXP =(GUICtrlRead($g_hChkSkipDragToEndXP) = $GUI_CHECKED)
+$g_irbSXTraining = GUICtrlRead($rbSXTraining) = $GUI_CHECKED ? 1 : 2
+$g_bSXBK =(GUICtrlRead($g_hChkSXBK) = $GUI_CHECKED) ? $eHeroKing : $eHeroNone
+$g_bSXAQ =(GUICtrlRead($g_hChkSXAQ) = $GUI_CHECKED) ? $eHeroQueen : $eHeroNone
+$g_bSXGW =(GUICtrlRead($g_hChkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
+$g_iTxtMaxXPtoGain = Int(GUICtrlRead($g_hTxtMaxXPtoGain))
+chkEnableSuperXP()
+EndFunc
+Func MainSuperXPHandler()
+If Not $g_bEnableSuperXP Then Return
+If $g_bDebugSetlog Or $g_bDebugSX Then SetDebugLog("Begin MainSuperXPHandler, $g_irbSXTraining=" & $g_irbSXTraining & ", $IsFullArmywithHeroesAndSpells=" & $g_bIsFullArmywithHeroesAndSpells, $COLOR_DEBUG)
+If $g_irbSXTraining = 1 And $g_bIsFullArmywithHeroesAndSpells = True Then Return
+$g_iTxtXPRunTime = _NowCalc()
+If $g_iGainedXP >= $g_iTxtMaxXPtoGain Then
+SetLog("You have Max XP to Gain GoblinXP", $COLOR_DEBUG)
+If $g_bDebugSX Then SetDebugLog("$g_iGainedXP = " & $g_iGainedXP & "|$g_iTxtMaxXPtoGain = " & $g_iTxtMaxXPtoGain, $COLOR_DEBUG)
+$g_bEnableSuperXP = False
+GUICtrlSetState($g_hChkEnableSuperXP, $GUI_UNCHECKED)
+Return
+EndIf
+If Not WaitForMain() Then
+SetLog("Cannot get in Main Screen!! Exiting SuperXP", $COLOR_RED)
+Return False
+EndIf
+$g_aiCurrentLoot[$eLootTrophy] = getTrophyMainScreen($aTrophies[0], $aTrophies[1])
+If $g_bDebugSetlog Then SetDebugLog("Current Trophy Count: " & $g_aiCurrentLoot, $COLOR_DEBUG)
+If Number($g_aiCurrentLoot) > Number($g_iDropTrophyMax) Then Return
+Local $aHeroResult = getArmyHeroCount(True, True)
+If $aHeroResult = @error And @error > 0 Then SetLog("Error while getting hero count, #" & @error, $COLOR_DEBUG)
+If Not WaitForMain() Then
+SetLog("Cannot get in Main Screen!! Exiting SuperXP", $COLOR_RED)
+Return False
+EndIf
+$g_canGainXP =($g_iHeroAvailable <> $eHeroNone And(IIf($g_bSXBK = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroKing) = $eHeroKing) Or IIf($g_bSXAQ = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroQueen) = $eHeroQueen) Or IIf($g_bSXGW = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroWarden) = $eHeroWarden) And IIf($g_irbSXTraining = 1, $g_bIsFullArmywithHeroesAndSpells = False, True) And Number($g_iGainedXP) < Number($g_iTxtMaxXPtoGain)))
+If $g_bDebugSX Then SetDebugLog("$g_iHeroAvailable = " & $g_iHeroAvailable)
+If $g_bDebugSX Then SetDebugLog("BK: " & $g_bSXBK & ", AQ: " & $g_bSXAQ & ", GW: " & $g_bSXGW)
+If $g_bDebugSX Then SetDebugLog("$canGainXP = " & $g_canGainXP & @CRLF & "1: " & String(IIf($g_bSXBK = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroKing) = $eHeroKing)) & ", 2: " & String(IIf($g_bSXAQ = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroQueen) = $eHeroQueen) & "|" & BitAND($g_iHeroAvailable, $eHeroQueen)) & ", 3: " & String(IIf($g_bSXGW = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroWarden) = $eHeroWarden) & "|" & BitAND($g_iHeroAvailable, $eHeroWarden)) & ", 4: " &($g_iHeroAvailable <> $eHeroNone) & ", 5: " & String(IIf($g_irbSXTraining = 1, $g_bIsFullArmywithHeroesAndSpells = False, True)) & ", 6: " & String(Number($g_iGainedXP) < Number($g_iTxtMaxXPtoGain)))
+If Not $g_canGainXP Then Return
+If $g_iStartXP = 0 Or $g_iStartXP = "" Then
+$g_iStartXP = GetCurXP()
+SXSetXP("S")
+EndIf
+Local $CurrentXPgain = 0
+While $g_canGainXP
+If Not WaitForMain() Then
+SetLog("Cannot get in Main Screen!! Exiting SuperXP", $COLOR_RED)
+Return False
+EndIf
+If $g_iGainedXP >= $g_iTxtMaxXPtoGain And Not $g_bFastGoblinXP Then
+$g_canGainXP = False
+SetLog("You have Max XP to Gain GoblinXP", $COLOR_DEBUG)
+If $g_bDebugSX Then SetDebugLog("$g_iGainedXP = " & $g_iGainedXP & "|$g_iTxtMaxXPtoGain = " & $g_iTxtMaxXPtoGain, $COLOR_DEBUG)
+$g_bEnableSuperXP = False
+GUICtrlSetState($g_hChkEnableSuperXP, $GUI_UNCHECKED)
+ExitLoop
+EndIf
+SetLog("Attacking to Goblin Picnic - GoblinXP", $COLOR_BLUE)
+If Not $g_bRunState Then Return
+If Not OpenGoblinPicnic() Then
+SafeReturnSX()
+Return False
+EndIf
+If Not $g_bRunState Then Return
+Local $rAttackSuperXP = AttackSuperXP()
+If $rAttackSuperXP Then
+If Not $g_bRunState Then Return
+WaitToFinishSuperXP()
+EndIf
+If Not $g_bRunState Then Return
+SetLog("Attack Finished - GoblinXP", $COLOR_GREEN)
+If $rAttackSuperXP Then AttackFinishedSX()
+If Not $g_canGainXP Then ExitLoop
+$CurrentXPgain += 5
+If Not SkipDonateNearFullTroops(False, $aHeroResult) And BalanceDonRec(False) Then
+DonateCC(True)
+EndIf
+If Not $g_bSkipZoomOutXP Then
+checkMainScreen(False)
+If IsMainPage() Then Zoomout()
+EndIf
+If $g_irbSXTraining = 1 Then CheckForFullArmy()
+$g_canGainXP =($g_iHeroAvailable <> $eHeroNone And(IIf($g_bSXBK = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroKing) = $eHeroKing) Or IIf($g_bSXAQ = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroQueen) = $eHeroQueen) Or IIf($g_bSXGW = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroWarden) = $eHeroWarden) And IIf($g_irbSXTraining = 1, $g_bIsFullArmywithHeroesAndSpells = False, True) And $g_bEnableSuperXP = True And Number($g_iGainedXP) < Number($g_iTxtMaxXPtoGain)))
+If ProfileSwitchAccountEnabled() And $g_canGainXP And $CurrentXPgain >= 50 And Not $g_bFastGoblinXP Then
+SetLog("Switch Account is enable let's check it", $COLOR_GREEN)
+ExitLoop
+EndIf
+If $g_bDebugSX Then SetDebugLog("$g_iHeroAvailable = " & $g_iHeroAvailable)
+If $g_bDebugSX Then SetDebugLog("BK: " & $g_bSXBK & ", AQ: " & $g_bSXAQ & ", GW: " & $g_bSXGW)
+If $g_bDebugSX Then SetDebugLog("While|$g_canGainXP = " & $g_canGainXP & @CRLF & "1: " & String(IIf($g_bSXBK = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroKing) = $eHeroKing)) & ", 2: " & String(IIf($g_bSXAQ = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroQueen) = $eHeroQueen)) & ", 3: " & String(IIf($g_bSXGW = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroWarden) = $eHeroWarden)) & ", 4: " &($g_iHeroAvailable <> $eHeroNone) & ", 5: " & String(IIf($g_irbSXTraining = 1, $g_bIsFullArmywithHeroesAndSpells = False, True)) & ", 6: " & String($g_bEnableSuperXP = True) & ", 7: " & String(Number($g_iGainedXP) < Number($g_iTxtMaxXPtoGain)))
+WEnd
+EndFunc
+Func CheckForFullArmy()
+If $g_bDebugSX Then SetDebugLog("SX|CheckForFullArmy", $COLOR_PURPLE)
+CheckIfArmyIsReady()
+$g_bCanRequestCC = _ColorCheck(_GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1], True), Hex($aRequestTroopsAO[2], 6), $aRequestTroopsAO[5])
+If $g_bCanRequestCC Then
+If $g_bUseCCBalanced Then
+If Number($g_iTroopsDonated) / Number($g_iTroopsReceived) >= Number($g_iCCDonated) / Number($g_iCCReceived) Then
+RequestCC()
+EndIf
+Else
+RequestCC()
+EndIf
+EndIf
+If($g_iCommandStop = 3 Or $g_iCommandStop = 0) And $g_bFullArmy Then
+SetLog("You are in halt attack mode and your Army is prepared!", $COLOR_DEBUG)
+If $g_bFirstStart Then $g_bFirstStart = False
+Return
+EndIf
+If $g_bDebugSX Then SetDebugLog("$g_bIsFullArmywithHeroesAndSpells: " & $g_bIsFullArmywithHeroesAndSpells)
+If $g_bDebugSX Then SetDebugLog("1 Pixel : " & _GetPixelColor(391, 126, True))
+If $g_bDebugSX Then SetDebugLog("2 Pixel : " & _GetPixelColor(587, 126, True))
+If Not $g_bIsFullArmywithHeroesAndSpells And((Not $g_bFullArmy And _ColorCheck(_GetPixelColor(391, 126, True), Hex(0x605C4C, 6), 15)) Or(Not $g_bFullArmySpells And _ColorCheck(_GetPixelColor(587, 126, True), Hex(0x605C4D, 6), 15))) Then
+If $g_bDebugSX Then SetDebugLog("SX|CFFA TrainSystem Condi. #1")
+TrainSystem()
+ElseIf $g_bIsFullArmywithHeroesAndSpells And $g_bEnableSuperXP And $g_irbSXTraining = 1 Then
+If $g_bDebugSX Then SetDebugLog("SX|CFFA TrainSystem Condi. #2")
+TrainSystem()
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|CheckForFullArmy Finished", $COLOR_PURPLE)
+EndFunc
+Func SafeReturnSX()
+If $g_bDebugSX Then SetDebugLog("SX|SafeReturn", $COLOR_PURPLE)
+Local $bObstacleResult = checkObstacles(False)
+If $g_bDebugSetLog Then SetDebugLog("CheckObstacles Result = " & $bObstacleResult, $COLOR_DEBUG)
+If(Not $bObstacleResult And $g_bMinorObstacle) Then
+$g_bMinorObstacle = False
+ElseIf(Not $bObstacleResult And Not $g_bMinorObstacle) Then
+RestartAndroidCoC()
+Else
+$g_bRestart = True
+EndIf
+$g_canGainXP = False
+If IsMainPage() Then Return True
+Local $rExit = False
+If IsInAttackSuperXP() Then
+$rExit = ReturnHomeSuperXP()
+ElseIf IsInSPPage() Then
+$rExit = ExitSPPage()
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|SafeReturn=" & $rExit)
+Return $rExit
+EndFunc
+Func ExitSPPage()
+If $g_bDebugSX Then SetDebugLog("SX|ExitSPPage", $COLOR_PURPLE)
+Click(822, 32, 1, 0, "#0152")
+Local $Counter = 0
+While Not(IsMainPage())
+If _Sleep(50) Then Return False
+$Counter += 1
+If $Counter >= 200 Then ExitLoop
+WEnd
+If $Counter >= 200 Then
+SetLog("Cannot Exit Single Player Page", $COLOR_RED)
+Return False
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|ExitSPPage Finished", $COLOR_PURPLE)
+Return True
+EndFunc
+Func AttackFinishedSX()
+If $g_bDebugSX Then SetDebugLog("SX|AttackFinished", $COLOR_PURPLE)
+$g_iCurrentXP = GetCurXP("Current")
+$g_iGainedXP += 5
+SXSetXP()
+$g_ActivatedHeroes[0] = False
+$g_ActivatedHeroes[1] = False
+$g_ActivatedHeroes[2] = False
+If $g_bDebugSX Then SetDebugLog("SX|AttackFinished Finished", $COLOR_PURPLE)
+EndFunc
+Func GetCurXP($returnVal = "Current")
+If $g_bFastGoblinXP Then Return
+If $g_bDebugSX Then SetDebugLog("SX|GetCurXP", $COLOR_PURPLE)
+Local $ToReturn = "0#0"
+Click(135, 30, 1)
+If _Sleep(2000) Then Return
+Local $XPOCRResult = getCurrentXP(80, 60)
+If $g_bDebugSX Then SetDebugLog("SX|GetCurXP $XPOCRResult: " & $XPOCRResult, $COLOR_PURPLE)
+ClickP($aAway, 1, 0, "#0346")
+If $returnVal = "" Then
+$ToReturn = $XPOCRResult
+ElseIf StringInStr($returnVal, "Cur") And StringInStr($XPOCRResult, "#") Then
+$ToReturn = StringSplit($XPOCRResult, "#", 2)[0]
+ElseIf StringInStr($returnVal, "Tot") And StringInStr($XPOCRResult, "#") Then
+$ToReturn = StringSplit($XPOCRResult, "#", 2)[1]
+Else
+$ToReturn = $XPOCRResult
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|GetCurXP Finished", $COLOR_PURPLE)
+Return $ToReturn
+EndFunc
+Func WaitToFinishSuperXP()
+If $g_bDebugSX Then SetDebugLog("SX|WaitToFinishSuperXP", $COLOR_PURPLE)
+Local $BdTimer = TimerInit()
+While 1
+If CheckEarnedStars($g_minStarsToEnd) = True Then ExitLoop
+If _Sleep(70) Then ExitLoop
+If Not $g_bRunState Then ExitLoop
+If IsInAttackSuperXP() = False Then ExitLoop
+ActivateHeroesByDelay($BdTimer)
+If TimerDiff($BdTimer) >= 120000 Then
+If $g_bDebugSX Then SetDebugLog("SX|WaitToFinishSuperXP TimeOut", $COLOR_RED)
+SafeReturnSX()
+ExitLoop
+EndIf
+WEnd
+If $g_bDebugSX Then SetDebugLog("SX|WaitToFinishSuperXP Finished", $COLOR_PURPLE)
+Return True
+EndFunc
+Func ActivateHeroesByDelay($hBdTimer)
+Local $QueenDelay = $g_BdGoblinPicnic[0]
+If StringInStr($QueenDelay, "-") > 0 Then $QueenDelay = Random(Number(StringSplit($QueenDelay, "-", 2)[0]), Number(StringSplit($QueenDelay, "-", 2)[1]), 1)
+Local $WardenDelay = $g_BdGoblinPicnic[1]
+If StringInStr($WardenDelay, "-") > 0 Then $WardenDelay = Random(Number(StringSplit($WardenDelay, "-", 2)[0]), Number(StringSplit($WardenDelay, "-", 2)[1]), 1)
+Local $KingDelay = $g_BdGoblinPicnic[2]
+If StringInStr($KingDelay, "-") > 0 Then $KingDelay = Random(Number(StringSplit($KingDelay, "-", 2)[0]), Number(StringSplit($KingDelay, "-", 2)[1]), 1)
+Local $tDiff = TimerDiff($hBdTimer)
+If $tDiff >= $QueenDelay And $QueenDelay <> 0 And $g_ActivatedHeroes[0] = False And $g_iQueenSlot <> -1 And $g_bSXAQ <> $eHeroNone Then
+If $g_bDebugSX Then SetDebugLog("SX|Activating Queen Ability After " & Round($tDiff, 3) & "/" & $QueenDelay & " ms(s)")
+SelectDropTroop($g_iQueenSlot)
+$g_ActivatedHeroes[0] = True
+EndIf
+If $tDiff >= $WardenDelay And $WardenDelay <> 0 And $g_ActivatedHeroes[1] = False And $g_iWardenSlot <> -1 And $g_bSXGW <> $eHeroNone Then
+If $g_bDebugSX Then SetDebugLog("SX|Activating Warden Ability After " & Round($tDiff, 3) & "/" & $WardenDelay & " ms(s)")
+SelectDropTroop($g_iWardenSlot)
+$g_ActivatedHeroes[1] = True
+EndIf
+If $tDiff >= $KingDelay And $KingDelay <> 0 And $g_ActivatedHeroes[2] = False And $g_iKingSlot <> -1 And $g_bSXBK <> $eHeroNone Then
+If $g_bDebugSX Then SetDebugLog("SX|Activating King Ability After " & Round($tDiff, 3) & "/" & $KingDelay & " ms(s)")
+SelectDropTroop($g_iKingSlot)
+$g_ActivatedHeroes[2] = True
+EndIf
+EndFunc
+Func IsInAttackSuperXP()
+If $g_bDebugSX Then SetDebugLog("SX|IsInAttackSuperXP", $COLOR_PURPLE)
+If _ColorCheck(_GetPixelColor(60, 576, True), Hex(0x000000, 6), 20) Then Return True
+If $g_bDebugSX Then SetDebugLog("SX|IsInAttackSuperXP=FALSE")
+Return False
+EndFunc
+Func IsInSPPage()
+If $g_bDebugSX Then SetDebugLog("SX|IsInSPPage", $COLOR_PURPLE)
+Local $rColCheck = _ColorCheck(_GetPixelColor(316, 34, True), Hex(0xFFFFFF, 6), 20)
+If $g_bDebugSX Then SetDebugLog("SX|IsInSPPage=" & $rColCheck)
+Return $rColCheck
+EndFunc
+Func AttackSuperXP()
+If $g_bDebugSX Then SetDebugLog("SX|AttackSuperXP", $COLOR_PURPLE)
+If WaitForNoClouds() = False Then
+If $g_bDebugSX Then SetDebugLog("SX|ASX|Wait For Clouds = False")
+$g_bIsClientSyncError = False
+Return False
+EndIf
+PrepareSuperXPAttack()
+If CheckAvailableHeroes() = False Then
+SetLog("No heroes available to attack with", $COLOR_ORANGE)
+ReturnHomeSuperXP()
+Return False
+EndIf
+DropAQSuperXP($g_BdGoblinPicnic[0] = 0)
+If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+DropGWSuperXP($g_BdGoblinPicnic[1] = 0)
+If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+DropBKSuperXP($g_BdGoblinPicnic[2] = 0)
+If $g_bDebugSX Then SetDebugLog("SX|AttackSuperXP Finished", $COLOR_PURPLE)
+Return True
+EndFunc
+Func CheckAvailableHeroes()
+$g_canGainXP =((IIf($g_bSXBK = $eHeroNone, False, $g_iKingSlot <> -1) Or IIf($g_bSXAQ = $eHeroNone, False, $g_iQueenSlot <> -1) Or IIf($g_bSXGW = $eHeroNone, False, $g_iWardenSlot <> -1)) And IIf($g_irbSXTraining = 1, $g_bIsFullArmywithHeroesAndSpells = False, True))
+If $g_bDebugSX Then SetDebugLog("SX|CheckAvailableHeroes=" & $g_canGainXP)
+Return $g_canGainXP
+EndFunc
+Func DropAQSuperXP($bActivateASAP = True)
+If $g_iQueenSlot <> -1 And $g_bSXAQ <> $eHeroNone Then
+SetLog("Deploying Queen", $COLOR_BLUE)
+SelectDropTroop($g_iQueenSlot)
+If _Sleep($DELAYDROPSuperXP1) Then Return False
+If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+ClickP(GetDropPointSuperXP(1), 1, 0, "#0000")
+If _Sleep($DELAYDROPSuperXP3) Then Return False
+If $bActivateASAP = True Then
+If IsAttackPage() Then
+SelectDropTroop($g_iQueenSlot)
+$g_ActivatedHeroes[0] = True
+EndIf
+EndIf
+If _Sleep($DELAYDROPSuperXP3) Then Return False
+EndIf
+EndFunc
+Func DropGWSuperXP($bActivateASAP = True)
+If $g_iWardenSlot <> -1 And $g_bSXGW <> $eHeroNone Then
+SetLog("Deploying Warden", $COLOR_BLUE)
+SelectDropTroop($g_iWardenSlot)
+If _Sleep($DELAYDROPSuperXP1) Then Return False
+If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+ClickP(GetDropPointSuperXP(2), 1, 0, "#0180")
+If _Sleep($DELAYDROPSuperXP3) Then Return False
+If $bActivateASAP = True Then
+If IsAttackPage() Then
+SelectDropTroop($g_iWardenSlot)
+$g_ActivatedHeroes[1] = True
+EndIf
+EndIf
+If _Sleep($DELAYDROPSuperXP3) Then Return False
+EndIf
+EndFunc
+Func DropBKSuperXP($bActivateASAP = True)
+If $g_iKingSlot <> -1 And $g_bSXBK <> $eHeroNone Then
+SetLog("Deploying King", $COLOR_BLUE)
+SelectDropTroop($g_iKingSlot)
+If _Sleep($DELAYDROPSuperXP1) Then Return False
+If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+ClickP(GetDropPointSuperXP(3), 1, 0, "#0178")
+If _Sleep($DELAYDROPSuperXP3) Then Return False
+If $bActivateASAP = True Then
+If IsAttackPage() Then
+SelectDropTroop($g_iKingSlot)
+$g_ActivatedHeroes[2] = True
+EndIf
+EndIf
+If _Sleep($DELAYDROPSuperXP3) Then Return False
+EndIf
+EndFunc
+Func GetDropPointSuperXP($iHero)
+Local $ToReturn[2] = [-1, -1]
+Local $Hero = $iHero - 1
+Local $rDpGoblinPicnic[4] = [0, 0, 0, 0]
+If $iHero = 0 Or $iHero > 3 Then $Hero = 0
+$rDpGoblinPicnic[0] = $g_DpGoblinPicnic[$Hero][0]
+$rDpGoblinPicnic[1] = $g_DpGoblinPicnic[$Hero][1]
+$rDpGoblinPicnic[2] = $g_DpGoblinPicnic[$Hero][2]
+$rDpGoblinPicnic[3] = $g_DpGoblinPicnic[$Hero][3]
+$ToReturn[0] = Random($rDpGoblinPicnic[0] - $rDpGoblinPicnic[2], $rDpGoblinPicnic[0] + $rDpGoblinPicnic[2], 1)
+$ToReturn[1] = Random($rDpGoblinPicnic[1] - $rDpGoblinPicnic[3], $rDpGoblinPicnic[1] + $rDpGoblinPicnic[3], 1)
+Return $ToReturn
+EndFunc
+Func PrepareSuperXPAttack()
+If $g_bDebugSX Then SetDebugLog("SX|PrepareSuperXPAttack", $COLOR_PURPLE)
+Local $troopsnumber = 0
+If _Sleep($DELAYPREPAREATTACK1) Then Return
+Local $avAttackBar = GetAttackBar()
+For $i = 0 To UBound($g_avAttackTroops, 1) - 1
+Local $bClearSlot = True
+Local $bDropped = Default
+Local $iTroopIndex = $g_avAttackTroops[$i][0]
+Switch $iTroopIndex
+Case $eKing
+$bDropped = $g_bDropKing
+Case $eQueen
+$bDropped = $g_bDropQueen
+Case $eWarden
+$bDropped = $g_bDropWarden
+EndSwitch
+If $bDropped = False Then
+SetDebugLog("Discard updating hero " & GetTroopName($g_avAttackTroops[$i][0]) & " because not dropped yet")
+$troopsnumber += $g_avAttackTroops[$i][2]
+ContinueLoop
+EndIf
+If $bDropped = True Then
+SetDebugLog("Discard updating hero " & GetTroopName($g_avAttackTroops[$i][0]) & " because already dropped")
+$troopsnumber += $g_avAttackTroops[$i][2]
+ContinueLoop
+EndIf
+If UBound($avAttackBar, 1) > 0 Then
+For $j = 0 To UBound($avAttackBar, 1) - 1
+If $avAttackBar[$j][1] = $i Then
+$bClearSlot = False
+Local $sLogExtension = ""
+Local $iTroopIndex = Number($avAttackBar[$j][0])
+$g_avAttackTroops[$i][0] = $iTroopIndex
+$g_avAttackTroops[$i][1] = Number($avAttackBar[$j][2])
+$g_avAttackTroops[$i][2] = Number($avAttackBar[$j][3])
+$g_avAttackTroops[$i][3] = Number($avAttackBar[$j][4])
+$g_avAttackTroops[$i][4] = Number($avAttackBar[$j][5])
+$g_avAttackTroops[$i][5] = Number($avAttackBar[$j][6])
+$troopsnumber += $avAttackBar[$j][2]
+Local $sDebugText = $g_bDebugSetlog ? " (X:" & $avAttackBar[$j][3] & "|Y:" & $avAttackBar[$j][4] & "|OCR-X:" & $avAttackBar[$j][5] & "|OCR-Y:" & $avAttackBar[$j][6] & ")" : ""
+SetLog($avAttackBar[$j][1] & ": " & $avAttackBar[$j][2] & " " & GetTroopName($avAttackBar[$j][0], $avAttackBar[$j][2]) & $sLogExtension & $sDebugText, $COLOR_SUCCESS)
+ExitLoop
+EndIf
+Next
+EndIf
+If $bClearSlot Then
+$g_avAttackTroops[$i][0] = -1
+$g_avAttackTroops[$i][1] = 0
+$g_avAttackTroops[$i][2] = 0
+$g_avAttackTroops[$i][3] = 0
+$g_avAttackTroops[$i][4] = 0
+$g_avAttackTroops[$i][5] = 0
+EndIf
+Next
+SetSlotSpecialTroops()
+If $g_bDebugSX Then SetDebugLog("SX|PrepareSuperXPAttack Finished", $COLOR_PURPLE)
+Return $troopsnumber
+EndFunc
+Func CheckEarnedStars($ExitWhileHave = 0)
+If $g_bDebugSX Then SetDebugLog("SX|CheckEarnedStars", $COLOR_PURPLE)
+Local $starsearned = 0
+If $ExitWhileHave = 1 Then
+If _ColorCheck(_GetPixelColor(455, 405, True), Hex(0xD0D8D0, 6), 20) Then
+SetLog("1 Star earned", $COLOR_GREEN)
+If ReturnHomeSuperXP() = False Then CloseCoC(True)
+Return True
+EndIf
+EndIf
+If _ColorCheck(_GetPixelColor(714, 594, True), Hex(0xCCCFC8, 6), 20) Then $starsearned += 1
+If $ExitWhileHave <> 0 And $starsearned >= $ExitWhileHave Then
+SetLog($starsearned & " Star earned", $COLOR_GREEN)
+If ReturnHomeSuperXP() = False Then CloseCoC(True)
+Return True
+EndIf
+If $ExitWhileHave >= 2 Then
+If _ColorCheck(_GetPixelColor(740, 583, True), Hex(0xC6CBC5, 6), 20) Then $starsearned += 1
+If $ExitWhileHave <> 0 And $starsearned >= $ExitWhileHave Then
+SetLog($starsearned & " Stars earned", $COLOR_GREEN)
+If ReturnHomeSuperXP() = False Then CloseCoC(True)
+Return True
+EndIf
+If $ExitWhileHave >= 3 Then
+If _ColorCheck(_GetPixelColor(764, 583, True), Hex(0xBEC5BE, 6), 20) Then $starsearned += 1
+If $ExitWhileHave <> 0 And $starsearned >= $ExitWhileHave Then
+SetLog($starsearned & " Stars earned", $COLOR_GREEN)
+If ReturnHomeSuperXP() = False Then CloseCoC(True)
+Return True
+EndIf
+EndIf
+EndIf
+Return False
+EndFunc
+Func ReturnHomeSuperXP()
+Local Const $EndBattleText[4] = [29, 565 + $g_iMidOffsetY, 0xFFFFFF, 10], $EndBattle2Text[4] = [377, 244 + $g_iMidOffsetY, 0xFFFFFF, 20], $ReturnHomeText[4] = [428, 545 + $g_iMidOffsetY, 0xFFFFFF, 10]
+Local Const $DELAYEachCheck = 70, $iRetryLimits = 429
+Local $Counter = 0
+$g_iKingSlot = -1
+$g_iQueenSlot = -1
+$g_iWardenSlot = -1
+SetLog("Returning Home - SuperXP", $COLOR_BLUE)
+While _ColorCheck(_GetPixelColor($EndBattleText[0], $EndBattleText[1], True), Hex($EndBattleText[2], 6), $EndBattleText[3]) = False
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|1-Loop #" & $Counter, $COLOR_DEBUG)
+If _Sleep($DELAYEachCheck) Then Return False
+$Counter += 1
+If $Counter >= $iRetryLimits Then
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|First EndBattle Button not found")
+Return False
+EndIf
+WEnd
+Click(Random($EndBattleText[0] - 5, $EndBattleText[0] + 5, 1), Random($EndBattleText[1] - 5, $EndBattleText[1] + 5, 1))
+If _Sleep($DELAYEachCheck) Then Return False
+$Counter = 0
+While _ColorCheck(_GetPixelColor($EndBattle2Text[0], $EndBattle2Text[1], True), Hex($EndBattle2Text[2], 6), $EndBattle2Text[3]) = False
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|2-Loop #" & $Counter, $COLOR_DEBUG)
+If _Sleep($DELAYEachCheck) Then Return False
+$Counter += 1
+If $Counter >= $iRetryLimits Then
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|Second EndBattle Button not found")
+Return False
+EndIf
+WEnd
+Click(Random(455, 565, 1), Random(412, 447, 1))
+If _Sleep($DELAYEachCheck) Then Return False
+$Counter = 0
+While _ColorCheck(_GetPixelColor($ReturnHomeText[0], $ReturnHomeText[1], True), Hex($ReturnHomeText[2], 6), $ReturnHomeText[3]) = False
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|3-Loop #" & $Counter, $COLOR_DEBUG)
+If _Sleep($DELAYEachCheck) Then Return False
+$Counter += 1
+If $Counter >= $iRetryLimits Then
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|Last Return Home Button not found")
+Return False
+EndIf
+WEnd
+Click(Random($ReturnHomeText[0] - 5, $ReturnHomeText[0] + 5, 1), Random($ReturnHomeText[1] - 5, $ReturnHomeText[1] + 5, 1))
+If _Sleep($DELAYReturnHome2) Then Return
+$Counter = 0
+While 1
+If $g_bDebugSX Then SetDebugLog("SX|RHSX|4-Loop #" & $Counter, $COLOR_DEBUG)
+If _Sleep($DELAYReturnHome4) Then Return
+If IsMainPage(1) Then
+_GUICtrlEdit_SetText($g_hTxtLog, _PadStringCenter(" BOT LOG ", 71, "="))
+_GUICtrlRichEdit_SetFont($g_hTxtLog, 6, "Lucida Console")
+_GUICtrlRichEdit_AppendTextColor($g_hTxtLog, "" & @CRLF, _ColorConvert($Color_Black))
+Return True
+EndIf
+$Counter += 1
+If $Counter >= 50 Or isProblemAffect(True) Then
+SetLog("Cannot return home.", $COLOR_RED)
+checkMainScreen(True)
+Return True
+EndIf
+WEnd
+EndFunc
+Func WaitForNoClouds()
+If $g_bDebugSX Then SetDebugLog("SX|WaitForNoClouds", $COLOR_PURPLE)
+Local $i = 0
+ForceCaptureRegion()
+While _ColorCheck(_GetPixelColor(60, 576, True), Hex(0x000000, 6), 20) = False
+If _Sleep($DELAYGetResources1) Then Return False
+$i += 1
+If $i >= 120 Or isProblemAffect(True) Then
+$g_bIsClientSyncError = True
+checkMainScreen()
+If $g_bRestart Then
+$g_iNbrOfOoS += 1
+UpdateStats()
+SetLog("Disconnected At Search Clouds - SuperXP", $COLOR_RED)
+PushMsg("OoSResources")
+Else
+SetLog("Stuck At Search Clouds, Restarting CoC and Bot... - SuperXP", $COLOR_RED)
+$g_bIsClientSyncError = False
+CloseCoC(True)
+EndIf
+Return False
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|WFNC|Loop #" & $i)
+ForceCaptureRegion()
+WEnd
+If $g_bDebugSX Then SetDebugLog("SX|WaitFornoClouds Finished", $COLOR_PURPLE)
+Return True
+EndFunc
+Func OpenGoblinPicnic()
+If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinPicnic", $COLOR_PURPLE)
+Local $rOpenSinglePlayerPage = OpenSinglePlayerPage()
+If $rOpenSinglePlayerPage = False Then
+SetLog("Failed to open Attack page, Single Player", $COLOR_RED)
+SafeReturnSX()
+Return False
+EndIf
+Local $rDragToGoblinPicnic = DragToGoblinPicnic()
+If $rDragToGoblinPicnic = False Then
+SetLog("Failed to find Goblin Picnic", $COLOR_RED)
+DebugImageSave("SuperXP_", True, "png", True, String(Random(5, 100, 1)) & ", " & String(Random(5, 100, 1)) & ", " & String(Random(5, 100, 1)))
+SafeReturnSX()
+Return False
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|OGP|Clicking On GP Text: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1])
+Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1])
+Local $Counter = 0
+While _ColorCheck(_GetPixelColor(621, 665, True), Hex(0xFFFFFF, 6), 10) = False Or _ColorCheck(_GetPixelColor(663, 662, True), Hex(0xFFFFFF, 6), 10) = False
+If _Sleep(50) Then ExitLoop
+$Counter += 1
+If $Counter > 200 Then
+SetLog("Available loot info didn't Displayed!", $COLOR_RED)
+SafeReturnSX()
+Return False
+EndIf
+WEnd
+$Counter = 0
+While _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 83, True), Hex(0xE04A00, 6), 30) = False
+If _Sleep(50) Then ExitLoop
+Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1])
+$Counter += 1
+If $Counter > 200 Then
+If IsGoblinPicnicLocked($rDragToGoblinPicnic) = True Then
+SetLog("Are you kidding me? Goblin Picnic is Locked", $COLOR_RED)
+DisableSX()
+SafeReturnSX()
+Return False
+EndIf
+SetLog("Attack Button Cannot be Verified", $COLOR_RED)
+DebugImageSave("SuperXP_", True, "png", True, String(Number($rDragToGoblinPicnic[0], 2) & ", " & Number($rDragToGoblinPicnic[1], 2) & @CRLF & Number($rDragToGoblinPicnic[0], 2) & ", " & Number($rDragToGoblinPicnic[1] + 83, 2)))
+SafeReturnSX()
+Return False
+EndIf
+WEnd
+If $g_bDebugSX Then SetDebugLog("SX|OGP|Clicking On Attack Btn: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1] + 78)
+Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 78)
+$Counter = 0
+While IsInSPPage()
+If _Sleep(50) Then ExitLoop
+$Counter += 1
+If $Counter > 150 Then
+SetLog("Still in SinglePlayer Page!! Something Strange Happened", $COLOR_RED)
+$g_canGainXP = False
+Return False
+EndIf
+WEnd
+Local $rIsGoblinPicnic = IsInGoblinPicnic()
+If $rIsGoblinPicnic = False Then
+SetLog("Looks like we're not in Goblin Picnic", $COLOR_RED)
+If _CheckPixel($aCancelFight, $g_bNoCapturePixel) Or _CheckPixel($aCancelFight2, $g_bNoCapturePixel) Then
+If $g_bDebugSetlog Then SetDebugLog("#cOb# Clicks X 2, $aCancelFight", $COLOR_BLUE)
+PureClickP($aCancelFight, 1, 0, "#0135")
+If _Sleep($DELAYcheckObstacles1) Then Return False
+SafeReturnSX()
+Return False
+EndIf
+SafeReturnSX()
+Return False
+EndIf
+SetLog("Now we're in Goblin Picnic Base", $COLOR_GREEN)
+Return True
+EndFunc
+Func IsInGoblinPicnic($Retry = True, $maxRetry = 30, $timeBetweenEachRet = 300)
+If $g_bDebugSX Then SetDebugLog("SX|IsInGoblinPicnic", $COLOR_PURPLE)
+Local $Found = False
+Local $Counter = 0
+Local $directory = @ScriptDir & "\imgxml\Resources\SuperXP\Verify"
+Local $result = ""
+While $Found = False
+If _Sleep($timeBetweenEachRet) Then Return False
+If Not IsInAttackSuperXP() Then
+$Counter += 1
+If $Counter = $maxRetry Then
+$Found = False
+ExitLoop
+EndIf
+ContinueLoop
+EndIf
+$result = multiMatchesPixelOnly($directory, 0, "FV", "FV", "", 0, 1000, 0, 0, 111, 31)
+If $g_bDebugSX Then SetDebugLog("SX|IGP|$result=" & $result)
+$Found =(StringLen($result) > 2 And StringInStr($result, ","))
+$Counter += 1
+If $Counter = $maxRetry Then
+$Found = False
+ExitLoop
+EndIf
+WEnd
+If $g_bDebugSX Then SetDebugLog("SX|IsGoblinPicnic=" & $Found, $COLOR_PURPLE)
+Return $Found
+EndFunc
+Func IsGoblinPicnicLocked($FoundCoord)
+If $g_bDebugSX Then SetDebugLog("SX|IsGoblinPicnicLocked", $COLOR_PURPLE)
+Local $x = $FoundCoord[0] - 9 , $y = $FoundCoord[1] + 23, $x1 = $x + 14, $y1 = $y + 13
+Local $directory = @ScriptDir & "\imgxml\Resources\SuperXP\Locked"
+Local $result = multiMatchesPixelOnly($directory, 0, "FV", "FV", "", 0, 1000, $x, $y, $x1, $y1)
+If $g_bDebugSX Then SetDebugLog("SX|IGPL|$result=" & $result)
+Local $Found =(StringLen($result) > 2 And StringInStr($result, ","))
+If $g_bDebugSX Then SetDebugLog("SX|IGPL Return " & $Found)
+Return $Found
+EndFunc
+Func DragToGoblinPicnic()
+If $g_bDebugSX Then SetDebugLog("SX|DragToGoblinPicnic", $COLOR_PURPLE)
+Local $rIsGoblinPicnicFound = False
+Local $Counter = 0
+Local $posInSinglePlayer2 = "MIDDLE"
+Local $posInSinglePlayer = GetPositionInSinglePlayer()
+If $g_bDebugSX Then SetDebugLog("SX|DTGP|$posInSinglePlayer=" & $posInSinglePlayer)
+If $posInSinglePlayer = "MIDDLE" Then
+If $g_bDebugSX Then SetDebugLog("SX|DTGP|Pos Middle, checking for GP")
+$rIsGoblinPicnicFound = IsGoblinPicnicFound()
+If IsArray($rIsGoblinPicnicFound) Then Return $rIsGoblinPicnicFound
+If $g_bDebugSX Then SetDebugLog("SX|DTGP|Pos middle, Dragging To End")
+If $g_bSkipDragToEndXP Then
+$posInSinglePlayer = "END"
+Else
+If DragToEndSinglePlayer() = True Then $posInSinglePlayer = "END"
+EndIf
+EndIf
+If $posInSinglePlayer = "MIDDLE" Then
+If $g_bDebugSX Then SetDebugLog("SX|DTGP|Failed to Drag To End, Still middle")
+Return False
+EndIf
+Switch $posInSinglePlayer
+Case "END"
+While Not(IsArray($rIsGoblinPicnicFound))
+If $g_bDebugSX Then SetDebugLog("SX|DTGP|Drag from End Loop #" & $Counter)
+If $g_bSkipDragToEndXP Then
+ClickDrag(Random(510, 515, 1), Random(100, 105, 1), Random(510, 515, 1), Random(561, 566, 1), 100)
+Else
+ClickDrag(Random(505, 515, 1), Random(95, 105, 1), Random(505, 515, 1), Random(656, 666, 1), 100)
+EndIf
+If _Sleep(100) Then Return False
+$rIsGoblinPicnicFound = IsGoblinPicnicFound()
+If IsArray($rIsGoblinPicnicFound) Then ExitLoop
+$Counter += 1
+$posInSinglePlayer2 = GetPositionInSinglePlayer()
+If $Counter = 15 Or $posInSinglePlayer2 = "FIRST" Then ExitLoop
+WEnd
+If $Counter = 15 Or $posInSinglePlayer2 And IsArray($rIsGoblinPicnicFound) = False Then Return False
+Return $rIsGoblinPicnicFound
+Case "FIRST"
+While Not(IsArray($rIsGoblinPicnicFound))
+If $g_bDebugSX Then SetDebugLog("SX|DTGP|Drag from First Loop #" & $Counter)
+If $g_bSkipDragToEndXP Then
+ClickDrag(Random(510, 515, 1), Random(561, 566, 1), Random(510, 515, 1), Random(100, 105, 1), 100)
+Else
+ClickDrag(Random(505, 515, 1), Random(656, 666, 1), Random(505, 515, 1), Random(95, 105, 1), 100)
+EndIf
+If _Sleep(100) Then Return False
+$rIsGoblinPicnicFound = IsGoblinPicnicFound()
+If IsArray($rIsGoblinPicnicFound) Then ExitLoop
+$Counter += 1
+$posInSinglePlayer2 = GetPositionInSinglePlayer()
+If $Counter = 15 Or $posInSinglePlayer2 = "FIRST" Then ExitLoop
+WEnd
+If $Counter = 15 Or $posInSinglePlayer2 And IsArray($rIsGoblinPicnicFound) = False Then Return False
+Return $rIsGoblinPicnicFound
+EndSwitch
+EndFunc
+Func IsGoblinPicnicFound()
+If $g_bDebugSX Then SetDebugLog("SX|IsGoblinPicnicFound", $COLOR_PURPLE)
+Click(840, 230 + $g_iMidOffsetY)
+If _Sleep(50) Then Return False
+Local $directory = @ScriptDir & "\imgxml\Resources\SuperXP\Find"
+Local $result = multiMatchesPixelOnly($directory, 0, "FV", "FV", "", 0, 1000, 560, 125, 639, $g_iGAME_HEIGHT)
+If $g_bDebugSX Then SetDebugLog("SX|IGPF|$result=" & $result)
+If StringLen($result) < 3 And StringInStr($result, "|") = 0 Then
+If $g_bDebugSX Then SetDebugLog("SX|IGPF|Return False")
+Return False
+EndIf
+Local $ToReturn = ""
+If StringInStr($result, "|") > 0 Then
+$ToReturn = StringSplit(StringSplit($result, "|", 2)[0], ",", 2)
+Else
+$ToReturn = StringSplit($result, ",", 2)
+EndIf
+$ToReturn[0] += 560
+$ToReturn[1] += 125
+If $g_bDebugSX Then SetDebugLog("SX|IGPF Return $ToReturn[2] = [0]=" & $ToReturn[0] & ",[1]=" & $ToReturn[1])
+Return $ToReturn
+EndFunc
+Func DragToEndSinglePlayer()
+If $g_bDebugSX Then SetDebugLog("SX|DragToEndSinglePlayer", $COLOR_PURPLE)
+Local $rColCheckEnd = _ColorCheck(_GetPixelColor(670, 695, True,"DragToEndSinglePlayer"), Hex(0x393224, 6), 20)
+Local $Counter = 0
+While $rColCheckEnd = False
+If $g_bDebugSX Then SetDebugLog("SX|DTESP|Loop #" & $Counter)
+ClickDrag(500, 635 + $g_iMidOffsetY, 500, 60 + $g_iMidOffsetY, 100)
+$rColCheckEnd = _ColorCheck(_GetPixelColor(670, 695, True,"DragToEndSinglePlayer"), Hex(0x393224, 6), 20)
+$Counter += 1
+If $Counter = 15 Then ExitLoop
+WEnd
+If $Counter = 15 Then
+If $g_bDebugSX Then SetDebugLog("SX|DTESP|Return False")
+Return False
+EndIf
+If $g_bDebugSX Then SetDebugLog("SX|DTESP|Return True")
+Return True
+EndFunc
+Func GetPositionInSinglePlayer()
+If $g_bDebugSX Then SetDebugLog("SX|GetPositionInSinglePlayer", $COLOR_PURPLE)
+ClickP($aAway, 2, 0, "#0346")
+Local $Counter = 0
+While _ColorCheck(_GetPixelColor(621, 665, True, "GetPositionInSinglePlayer"), Hex(0xFFFFFF, 6), 10) And _ColorCheck(_GetPixelColor(663, 662, True), Hex(0xFFFFFF, 6), 10)
+If _Sleep(50) Then ExitLoop
+ClickP($aAway, 2, 0, "#0346")
+$Counter += 1
+If $Counter > 100 Then
+If $g_bDebugSX Then SetDebugLog("SX|GPISP|Available Loot Not Hidden, Returning")
+ExitLoop
+EndIf
+WEnd
+Local $rColCheckEnd = _ColorCheck(_GetPixelColor(517, 729, True, "GetPositionInSinglePlayer CheckEnd"), Hex(0x3B3426, 6), 10)
+If $rColCheckEnd Then
+If $g_bDebugSX Then SetDebugLog("SX|GPISP|Return END")
+Return "END"
+Else
+Local $rColCheckFirst = _ColorCheck(_GetPixelColor(510, 4, True, "GetPositionInSinglePlayer CheckFirst/Middle"), Hex(0x373022, 6), 10)
+If $rColCheckFirst Then
+If $g_bDebugSX Then SetDebugLog("SX|GPISP|Return FIRST")
+Return "FIRST"
+Else
+If $g_bDebugSX Then SetDebugLog("SX|GPISP|Return MIDDLE")
+Return "MIDDLE"
+EndIf
+EndIf
+EndFunc
+Func OpenSinglePlayerPage()
+If $g_bDebugSX Then SetDebugLog("SX|OpenSinglePlayerPage", $COLOR_PURPLE)
+If Not WaitForMain(True, 50, 300) Then
+If $g_bDebugSX Then SetDebugLog("SX|MainPage Not Displayed to Open SingleP")
+Return False
+EndIf
+SetLog("Going to Gain XP...", $COLOR_BLUE)
+If IsMainPage() Then
+If $g_bUseRandomClick = 0 Then
+ClickP($aAttackButton, 1, 0, "#0149")
+Else
+ClickR($aAttackButtonRND, $aAttackButton[0], $aAttackButton[1], 1, 0)
+EndIf
+EndIf
+If _Sleep(70) Then Return
+Local $j = 0
+While Not _ColorCheck(_GetPixelColor(606, 33, True), Hex(0xFFFFFF, 6), 10) And Not _ColorCheck(_GetPixelColor(804, 32, True), Hex(0xFFFFFF, 6), 10)
+If _Sleep(70) Then Return
+$j += 1
+If $j > 214 Then ExitLoop
+WEnd
+If $j > 214 Then
+SetLog("Launch attack Page Fail", $COLOR_RED)
+checkMainScreen()
+Return False
+Else
+Return True
+EndIf
+EndFunc
+Func WaitForMain($clickAway = True, $DELAYEachCheck = 50, $maxRetry = 100)
+If $clickAway Then ClickP($aAway, 2, 0, "#0346")
+Local $Counter = 0
+While Not(IsMainPage())
+If _Sleep($DELAYEachCheck) Then Return True
+If $clickAway Then ClickP($aAway, 2, 0, "#0346")
+$Counter += 1
+If $Counter > $maxRetry Then
+Return False
+EndIf
+WEnd
+Return True
+EndFunc
+Func getCurrentXP($x_start, $y_start)
+Return getOcrAndCapture("coc-ms", $x_start, $y_start, 100, 15, True)
+EndFunc
+Func multiMatchesPixelOnly($directory, $maxReturnPoints = 0, $fullCocAreas = "ECD", $redLines = "", $statFile = "", $minLevel = 0, $maxLevel = 1000, $x1 = 0, $y1 = 0, $x2 = $g_iGAME_WIDTH, $y2 = $g_iGAME_HEIGHT, $bCaptureNew = True, $xDiff = Default, $yDiff = Default, $forceReturnString = False, $saveSourceImg = False)
+Local $Result = ""
+Local $res
+If $bCaptureNew Then
+_CaptureRegion2($x1, $y1, $x2, $y2)
+$res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
+If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
+If $saveSourceImg = True Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2), @ScriptDir & "\multiMatchesPixelOnly.png")
+Local $aValue = DllCallMyBot("GetProperty", "str", "redline", "str", "")
+$redLines = $aValue[0]
+Else
+Local $hClone = CloneAreaToSearch($x1, $y1, $x2, $y2)
+$res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $hClone, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
+If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
+If $saveSourceImg = True Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($hClone), @ScriptDir & "\multiMatchesPixelOnly.png")
+Local $aValue = DllCallMyBot("GetProperty", "str", "redline", "str", "")
+$redLines = $aValue[0]
+_WinAPI_DeleteObject($hClone)
+EndIf
+If $res[0] <> "" Then
+Local $aKeys = StringSplit($res[0], "|", $STR_NOCOUNT)
+For $i = 0 To UBound($aKeys) - 1
+$Result &= RetrieveImglocProperty($aKeys[$i], "objectpoints") & "|"
+Next
+EndIf
+If StringLen($Result) > 0 Then
+If StringRight($Result, 1) = "|" Then $Result = StringLeft($Result,(StringLen($Result) - 1))
+If($xDiff <> Default) Or($yDiff <> Default) Then
+If $xDiff = Default Then $xDiff = 0
+If $yDiff = Default Then $yDiff = 0
+DelPosWithDiff($Result, $xDiff, $yDiff, True)
+Return $Result
+EndIf
+EndIf
+Return $Result
+EndFunc
+Func CloneAreaToSearch($x, $y, $x1, $y1)
+Local $hClone, $hImage, $iX, $iY, $hBMP
+$iX = $x1 - $x
+$iY = $y1 - $y
+If StringInStr($iX, "-") > 0 Or StringInStr($iY, "-") > 0 Or $iX = 0 Or $iY = 0 Then Return $g_hHBitmap2
+$hImage = _GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2)
+$hClone = _GDIPlus_BitmapCloneArea($hImage, $x, $y, $iX, $iY)
+$hBMP = _GDIPlus_BitmapCreateHBITMAPFromBitmap($hClone)
+_GDIPlus_BitmapDispose($hImage)
+_GDIPlus_BitmapDispose($hClone)
+_WinAPI_DeleteObject($g_hHBitmap2)
+Return $hBMP
+EndFunc
+Func DelPosWithDiff(ByRef $Input, $xDiff, $yDiff, $ReturnAsString = True, $And = True)
+If IsArray($Input) Then
+_DelPosWithDiff1($Input, $xDiff, $yDiff, $ReturnAsString, $And)
+Else
+_DelPosWithDiff2($Input, $xDiff, $yDiff, $ReturnAsString, $And)
+EndIf
+EndFunc
+Func _DelPosWithDiff1(ByRef $Arr, $xDiff, $yDiff, $ReturnAsString = True, $And = True)
+Local $iStart = 0
+Local $iXDiff = 0, $iYDiff = 0
+Local $IndexesToDelete = ""
+For $i = $iStart To(UBound($Arr) - 1)
+For $j = $i + 1 To(UBound($Arr) - 1)
+$iXDiff = Number(Abs(Number(Number($Arr[$i][0]) - Number($Arr[$j][0]))))
+$iYDiff = Number(Abs(Number(Number($Arr[$i][1]) - Number($Arr[$j][1]))))
+If $And = True Then
+If($iXDiff <= $xDiff) And($iYDiff <= $yDiff) Then
+$IndexesToDelete &= $j & ","
+$i += 1
+ExitLoop
+EndIf
+Else
+If($iXDiff <= $xDiff) Or($iYDiff <= $yDiff) Then
+$IndexesToDelete &= $j & ","
+$i += 1
+ExitLoop
+EndIf
+EndIf
+$iXDiff = 0
+$iYDiff = 0
+Next
+Next
+If StringRight($IndexesToDelete, 1) = "," Then $IndexesToDelete = StringLeft($IndexesToDelete,(StringLen($IndexesToDelete) - 1))
+If StringLen($IndexesToDelete) > 0 Then
+Local $tmpArr[UBound($Arr)][2]
+Local $splitedToDelete
+If StringInStr($IndexesToDelete, ",") > 0 Then
+$splitedToDelete = StringSplit($IndexesToDelete, ",", 2)
+Else
+$splitedToDelete = _StringEqualSplit($IndexesToDelete, StringLen($IndexesToDelete))
+EndIf
+Local $searchResult = -1
+For $i = 0 To(UBound($Arr) - 1)
+$searchResult = _ArraySearch($splitedToDelete, $i)
+If $searchResult > -1 And StringLen($splitedToDelete[$searchResult]) > 0 Then ContinueLoop
+$tmpArr[$i][0] = $Arr[$i][0]
+$tmpArr[$i][1] = $Arr[$i][1]
+Next
+_ArryRemoveBlanks($tmpArr)
+$Arr = $tmpArr
+EndIf
+If $ReturnAsString = True Then
+Local $ToReturn = ""
+For $k = 0 To(UBound($Arr) - 1)
+$ToReturn &= $Arr[$k][0] & "," & $Arr[$k][1] & "|"
+Next
+If StringRight($ToReturn, 1) = "|" Then $ToReturn = StringLeft($ToReturn,(StringLen($ToReturn) - 1))
+$Arr = $ToReturn
+Return $ToReturn
+EndIf
+EndFunc
+Func _DelPosWithDiff2(ByRef $sResult, $xDiff, $yDiff, $ReturnAsString = True, $And = True)
+Local $tmpSplitedPositions
+If StringInStr($sResult, "|") > 0 Then
+$tmpSplitedPositions = StringSplit($sResult, "|", 2)
+Else
+$tmpSplitedPositions = _StringEqualSplit($sResult, StringLen($sResult))
+EndIf
+Local $splitedPositions[UBound($tmpSplitedPositions)][2]
+For $j = 0 To(UBound($tmpSplitedPositions) - 1)
+If StringInStr($tmpSplitedPositions[$j], ",") Then
+$splitedPositions[$j][0] = StringSplit($tmpSplitedPositions[$j], ",", 2)[0]
+$splitedPositions[$j][1] = StringSplit($tmpSplitedPositions[$j], ",", 2)[1]
+EndIf
+Next
+Local $Arr = $splitedPositions
+Local $iStart = 0
+Local $iXDiff = 0, $iYDiff = 0
+Local $IndexesToDelete = ""
+For $i = $iStart To(UBound($Arr) - 1)
+For $j = $i + 1 To(UBound($Arr) - 1)
+$iXDiff = Number(Abs(Number(Number($Arr[$i][0]) - Number($Arr[$j][0]))))
+$iYDiff = Number(Abs(Number(Number($Arr[$i][1]) - Number($Arr[$j][1]))))
+If $And = True Then
+If($iXDiff <= $xDiff) And($iYDiff <= $yDiff) Then
+$IndexesToDelete &= $j & ","
+$i += 1
+ExitLoop
+EndIf
+Else
+If($iXDiff <= $xDiff) Or($iYDiff <= $yDiff) Then
+$IndexesToDelete &= $j & ","
+$i += 1
+ExitLoop
+EndIf
+EndIf
+$iXDiff = 0
+$iYDiff = 0
+Next
+Next
+If StringRight($IndexesToDelete, 1) = "," Then $IndexesToDelete = StringLeft($IndexesToDelete,(StringLen($IndexesToDelete) - 1))
+If StringLen($IndexesToDelete) > 0 Then
+Local $tmpArr[UBound($Arr)][2]
+Local $splitedToDelete
+If StringInStr($IndexesToDelete, ",") > 0 Then
+$splitedToDelete = StringSplit($IndexesToDelete, ",", 2)
+Else
+$splitedToDelete = _StringEqualSplit($IndexesToDelete, StringLen($IndexesToDelete))
+EndIf
+Local $searchResult = -1
+For $i = 0 To(UBound($Arr) - 1)
+$searchResult = _ArraySearch($splitedToDelete, $i)
+If $searchResult > -1 And StringLen($splitedToDelete[$searchResult]) > 0 Then ContinueLoop
+$tmpArr[$i][0] = $Arr[$i][0]
+$tmpArr[$i][1] = $Arr[$i][1]
+Next
+_ArryRemoveBlanks($tmpArr)
+$Arr = $tmpArr
+EndIf
+If $ReturnAsString = True Then
+Local $ToReturn = ""
+For $k = 0 To(UBound($Arr) - 1)
+$ToReturn &= $Arr[$k][0] & "," & $Arr[$k][1] & "|"
+Next
+If StringRight($ToReturn, 1) = "|" Then $ToReturn = StringLeft($ToReturn,(StringLen($ToReturn) - 1))
+$sResult = $ToReturn
+Return $ToReturn
+EndIf
+Return $Arr
+EndFunc
+Func _ArryRemoveBlanks(ByRef $Array)
+Switch(UBound($Array, 2) > 0)
+Case True
+Local $canKeep = True
+Local $2DBound = UBound($Array, 2)
+Local $Counter = 0
+For $i = 0 To(UBound($Array) - 1)
+For $j = 0 To(UBound($Array, 2) - 1)
+If $Array[$i][$j] = "" Then
+$canKeep = False
+Else
+$canKeep = True
+ExitLoop
+EndIf
+Next
+If $canKeep = True Then
+For $j = 0 To(UBound($Array, 2) - 1)
+$Array[$Counter][$j] = $Array[$i][$j]
+Next
+$Counter += 1
+EndIf
+Next
+ReDim $Array[$Counter][$2DBound]
+Case Else
+Local $Counter = 0
+For $i = 0 To(UBound($Array) - 1)
+If $Array[$i] <> "" Then
+$Array[$Counter] = $Array[$i]
+$Counter += 1
+EndIf
+Next
+ReDim $Array[$Counter]
+EndSwitch
+EndFunc
+Func _StringEqualSplit($sString, $iNumChars = Default)
+If $iNumChars = Default Then $iNumChars = StringLen($sString)
+If Not IsString($sString) Or $sString = "" Then Return SetError(1, 0, 0)
+If Not IsInt($iNumChars) Or $iNumChars < 1 Then Return SetError(2, 0, 0)
+Return StringRegExp($sString, "(?s).{1," & $iNumChars & "}", 3)
+EndFunc
 Func BB_DropTrophies()
 Local $i = 0
 Local $j = 0
@@ -72431,7 +73636,7 @@ TrainGTFO()
 MainKickout()
 If $g_aiTimeTrain[0] > 10 Then
 SetLog("Let's wait for a few minutes!", $COLOR_INFO)
-Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard', 'BuilderBase', 'Boost']
+Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard', 'BuilderBase']
 While 1
 If Not $g_bRunState Then Return
 If $g_bRestart Then ContinueLoop 2
@@ -72475,6 +73680,9 @@ Func TrainGTFO()
 StartGainCost()
 CheckIfArmyIsReady()
 If Not $g_bRunState Then Return
+ClickP($aAway, 2, 0, "#0346")
+If _Sleep(1000) Then Return
+SetLog("Army Window Closed", $COLOR_INFO)
 If Not OpenArmyOverview(True, "TrainGTFO()") Then Return
 If _Sleep(250) Then Return
 CheckArmyCamp(False, False, False, True)
@@ -72777,6 +73985,11 @@ If _Sleep($DELAYDONATECC4) Then Return
 SetLog("Checking for Donate Requests in Clan Chat", $COLOR_INFO)
 ClickP($aOpenChat, 1, 0, "#0168")
 If _Sleep($DELAYDONATECC4) Then Return
+If _Sleep(300) Then Return
+If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
+SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
+EndIf
 Local $iLoopCount = 0
 While 1
 If _ColorCheck(_GetPixelColor(189, 24, True), Hex(0x706C50, 6), 20) Then
@@ -73587,6 +74800,27 @@ SetLog("Maybe you have a new friend request, lemme check...", $COLOR_ACTION1)
 Click(40, 40)
 randomSleep(2000)
 If IsClanOverview() Then
+If _ColorCheck(_GetPixelColor(682, 79, True), "FFFFFF", 20) Then
+SetLog("Account is in Clan", $COLOR_ACTION1)
+If _ColorCheck(_GetPixelColor(774, 68, True), "D00818", 20) Then
+SetLog("It's confirmed, you have a new friend request, lemme check...", $COLOR_ACTION1)
+Click(700, 80)
+randomSleep(2000)
+If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 720, 165, 780, 600) Then
+Click($g_iQuickMISX + 720, $g_iQuickMISY + 165)
+randomSleep(1500)
+If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 440, 380, 590, 470) Then
+Click($g_iQuickMISX + 440, $g_iQuickMISY + 380)
+Else
+SetLog("Error when trying to find Okay button... skipping...", $COLOR_WARNING)
+EndIf
+Else
+SetLog("Error when trying to find friend request... skipping...", $COLOR_WARNING)
+EndIf
+Else
+SetLog("No friend request found... skipping...", $COLOR_WARNING)
+EndIf
+Else
 If _ColorCheck(_GetPixelColor(603, 69, True), "D00818", 20) Then
 SetLog("It's confirmed, you have a new friend request, lemme check...", $COLOR_ACTION1)
 Click(530, 80)
@@ -73604,6 +74838,7 @@ SetLog("Error when trying to find friend request... skipping...", $COLOR_WARNING
 EndIf
 Else
 SetLog("No friend request found... skipping...", $COLOR_WARNING)
+EndIf
 EndIf
 Else
 SetLog("Error when trying to open Social tab... skipping...", $COLOR_WARNING)
@@ -73888,8 +75123,8 @@ randomSleep(3000)
 If ChatOpen() Then
 Click(230, 20)
 randomSleep(1500)
-If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1)
+If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
 SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 EndIf
 randomSleep(1500)
@@ -73914,8 +75149,8 @@ randomSleep(3000)
 If ChatOpen() Then
 Click(80, 20)
 randomSleep(1500)
-If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1)
+If _CheckColorPixel($g_aButtonChatRulesGlobal[2], $g_aButtonChatRulesGlobal[3], $g_aButtonChatRulesGlobal[4], $g_aButtonChatRulesGlobal[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+Click($g_aButtonChatRulesGlobal[0], $g_aButtonChatRulesGlobal[1], 1)
 SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 EndIf
 randomSleep(1500)
@@ -74365,8 +75600,8 @@ EndFunc
 Func ChatbotSelectClanChat()
 Click($g_aButtonChatSelectTabClan[0], $g_aButtonChatSelectTabClan[1], 1)
 If _Sleep(300) Then Return
-If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1)
+If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
 SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
 EndIf
 If _Sleep(300) Then Return
@@ -74389,8 +75624,8 @@ EndFunc
 Func ChatbotSelectGlobalChat()
 Click($g_aButtonChatSelectTabGlobal[0], $g_aButtonChatSelectTabGlobal[1], 1)
 If _Sleep(300) Then Return
-If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1)
+If _CheckColorPixel($g_aButtonChatRulesGlobal[2], $g_aButtonChatRulesGlobal[3], $g_aButtonChatRulesGlobal[4], $g_aButtonChatRulesGlobal[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+Click($g_aButtonChatRulesGlobal[0], $g_aButtonChatRulesGlobal[1], 1)
 SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
 EndIf
 If _Sleep(300) Then Return
@@ -75082,7 +76317,41 @@ $g_bChkUseGTFO = $wasUseGTFO
 $g_bRunState = $wasRunState
 SetLog("Test GTFO Ended", $COLOR_DEBUG)
 EndFunc
+Func btnTestGoblinXP()
+SetLog("Test GoblinXP Started", $COLOR_DEBUG)
+Local $wasRunState = $g_bRunState
+Local $wasFirstStart = $g_bFirstStart
+Local $wasEnableSuperXP = $g_bEnableSuperXP
+Local $wasSXTraining = $g_irbSXTraining
+Local $wasDebugSX = $g_bDebugSX
+Local $waschkSXAQ = $g_bSXAQ
+$g_bRunState = True
+$g_bFirstStart = True
+$g_bEnableSuperXP = True
+$g_irbSXTraining = 2
+$g_bDebugSX = True
+If $g_hTimerSinceStarted = 0 Then $g_hTimerSinceStarted = __TimerInit()
+If $g_iTimePassed = 0 Then $g_iTimePassed += Int(__TimerDiff($g_hTimerSinceStarted))
+$g_bSXAQ = $eHeroQueen
+MainSuperXPHandler()
+$g_bFirstStart = $wasFirstStart
+$g_bEnableSuperXP = $wasEnableSuperXP
+$g_irbSXTraining = $wasSXTraining
+$g_bDebugSX = $wasDebugSX
+$g_bSXAQ = $waschkSXAQ
+$g_bRunState = $wasRunState
+SetLog("Test GoblinXP Ended", $COLOR_DEBUG)
+EndFunc
 Func ReadConfig_IMMod()
+IniReadS($g_bEnableSuperXP, $g_sProfileConfigPath, "SM GoblinXP", "EnableSuperXP", $g_bEnableSuperXP, "Bool")
+IniReadS($g_bSkipZoomOutXP, $g_sProfileConfigPath, "SM GoblinXP", "SkipZoomOutXP", $g_bSkipZoomOutXP, "Bool")
+IniReadS($g_bFastGoblinXP, $g_sProfileConfigPath, "SM GoblinXP", "FastGoblinXP", $g_bFastGoblinXP, "Bool")
+IniReadS($g_bSkipDragToEndXP, $g_sProfileConfigPath, "SM GoblinXP", "SkipDragToEndXP", $g_bSkipDragToEndXP, "Bool")
+IniReadS($g_irbSXTraining, $g_sProfileConfigPath, "SM GoblinXP", "SXTraining", $g_irbSXTraining, "int")
+IniReadS($g_iTxtMaxXPtoGain, $g_sProfileConfigPath, "SM GoblinXP", "MaxXptoGain", $g_iTxtMaxXPtoGain, "int")
+IniReadS($g_bSXBK, $g_sProfileConfigPath, "SM GoblinXP", "SXBK", $eHeroNone)
+IniReadS($g_bSXAQ, $g_sProfileConfigPath, "SM GoblinXP", "SXAQ", $eHeroNone)
+IniReadS($g_bSXGW, $g_sProfileConfigPath, "SM GoblinXP", "SXGW", $eHeroNone)
 IniReadS($g_bUseBotHumanization, $g_sProfileConfigPath, "Bot Humanization", "chkUseBotHumanization", $g_bUseBotHumanization, "Bool")
 IniReadS($g_bUseAltRClick, $g_sProfileConfigPath, "Bot Humanization", "chkUseAltRClick", $g_bUseAltRClick, "Bool")
 IniReadS($g_bCollectAchievements, $g_sProfileConfigPath, "Bot Humanization", "chkCollectAchievements", $g_bCollectAchievements, "Bool")
@@ -75117,6 +76386,15 @@ IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "Chatbot", "ChkPbSendNewChats", F
 EndFunc
 Func SaveConfig_IMMod()
 ApplyConfig_IMMod(GetApplyConfigSaveAction())
+_Ini_Add("SM GoblinXP", "EnableSuperXP", $g_bEnableSuperXP ? True : False)
+_Ini_Add("SM GoblinXP", "SkipZoomOutXP", $g_bSkipZoomOutXP ? True : False)
+_Ini_Add("SM GoblinXP", "FastGoblinXP", $g_bFastGoblinXP ? True : False)
+_Ini_Add("SM GoblinXP", "SkipDragToEndXP", $g_bSkipDragToEndXP ? True : False)
+_Ini_Add("SM GoblinXP", "SXTraining", $g_irbSXTraining)
+_Ini_Add("SM GoblinXP", "SXBK", $g_bSXBK)
+_Ini_Add("SM GoblinXP", "SXAQ", $g_bSXAQ)
+_Ini_Add("SM GoblinXP", "SXGW", $g_bSXGW)
+_Ini_Add("SM GoblinXP", "MaxXptoGain", GUICtrlRead($g_hTxtMaxXPtoGain))
 _Ini_Add("Bot Humanization", "chkUseBotHumanization", $g_bUseBotHumanization ? True : False)
 _Ini_Add("Bot Humanization", "chkUseAltRClick", $g_bUseAltRClick ? True : False)
 _Ini_Add("Bot Humanization", "chkCollectAchievements", $g_bCollectAchievements ? True : False)
@@ -75156,6 +76434,15 @@ EndFunc
 Func ApplyConfig_IMMod($TypeReadSave)
 Switch $TypeReadSave
 Case "Save"
+$g_bEnableSuperXP =(GUICtrlRead($g_hChkEnableSuperXP) = $GUI_CHECKED)
+$g_bSkipZoomOutXP =(GUICtrlRead($g_hChkSkipZoomOutXP) = $GUI_CHECKED)
+$g_bFastGoblinXP =(GUICtrlRead($g_hChkFastGoblinXP) = $GUI_CHECKED)
+$g_bSkipDragToEndXP =(GUICtrlRead($g_hChkSkipDragToEndXP) = $GUI_CHECKED)
+$g_irbSXTraining = GUICtrlRead($rbSXTraining) = $GUI_CHECKED ? 1 : 2
+$g_bSXBK =(GUICtrlRead($g_hChkSXBK) = $GUI_CHECKED) ? $eHeroKing : $eHeroNone
+$g_bSXAQ =(GUICtrlRead($g_hChkSXAQ) = $GUI_CHECKED) ? $eHeroQueen : $eHeroNone
+$g_bSXGW =(GUICtrlRead($g_hChkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
+$g_iTxtMaxXPtoGain = GUICtrlRead($g_hTxtMaxXPtoGain)
 $g_bUseBotHumanization =(GUICtrlRead($g_hChkUseBotHumanization) = $GUI_CHECKED)
 $g_bUseAltRClick =(GUICtrlRead($g_hChkUseAltRClick) = $GUI_CHECKED)
 $g_bCollectAchievements =(GUICtrlRead($g_hChkCollectAchievements) = $GUI_CHECKED)
@@ -75188,6 +76475,17 @@ $g_bCleverbot =(GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
 $g_bUseNotify =(GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
 $g_bPbSendNew =(GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
 Case "Read"
+GUICtrlSetState($g_hChkEnableSuperXP, $g_bEnableSuperXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+chkEnableSuperXP()
+GUICtrlSetState($g_hChkSkipZoomOutXP, $g_bSkipZoomOutXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkFastGoblinXP, $g_bFastGoblinXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkSkipDragToEndXP, $g_bSkipDragToEndXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($rbSXTraining,($g_irbSXTraining = 1) ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($rbSXIAttacking,($g_irbSXTraining = 2) ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetData($g_hTxtMaxXPtoGain, $g_iTxtMaxXPtoGain)
+GUICtrlSetState($g_hChkSXBK, $g_bSXBK = $eHeroKing ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkSXAQ, $g_bSXAQ = $eHeroQueen ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkSXGW, $g_bSXGW = $eHeroWarden ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkUseBotHumanization, $g_bUseBotHumanization ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkUseAltRClick, $g_bUseAltRClick ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkCollectAchievements, $g_bCollectAchievements ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -77399,6 +78697,7 @@ EndIf
 If($g_iCommandStop = 3 Or $g_iCommandStop = 0) Then
 If BalanceDonRec(True) Then DonateCC()
 EndIf
+MainSuperXPHandler()
 Local $aRndFuncList = ['Laboratory', 'UpgradeHeroes', 'UpgradeBuilding', 'BuilderBase']
 While 1
 If $g_bRunState = False Then Return
@@ -77526,6 +78825,7 @@ AddIdleTime()
 checkMainScreen(False)
 If $g_iCommandStop = -1 Then
 If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
+MainSuperXPHandler()
 If CheckNeedOpenTrain($g_sTimeBeforeTrain) Then TrainSystem()
 If $g_bRestart = True Then ExitLoop
 If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -77538,6 +78838,7 @@ $g_iActualTrainSkip = 0
 EndIf
 CheckArmyCamp(True, True)
 EndIf
+MainSuperXPHandler()
 EndIf
 If _Sleep($DELAYIDLE1) Then Return
 If $g_iCommandStop = 0 And $g_bTrainEnabled = True Then
@@ -77587,6 +78888,10 @@ WEnd
 EndFunc
 Func AttackMain()
 If ProfileSwitchAccountEnabled() And $g_abDonateOnly[$g_iCurAccount] Then Return
+If $g_bEnableSuperXP = True And $g_irbSXTraining = 2 Then
+MainSuperXPHandler()
+Return
+EndIf
 ClickP($aAway, 1, 0, "#0000")
 If IsSearchAttackEnabled() Then
 If(IsSearchModeActive($DB) And checkCollectors(True, False)) Or IsSearchModeActive($LB) Or IsSearchModeActive($TS) Then
@@ -77796,6 +79101,9 @@ BuilderBaseReport()
 SwitchBetweenBases()
 EndIf
 _Sleep($DELAYRUNBOT3)
+Case "SuperXP"
+MainSuperXPHandler()
+_Sleep($DELAYRUNBOT3)
 Case "Humanization"
 BotHumanization()
 Case "CollectFreeMagicItems"
@@ -77816,6 +79124,10 @@ $g_bRestart = False
 $g_bFullArmy = False
 $g_iCommandStop = -1
 BotHumanization()
+If $g_bEnableSuperXP = True And $g_irbSXTraining = 2 Then
+MainSuperXPHandler()
+Return
+EndIf
 MainGTFO()
 MainKickout()
 VillageReport()

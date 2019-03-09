@@ -16,6 +16,11 @@
 #include "IM Extra.au3"
 #include "IM Other\_Wait4Pixel.au3"
 
+; GoblinXP - Added by IMMOD
+#include "IM GoblinXP\IM GoblinXP.au3"
+#include "IM GoblinXP\IM multiSearch.au3"
+#include "IM GoblinXP\IM ArrayFunctions.au3"
+
 ; BB Attack - Added by IMMOD
 #include "IM BB Attack\BB_DropTrophies.au3"
 #include "IM BB Attack\BB_PrepareAttack.au3"

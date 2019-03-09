@@ -15,8 +15,18 @@
 
 Func ReadConfig_IMMod()
 
+	; ================================================== Super XP - Added by IMMOD ==================================== ;
+	IniReadS($g_bEnableSuperXP, $g_sProfileConfigPath, "SM GoblinXP", "EnableSuperXP", $g_bEnableSuperXP, "Bool")
+	IniReadS($g_bSkipZoomOutXP, $g_sProfileConfigPath, "SM GoblinXP", "SkipZoomOutXP", $g_bSkipZoomOutXP, "Bool")
+	IniReadS($g_bFastGoblinXP, $g_sProfileConfigPath, "SM GoblinXP", "FastGoblinXP", $g_bFastGoblinXP, "Bool")
+	IniReadS($g_bSkipDragToEndXP, $g_sProfileConfigPath, "SM GoblinXP", "SkipDragToEndXP", $g_bSkipDragToEndXP, "Bool")
+	IniReadS($g_irbSXTraining, $g_sProfileConfigPath, "SM GoblinXP", "SXTraining", $g_irbSXTraining, "int")
+	IniReadS($g_iTxtMaxXPtoGain, $g_sProfileConfigPath, "SM GoblinXP", "MaxXptoGain", $g_iTxtMaxXPtoGain, "int")
+	IniReadS($g_bSXBK, $g_sProfileConfigPath, "SM GoblinXP", "SXBK", $eHeroNone)
+	IniReadS($g_bSXAQ, $g_sProfileConfigPath, "SM GoblinXP", "SXAQ", $eHeroNone)
+	IniReadS($g_bSXGW, $g_sProfileConfigPath, "SM GoblinXP", "SXGW", $eHeroNone)
+	
 	;================================================== Bot Humanization - Added by IMMOD ==================== ;
-
 	IniReadS($g_bUseBotHumanization, $g_sProfileConfigPath, "Bot Humanization", "chkUseBotHumanization", $g_bUseBotHumanization, "Bool")
 	IniReadS($g_bUseAltRClick, $g_sProfileConfigPath, "Bot Humanization", "chkUseAltRClick", $g_bUseAltRClick, "Bool")
 	IniReadS($g_bCollectAchievements, $g_sProfileConfigPath, "Bot Humanization", "chkCollectAchievements", $g_bCollectAchievements, "Bool")
@@ -37,7 +47,6 @@ Func ReadConfig_IMMod()
 	IniReadS($g_iTxtChallengeMessage, $g_sProfileConfigPath, "Bot Humanization", "challengeMessage", $g_iTxtChallengeMessage)
 	
 	; ================================================== ChatBot - by IMMOD ================================= ;
-
 	IniReadS($g_bChatGlobal, $g_sProfileConfigPath, "Chatbot", "ChkChatGlobal", False, "Bool")
 	IniReadS($g_bScrambleGlobal, $g_sProfileConfigPath, "Chatbot", "ChkScrambleGlobal", False, "Bool")
 	IniReadS($g_bDelayTime, $g_sProfileConfigPath, "Chatbot", "ChkDelayTime", False, "Bool")
@@ -57,8 +66,18 @@ EndFunc   ;==>ReadConfig_IMMod
 Func SaveConfig_IMMod() ; due to mini mode no guitCtrols Reads in this function
 	ApplyConfig_IMMod(GetApplyConfigSaveAction())
 
+	; ================================================== Super XP - Added by IMMOD ================================ ;
+	_Ini_Add("SM GoblinXP", "EnableSuperXP", $g_bEnableSuperXP ? True : False)
+	_Ini_Add("SM GoblinXP", "SkipZoomOutXP", $g_bSkipZoomOutXP ? True : False)
+	_Ini_Add("SM GoblinXP", "FastGoblinXP", $g_bFastGoblinXP ? True : False)
+	_Ini_Add("SM GoblinXP", "SkipDragToEndXP", $g_bSkipDragToEndXP ? True : False)
+	_Ini_Add("SM GoblinXP", "SXTraining", $g_irbSXTraining)
+	_Ini_Add("SM GoblinXP", "SXBK", $g_bSXBK)
+	_Ini_Add("SM GoblinXP", "SXAQ", $g_bSXAQ)
+	_Ini_Add("SM GoblinXP", "SXGW", $g_bSXGW)
+	_Ini_Add("SM GoblinXP", "MaxXptoGain", GUICtrlRead($g_hTxtMaxXPtoGain))
+	
 	;================================================== Bot Humanization - Added by IMMOD ==================== ;
-
 	_Ini_Add("Bot Humanization", "chkUseBotHumanization", $g_bUseBotHumanization ? True : False)
 	_Ini_Add("Bot Humanization", "chkUseAltRClick", $g_bUseAltRClick ? True : False)
 	_Ini_Add("Bot Humanization", "chkCollectAchievements", $g_bCollectAchievements ? True : False)
@@ -79,7 +98,6 @@ Func SaveConfig_IMMod() ; due to mini mode no guitCtrols Reads in this function
 	_Ini_Add("Bot Humanization", "challengeMessage", GUICtrlRead($g_hChallengeMessage))
 	
 	; ================================================== ChatBot - by IMMOD ================================= ;
-
 	_Ini_Add("Chatbot", "ChkChatGlobal", $g_bChatGlobal ? True : False)
 	_Ini_Add("Chatbot", "ChkScrambleGlobal", $g_bScrambleGlobal ? True : False)
 	_Ini_Add("Chatbot", "ChkDelayTime", $g_bDelayTime ? True : False)
@@ -108,8 +126,18 @@ Func ApplyConfig_IMMod($TypeReadSave)
 
 		Case "Save"
 
+			; ================================================== Super XP - Added by IMMOD ========================== ;
+			$g_bEnableSuperXP = (GUICtrlRead($g_hChkEnableSuperXP) = $GUI_CHECKED)
+			$g_bSkipZoomOutXP = (GUICtrlRead($g_hChkSkipZoomOutXP) = $GUI_CHECKED)
+			$g_bFastGoblinXP = (GUICtrlRead($g_hChkFastGoblinXP) = $GUI_CHECKED)
+			$g_bSkipDragToEndXP = (GUICtrlRead($g_hChkSkipDragToEndXP) = $GUI_CHECKED)
+			$g_irbSXTraining = GUICtrlRead($rbSXTraining) = $GUI_CHECKED ? 1 : 2
+			$g_bSXBK = (GUICtrlRead($g_hChkSXBK) = $GUI_CHECKED) ? $eHeroKing : $eHeroNone
+			$g_bSXAQ = (GUICtrlRead($g_hChkSXAQ) = $GUI_CHECKED) ? $eHeroQueen : $eHeroNone
+			$g_bSXGW = (GUICtrlRead($g_hChkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
+			$g_iTxtMaxXPtoGain = GUICtrlRead($g_hTxtMaxXPtoGain)
+			
 			;==================================================  Bot Humanization - Added by IMMOD ==================== ;
-
 			$g_bUseBotHumanization = (GUICtrlRead($g_hChkUseBotHumanization) = $GUI_CHECKED)
 			$g_bUseAltRClick = (GUICtrlRead($g_hChkUseAltRClick) = $GUI_CHECKED)
 			$g_bCollectAchievements = (GUICtrlRead($g_hChkCollectAchievements) = $GUI_CHECKED)
@@ -130,7 +158,6 @@ Func ApplyConfig_IMMod($TypeReadSave)
 			$g_iTxtChallengeMessage = GUICtrlRead($g_hChallengeMessage)
 			
 			; ================================================== ChatBot - by IMMOD ================================= ;
-
 			$g_bChatGlobal = (GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED)
 			$g_bScrambleGlobal = (GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED)
 			$g_bDelayTime = (GUICtrlRead($g_hChkDelayTime) = $GUI_CHECKED)
@@ -147,8 +174,20 @@ Func ApplyConfig_IMMod($TypeReadSave)
 
 		Case "Read"
 
+			; ================================================== Super XP - Added by IMMOD ============================== ;
+			GUICtrlSetState($g_hChkEnableSuperXP, $g_bEnableSuperXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkEnableSuperXP()
+			GUICtrlSetState($g_hChkSkipZoomOutXP, $g_bSkipZoomOutXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkFastGoblinXP, $g_bFastGoblinXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkSkipDragToEndXP, $g_bSkipDragToEndXP ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($rbSXTraining, ($g_irbSXTraining = 1) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($rbSXIAttacking, ($g_irbSXTraining = 2) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtMaxXPtoGain, $g_iTxtMaxXPtoGain)
+			GUICtrlSetState($g_hChkSXBK, $g_bSXBK = $eHeroKing ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkSXAQ, $g_bSXAQ = $eHeroQueen ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkSXGW, $g_bSXGW = $eHeroWarden ? $GUI_CHECKED : $GUI_UNCHECKED)
+			
 			;================================================== Bot Humanization - Added by IMMOD ==================== ;
-
 			GUICtrlSetState($g_hChkUseBotHumanization, $g_bUseBotHumanization ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkUseAltRClick, $g_bUseAltRClick ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkCollectAchievements, $g_bCollectAchievements ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -172,7 +211,6 @@ Func ApplyConfig_IMMod($TypeReadSave)
 			cmbWarReplay()
 			
 			; ================================================== ChatBot - by IMMOD ======================================== ;
-
 			GUICtrlSetState($g_hChkGlobalChat, $g_bChatGlobal ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkGlobalScramble, $g_bScrambleGlobal ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkDelayTime, $g_bDelayTime ? $GUI_CHECKED : $GUI_UNCHECKED)

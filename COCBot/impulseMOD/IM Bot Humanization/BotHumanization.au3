@@ -447,23 +447,45 @@ Func LookAtRedNotifications()
 		randomSleep(2000)
 
 		If IsClanOverview() Then
-			If _ColorCheck(_GetPixelColor(603, 69, True), "D00818", 20) Then
-				SetLog("It's confirmed, you have a new friend request, lemme check...", $COLOR_ACTION1)
-				Click(530, 80)
-				randomSleep(2000)
-				If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 720, 165, 780, 600) Then
-					Click($g_iQuickMISX + 720, $g_iQuickMISY + 165)
-					randomSleep(1500)
-					If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 440, 380, 590, 470) Then
-						Click($g_iQuickMISX + 440, $g_iQuickMISY + 380)
+			If _ColorCheck(_GetPixelColor(682, 79, True), "FFFFFF", 20) Then
+				SetLog("Account is in Clan", $COLOR_ACTION1)
+				If _ColorCheck(_GetPixelColor(774, 68, True), "D00818", 20) Then
+					SetLog("It's confirmed, you have a new friend request, lemme check...", $COLOR_ACTION1)
+					Click(700, 80)
+					randomSleep(2000)
+						If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 720, 165, 780, 600) Then
+						Click($g_iQuickMISX + 720, $g_iQuickMISY + 165)
+						randomSleep(1500)
+							If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 440, 380, 590, 470) Then
+							Click($g_iQuickMISX + 440, $g_iQuickMISY + 380)
+						Else
+							SetLog("Error when trying to find Okay button... skipping...", $COLOR_WARNING)
+						EndIf
 					Else
-						SetLog("Error when trying to find Okay button... skipping...", $COLOR_WARNING)
+						SetLog("Error when trying to find friend request... skipping...", $COLOR_WARNING)
 					EndIf
 				Else
-					SetLog("Error when trying to find friend request... skipping...", $COLOR_WARNING)
+					SetLog("No friend request found... skipping...", $COLOR_WARNING)
 				EndIf
 			Else
-				SetLog("No friend request found... skipping...", $COLOR_WARNING)
+				If _ColorCheck(_GetPixelColor(603, 69, True), "D00818", 20) Then
+					SetLog("It's confirmed, you have a new friend request, lemme check...", $COLOR_ACTION1)
+					Click(530, 80)
+					randomSleep(2000)
+						If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 720, 165, 780, 600) Then
+						Click($g_iQuickMISX + 720, $g_iQuickMISY + 165)
+						randomSleep(1500)
+							If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Bot Humanization\Friend", 440, 380, 590, 470) Then
+							Click($g_iQuickMISX + 440, $g_iQuickMISY + 380)
+						Else
+							SetLog("Error when trying to find Okay button... skipping...", $COLOR_WARNING)
+						EndIf
+					Else
+						SetLog("Error when trying to find friend request... skipping...", $COLOR_WARNING)
+					EndIf
+				Else
+					SetLog("No friend request found... skipping...", $COLOR_WARNING)
+				EndIf
 			EndIf
 		Else
 			SetLog("Error when trying to open Social tab... skipping...", $COLOR_WARNING)

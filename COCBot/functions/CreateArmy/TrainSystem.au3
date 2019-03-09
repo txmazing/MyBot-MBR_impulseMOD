@@ -1890,16 +1890,18 @@ Func IIf($Condition, $IfTrue, $IfFalse)
 	EndIf
 EndFunc   ;==>IIf
 
-Func _ArryRemoveBlanks(ByRef $aArray)
-	Local $iCounter = 0
-	For $i = 0 To UBound($aArray) - 1
-		If $aArray[$i] <> "" Then
-			$aArray[$iCounter] = $aArray[$i]
-			$iCounter += 1
-		EndIf
-	Next
-	ReDim $aArray[$iCounter]
-EndFunc   ;==>_ArryRemoveBlanks
+;------------------REMOVED By IMMOD Using Own _ArryRemoveBlanks From SM ArrayFunctions.au3 - START------------------
+;Func _ArryRemoveBlanks(ByRef $aArray)
+;	Local $iCounter = 0
+;	For $i = 0 To UBound($aArray) - 1
+;		If $aArray[$i] <> "" Then
+;			$aArray[$iCounter] = $aArray[$i]
+;			$iCounter += 1
+;		EndIf
+;	Next
+;	ReDim $aArray[$iCounter]
+;EndFunc   ;==>_ArryRemoveBlanks
+;------------------REMOVED By IMMOD - END------------------
 
 Func ValidateSearchArmyResult($aSearchResult, $iIndex = 0)
 	If IsArray($aSearchResult) Then

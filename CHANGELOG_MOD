@@ -1,6 +1,12 @@
 ﻿* **V1.0.5**
+* Added GoblinXP
+* Fixed Humanization (Friendrequest - distinguish Player in Clan or not & Finally click "I UNDERSTAND" Button in Clanchat)
+* Fixed ChatBot (Finally click "I UNDERSTAND" Button in Clanchat)
+* Fixed GTFO (Click "I UNDERSTAND" Button in Clanchat)
+
+* **V1.0.5**
 * Added GTFO (I currently have no account to test the feature in detail. Please report bugs in the forum or on github)
-* Fixed Humanization (Accept Fiendrequest and click "I UNDERSTAND" Button in Globalchat & Clanchat)
+* Fixed Humanization (Accept Fiendrequest & click "I UNDERSTAND" Button in Globalchat & Clanchat)
 * Fixed ChatBot (Click "I UNDERSTAND" Button in Globalchat & Clanchat)
 
 * **V1.0.4**

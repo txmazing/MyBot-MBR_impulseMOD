@@ -17,6 +17,18 @@ Global $g_sLastModversion = "" ;latest version from GIT
 Global $g_sLastModmessage = "" ;message for last version
 Global $g_sOldModversmessage = "" ;warning message for old bot
 
+; ================================================== GoblinXP - Added by IMMOD =========================================== ;
+;SuperXP / GoblinXP
+Global $g_bEnableSuperXP = False, $g_bSkipZoomOutXP = False, $g_bFastGoblinXP = False, $g_bSkipDragToEndXP = False, $g_bFastGoblinXP = False, $g_irbSXTraining = 1, $g_bSXBK = False, $g_bSXAQ = False, $g_bSXGW = False
+Global $g_iStartXP = 0, $g_iCurrentXP = 0, $g_iGainedXP = 0, $g_iGainedXPHour = 0, $g_iTxtMaxXPtoGain = 500, $g_iTxtXPRunTime = 0
+Global $g_bDebugSX = False
+
+Global $g_DpGoblinPicnic[3][4] = [[310, 200, 5, 5], [340, 140, 5, 5], [290, 220, 5, 5]]
+Global $g_BdGoblinPicnic[3] = [0, "5000-7000", "6000-8000"] ; [0] = Queen, [1] = Warden, [2] = Barbarian King
+Global $g_ActivatedHeroes[3] = [False, False, False] ; [0] = Queen, [1] = Warden, [2] = Barbarian King , Prevent to click on them to Activate Again And Again
+Global Const $g_minStarsToEnd = 1
+Global $g_canGainXP = False
+
 ; ================================================ Bot Humanization - Added by IMMOD ======================================== ;
 
 Global $g_iacmbPriority[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -45,10 +57,11 @@ Global Const $g_aButtonChatWindowClose[6] = [321, 355, 330, 400, 0xC55115, 20] ;
 Global Const $g_aButtonChatSelectTabGlobal[6] = [74, 23, 20, 10, 0x79755B, 20] ; color med gray Select Global Chat Tab
 Global Const $g_aButtonChatSelectTabClan[6] = [222, 27, 170, 10, 0x79755B, 20] ; color med gray Select Clan Chat Tab
 Global Const $g_aButtonChatSelectTextBox[6] = [277, 706, 100, 700, 0xFFFFFF, 20] ; color white Select Chat Textbox
-Global Const $g_aButtonChatSendButton[6] = [840, 693, 840, 693, 0xFFFFFF, 20] ; color white Select Chat Textbox
+Global Const $g_aButtonChatSendButton[6] = [825, 700, 835, 710, 0xFFFFFF, 20] ; color white Select Chat Textbox
 Global Const $g_aButtonChatSelectTextBoxBottomNav[6] = [277, 706, 100, 690, 0xFFFFFF, 20] ; color white Select Chat Textbox Position is different when nav is set to bottom
 Global Const $g_aButtonChatJoinClan[4] = [157, 510, 0x6CBB1F, 20] ; Green Join Button on Chat Tab when you are not in a Clan
-Global Const $g_aButtonChatRules[6]   	    = [  155, 500, 70, 483, 0xDDF585, 20] ; "I Understand" Button
+Global Const $g_aButtonChatRulesGlobal[6]   	    = [  155, 500, 70, 483, 0xDDF585, 20] ; "I Understand" Button
+Global Const $g_aButtonChatRulesClan[6]   	    = [  155, 500, 70, 469, 0xDDF585, 20] ; "I Understand" Button
 
 Global Const $g_aButtonLangSetting[6] = [820, 585, 810, 584, 0xF5F5E0, 20] ; Main Screen Button
 Global Const $g_aButtonLangSettingClose[6] = [777, 113, 777, 113, 0xFF8D8D, 20] ; On Setting screen close button

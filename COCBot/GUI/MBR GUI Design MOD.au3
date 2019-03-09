@@ -18,6 +18,12 @@ Global $g_hBtnTestBuilderTimeOCR = 0, $g_hBtnTestGlobalChatBot = 0, $g_hBtnTestC
 Global $g_hBtnTestGoblinXP = 0, $g_hBtnForceStopBot = 0, $g_hBtnTestWardenMode = 0, $g_hBtnTestBotHumanization = 0, $g_hBtnDragNDropQueue = 0, $g_hBtnTestLabUpgrade = 0
 Global $g_hBtnTestBuilderBaseAtk = 0, $g_hBtnTestBuilderBaseObs = 0, $g_hBtnTestGTFO = 0, $g_hBtnTestStopForWar = 0
 
+; ================================================== Super XP PART ================================================== ;
+Global $g_hGrpSuperXP = 0, $g_hChkEnableSuperXP = 0, $g_hChkSkipZoomOutXP = 0, $g_hChkSkipDragToEndXP = 0, $g_hChkFastGoblinXP = 0, $rbSXTraining = 0, $g_hLblLOCKEDSX = 0, $rbSXIAttacking = 0, $g_hTxtMaxXPtoGain = 0
+Global $g_hChkSXBK = 0, $g_hChkSXAQ = 0, $g_hChkSXGW = 0
+Global $DocXP1 = 0, $DocXP2 = 0, $DocXP3 = 0, $DocXP4 = 0, $DocXP5 = 0
+Global $g_hLblXPatStart = 0, $g_hLblXPCurrent = 0, $g_hLblXPSXWon = 0, $g_hLblXPSXWonHour = 0, $g_hLblXPRunTime = 0
+
 ; ================================================== GTFO PART ================================================== ;
 Global $g_hLblGFTO = 0, $g_hChkUseGTFO = 0, $g_hTxtMinSaveGTFO_Elixir = 0, $g_hTxtMinSaveGTFO_DE = 0, $g_hTxtCyclesGTFO = 0
 Global $g_hLblKickout = 0, $g_hChkUseKickOut = 0, $g_hTxtDonatedCap = 0, $g_hTxtReceivedCap = 0, $g_hChkKickOutSpammers = 0, $g_hTxtKickLimit = 0
@@ -47,8 +53,7 @@ Global $g_alblAinGlobal, $g_alblSGchats, $g_alblSwitchlang, $g_alblChatclan, $g_
 
 Global $g_hGUI_MOD = 0
 
-
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0, $g_hGUI_MOD_TAB_GTFO = 0, $g_hGUI_MOD_TAB_IM_DEBUG = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_HUMANIZATION = 0, $g_hGUI_MOD_TAB_CHATBOT = 0, $g_hGUI_MOD_TAB_GTFO = 0, $g_hGUI_MOD_TAB_GOBLIN_XP = 0, $g_hGUI_MOD_TAB_IM_DEBUG = 0
 
 Func CreateMODTab()
 
@@ -62,6 +67,8 @@ Func CreateMODTab()
 	TabChatBotGUI()
 	$g_hGUI_MOD_TAB_GTFO = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_03", "GTFO"))
 	TabGTFOGUI()
+	$g_hGUI_MOD_TAB_GOBLIN_XP = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_04", "Goblin XP"))
+	TabGoblinXPGUI()
 	$g_hGUI_MOD_TAB_IM_DEBUG = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_08", "IM Debug"))
 	TabIMDebugGUI()
 
@@ -411,6 +418,96 @@ Func TabGTFOGUI()
 
 EndFunc   ;==>TabGTFOGUI
 
+Func TabGoblinXPGUI()
+
+	Local $x = 25, $y = 45, $xStart = 25, $yStart = 50
+
+	$g_hGrpSuperXP = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP_Info_05", "Goblin XP"), $x - 20, $y, 440, 340)
+	$y += 17
+	$g_hChkEnableSuperXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP_Info_01", "Enable Goblin XP"), $x, $y, -1, -1)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP")
+	$g_hChkSkipZoomOutXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipZoomOutXP", "Skip ZoomOut"), $x + 120, $y, -1, -1)
+	_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipZoomOutXP_01", "Skip ZoomOut after Attack Finsihed."))
+	GUICtrlSetState(-1, $GUI_UNCHECKED)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$g_hChkFastGoblinXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkFastGoblinXP", "Fast GoblinXP"), $x + 215, $y, -1, -1)
+	_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkFastGoblinXP_01", "Skip Current Xp Check from main screen and make GoblinXP Fast."))
+	GUICtrlSetState(-1, $GUI_UNCHECKED)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$g_hChkSkipDragToEndXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP", "Skip Drag To End"), $x + 310, $y, -1, -1)
+	_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP_01", "Skip End Drag To Start Finding Goblin Picnic From Current Mission.") & @CRLF & _
+			GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP_02", "Note: Uncheck When You Have Unlocked All Goblin Missions. It will be fast.") & @CRLF & _
+			GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkSkipDragToEndXP_03", "Note: Check When You Have New Missions Locked. It will be fast."))
+	GUICtrlSetState(-1, $GUI_UNCHECKED)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$rbSXTraining = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_01", "Farm XP during troops Training"), $x, $y + 25, 220, 17)
+	GUICtrlSetState(-1, $GUI_CHECKED)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$g_hLblLOCKEDSX = GUICtrlCreateLabel("LOCKED", $x + 210, $y + 35, 173, 50)
+	GUICtrlSetFont(-1, 30, 800, 0, "Arial")
+	GUICtrlSetColor(-1, 0xFF0000)
+	GUICtrlSetState(-1, $GUI_HIDE)
+	$rbSXIAttacking = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_02", "Farm XP instead of Attacking"), $x, $y + 45, 158, 17)
+	GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_03", "Max XP to Gain") & ":", $x, $y + 78, -1, 17)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$g_hTxtMaxXPtoGain = GUICtrlCreateInput("500", $x + 85, $y + 75, 70, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+	GUICtrlSetLimit(-1, 8)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$x += 129
+	$y += 120
+	GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_04", "Use"), $x - 35, $y + 13, 23, 17)
+	_GUICtrlCreateIcon($g_sLibIconPath, $eIcnKing, $x, $y, 32, 32)
+	_GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueen, $x + 40, $y, 32, 32)
+	_GUICtrlCreateIcon($g_sLibIconPath, $eIcnWarden, $x + 80, $y, 32, 32)
+	GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_05", "to gain XP"), $x + 123, $y + 13, 53, 17)
+	$x += 10
+	$g_hChkSXBK = GUICtrlCreateCheckbox("", $x, $y + 35, 13, 13)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$g_hChkSXAQ = GUICtrlCreateCheckbox("", $x + 40, $y + 35, 13, 13)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+	$g_hChkSXGW = GUICtrlCreateCheckbox("", $x + 80, $y + 35, 13, 13)
+	GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+
+	$x = $xStart + 7
+	$y += 85
+	$DocXP1 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_07", "XP at Start"), $x - 20, $y, 90, 19)
+	GUICtrlSetBkColor(-1, 0xD8D8D8)
+	$DocXP2 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_08", "Current XP"), $x + 65, $y, 90, 19)
+	GUICtrlSetBkColor(-1, 0xD8D8D8)
+	$DocXP3 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_09", "XP Won"), $x + 150, $y, 90, 19)
+	GUICtrlSetBkColor(-1, 0xD8D8D8)
+	$DocXP4 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_10", "XP Won/Hour"), $x + 240, $y, 75, 19)
+	GUICtrlSetBkColor(-1, 0xD8D8D8)
+	$DocXP5 = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "chkEnableSuperXP2_Info_11", "Runtime"), $x + 315, $y, 90, 19)
+	GUICtrlSetBkColor(-1, 0xD8D8D8)
+
+	$y += 15
+	$g_hLblXPatStart = GUICtrlCreateLabel("0", $x - 20, $y + 7, 90, 32)
+	GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+	GUICtrlSetBkColor(-1, 0xbfdfff)
+	$g_hLblXPCurrent = GUICtrlCreateLabel("0", $x + 65, $y + 7, 90, 32)
+	GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+	GUICtrlSetBkColor(-1, 0xbfdfff)
+	$g_hLblXPSXWon = GUICtrlCreateLabel("0", $x + 150, $y + 7, 90, 32)
+	GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+	GUICtrlSetBkColor(-1, 0xbfdfff)
+	$g_hLblXPSXWonHour = GUICtrlCreateLabel("0", $x + 240, $y + 7, 75, 32)
+	GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+	GUICtrlSetBkColor(-1, 0xbfdfff)
+	$g_hLblXPRunTime = GUICtrlCreateLabel("00:00:00", $x + 315, $y + 7, 90, 32)
+	GUICtrlSetFont(-1, 17, 800, 0, "Arial")
+	GUICtrlSetBkColor(-1, 0xbfdfff)
+
+	$x = $xStart
+	$y += 55
+	GUICtrlCreateLabel( GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "Label_03", "Goblin XP attack continuously the TH of Goblin Picnic to farm XP."), $x - 13, $y, 312, 17)
+	GUICtrlCreateLabel( GetTranslatedFileIni("MBR GUI Design MOD - Goblin XP", "Label_04", "At each attack, you win 5 XP"), $x - 13, $y + 20, 306, 17)
+
+	chkEnableSuperXP()
+
+	GUICtrlCreateGroup("", -99, -99, 1, 1)
+EndFunc   ;==>TabGoblinXPGUI
+
 Func TabIMDebugGUI()
 	Local $x = 5, $y = 45 ;For Border
 	Local $yNext = 30
@@ -435,8 +532,8 @@ Func TabIMDebugGUI()
 ;	$g_hBtnTestCheckOneGem = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestCheckOneGem", "Test Check Gem Boost"), $x, $y, 140, 25)
 ;	GUICtrlSetOnEvent(-1, "btnTestCheckOneGem")
 	$y += $yNext
-;	$g_hBtnTestGoblinXP = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGoblinXP", "Test Goblin XP"), $x, $y, 140, 25)
-;	GUICtrlSetOnEvent(-1, "btnTestGoblinXP")
+	$g_hBtnTestGoblinXP = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestGoblinXP", "Test Goblin XP"), $x, $y, 140, 25)
+	GUICtrlSetOnEvent(-1, "btnTestGoblinXP")
 	$y += $yNext
 	$g_hBtnTestBotHumanization = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design MOD - IM Debug", "BtnTestBotHumanization", "Test Bot Humanization"), $x, $y, 140, 25)
 	GUICtrlSetOnEvent(-1, "btnTestBotHumanization")

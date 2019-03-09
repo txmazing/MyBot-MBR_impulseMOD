@@ -20,8 +20,8 @@ Func ReadClanChat()
 	If ChatOpen() Then
 		Click(230, 20) ; go to clan chat
 		randomSleep(1500)
-		If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-			Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+		If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+			Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
 			SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 		EndIf
 		randomSleep(1500)
@@ -48,8 +48,8 @@ Func ReadGlobalChat()
 	If ChatOpen() Then
 		Click(80, 20) ; go to global chat
 		randomSleep(1500)
-		If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-			Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+		If _CheckColorPixel($g_aButtonChatRulesGlobal[2], $g_aButtonChatRulesGlobal[3], $g_aButtonChatRulesGlobal[4], $g_aButtonChatRulesGlobal[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+			Click($g_aButtonChatRulesGlobal[0], $g_aButtonChatRulesGlobal[1], 1) ;Click on Understand button
 			SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 		EndIf
 		randomSleep(1500)

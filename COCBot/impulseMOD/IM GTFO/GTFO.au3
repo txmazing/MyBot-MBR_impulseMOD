@@ -85,7 +85,7 @@ Func MainGTFO()
 
 		If $g_aiTimeTrain[0] > 10 Then
 			SetLog("Let's wait for a few minutes!", $COLOR_INFO)
-			Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard', 'BuilderBase', 'Boost']
+			Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard', 'BuilderBase']
 			While 1
 				If Not $g_bRunState Then Return
 				If $g_bRestart Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
@@ -145,14 +145,18 @@ Func TrainGTFO()
 
 	If Not $g_bRunState Then Return
 
-	; Smart Train - IMMOD
+	; Smart Train - IMMOD TODO: Reactivate except #REMOVED
 ;	If $g_bChkSmartTrain Then
 ;		SmartTrain()
-;~ 		ResetVariables("donated")
+;~ 		ResetVariables("donated") #REMOVED
 ;		EndGainCost("Train")
 ;		Return
 ;	EndIf
-
+	
+	ClickP($aAway, 2, 0, "#0346") ;Click Away
+	If _Sleep(1000) Then Return ; Delay AFTER the click Away Prevents lots of coc restarts
+	SetLog("Army Window Closed", $COLOR_INFO)
+	
 	; Is necessary to be Custom Train Troops to be accurate
 	If Not OpenArmyOverview(True, "TrainGTFO()") Then Return
 
@@ -544,6 +548,7 @@ Func ClickAwayChat($iSleep = 10)
 
 	Click($ix, $iy, 1, 0)
 EndFunc   ;==>ClickAwayChat
+
 Func OpenClanChat()
 
 	; OPEN CLAN CHAT and verbose in log
@@ -552,7 +557,13 @@ Func OpenClanChat()
 	SetLog("Checking for Donate Requests in Clan Chat", $COLOR_INFO)
 	ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
 	If _Sleep($DELAYDONATECC4) Then Return
-		
+
+	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+	If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+		Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
+		SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
+	EndIf
+	
 	Local $iLoopCount = 0
 	While 1
 		;If Clan tab is selected.

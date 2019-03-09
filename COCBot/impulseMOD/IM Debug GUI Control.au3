@@ -95,6 +95,44 @@ Func btnTestGTFO()
 
 EndFunc   ;==>btnTestGTFO
 
+Func btnTestGoblinXP()
+	SetLog("Test GoblinXP Started", $COLOR_DEBUG)
+
+	Local $wasRunState = $g_bRunState
+	Local $wasFirstStart = $g_bFirstStart
+	Local $wasEnableSuperXP = $g_bEnableSuperXP
+	Local $wasSXTraining = $g_irbSXTraining
+	Local $wasDebugSX = $g_bDebugSX
+	Local $waschkSXAQ = $g_bSXAQ
+
+	;For Debug Purpose set run state to true temporarily
+	$g_bRunState = True
+	$g_bFirstStart = True
+	$g_bEnableSuperXP = True
+	$g_irbSXTraining = 2
+	$g_bDebugSX = True
+	If $g_hTimerSinceStarted = 0 Then $g_hTimerSinceStarted = __TimerInit()
+	If $g_iTimePassed = 0 Then $g_iTimePassed += Int(__TimerDiff($g_hTimerSinceStarted))
+
+	$g_bSXAQ = $eHeroQueen
+
+	MainSuperXPHandler()
+
+	;Reset to orignal state
+
+	$g_bFirstStart = $wasFirstStart
+	$g_bEnableSuperXP = $wasEnableSuperXP
+	$g_irbSXTraining = $wasSXTraining
+	$g_bDebugSX = $wasDebugSX
+
+	$g_bSXAQ = $waschkSXAQ
+
+	$g_bRunState = $wasRunState
+
+	SetLog("Test GoblinXP Ended", $COLOR_DEBUG)
+
+EndFunc   ;==>btnTestGoblinXP
+
 Func btnForceStopBot()
 	SetLog("Going to force stop the bot.", $COLOR_DEBUG)
 	If $g_bRunState Then

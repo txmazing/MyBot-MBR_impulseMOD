@@ -555,7 +555,7 @@ Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIc
 		$eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnModHumanization, $eIcnIMMod, _ ; 255
 		$eIcnDebug, $eIcnBoostMagic, $eIcnClanHop, $eIcnBoostClMagic, $eIcnHumanization, _ ; 260
 		$eIcnNEWChat, $eIcnNEWChat1, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnClanGames, $eIcnFarmingSchedule, $eIcnWarPreparation, _ ; 270
-		$eIcnSwitchAcc, $eIcnSwitchProfile, $eIcnModChatBot, $eIcnModGTFO
+		$eIcnSwitchAcc, $eIcnSwitchProfile, $eIcnModChatBot, $eIcnModGTFO, $eIcnModGoblinXp
 ;------------------EDITED By IMMOD - END------------------
 
 Global $eIcnDonBlank = $eIcnDonBlacklist

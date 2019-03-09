@@ -216,8 +216,8 @@ EndFunc   ;==>ChatbotChatOpen
 Func ChatbotSelectClanChat() ; select clan tab
 	Click($g_aButtonChatSelectTabClan[0], $g_aButtonChatSelectTabClan[1], 1) ; switch to Clan chat
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
-	If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-		Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+	If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+		Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
 		SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
 	EndIf
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
@@ -242,8 +242,8 @@ EndFunc   ;==>ChatbotCheckIfUserIsInClan
 Func ChatbotSelectGlobalChat() ; select global tab
 	Click($g_aButtonChatSelectTabGlobal[0], $g_aButtonChatSelectTabGlobal[1], 1) ; switch to global
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
-	If _CheckColorPixel($g_aButtonChatRules[2], $g_aButtonChatRules[3], $g_aButtonChatRules[4], $g_aButtonChatRules[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-		Click($g_aButtonChatRules[0], $g_aButtonChatRules[1], 1) ;Click on Understand button
+	If _CheckColorPixel($g_aButtonChatRulesGlobal[2], $g_aButtonChatRulesGlobal[3], $g_aButtonChatRulesGlobal[4], $g_aButtonChatRulesGlobal[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
+		Click($g_aButtonChatRulesGlobal[0], $g_aButtonChatRulesGlobal[1], 1) ;Click on Understand button
 		SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
 	EndIf
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed

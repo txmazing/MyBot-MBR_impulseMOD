@@ -818,6 +818,7 @@ Func runBot() ;Bot that runs everything in order
 			If ($g_iCommandStop = 3 Or $g_iCommandStop = 0) Then ; Train Donate only - force a donate cc everytime, Ignore any SkipDonate Near Full Values
 				If BalanceDonRec(True) Then DonateCC()
 			EndIf
+			MainSuperXPHandler() ; ADDED By IMMOD
 			Local $aRndFuncList = ['Laboratory', 'UpgradeHeroes', 'UpgradeBuilding', 'BuilderBase']
 			While 1
 				If $g_bRunState = False Then Return
@@ -959,6 +960,7 @@ Func _Idle() ;Sequence that runs until Full Army
 		checkMainScreen(False) ; required here due to many possible exits
 		If $g_iCommandStop = -1 Then
 			If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
+				MainSuperXPHandler() ; ADDED By IMMOD
 				If CheckNeedOpenTrain($g_sTimeBeforeTrain) Then TrainSystem()
 				If $g_bRestart = True Then ExitLoop
 				If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -971,6 +973,7 @@ Func _Idle() ;Sequence that runs until Full Army
 				EndIf
 				CheckArmyCamp(True, True)
 			EndIf
+			MainSuperXPHandler() ; ADDED By IMMOD
 		EndIf
 		If _Sleep($DELAYIDLE1) Then Return
 		If $g_iCommandStop = 0 And $g_bTrainEnabled = True Then
@@ -1029,7 +1032,14 @@ EndFunc   ;==>_Idle
 
 Func AttackMain() ;Main control for attack functions
 	If ProfileSwitchAccountEnabled() And $g_abDonateOnly[$g_iCurAccount] Then Return
-	; getArmyTroopCapacity(True, True)
+		;------------------ADDED By IMMOD - START------------------
+	If $g_bEnableSuperXP = True And $g_irbSXTraining = 2 Then
+		MainSuperXPHandler()
+		Return
+	EndIf
+	;getArmyTroopCapacity(True, True)
+	;If checkForecastPause($g_iCurrentForecast) = True Then Return
+	;------------------ADDED By IMMOD - END------------------
 	ClickP($aAway, 1, 0, "#0000") ;Click Away to prevent any pages on top
 	If IsSearchAttackEnabled() Then
 		If (IsSearchModeActive($DB) And checkCollectors(True, False)) Or IsSearchModeActive($LB) Or IsSearchModeActive($TS) Then
@@ -1260,8 +1270,13 @@ Func _RunFunction($action)
 				SwitchBetweenBases()
 			EndIf
 			_Sleep($DELAYRUNBOT3)
+		;------------------ADDED By IMMOD - START------------------
+		Case "SuperXP"
+			MainSuperXPHandler()
+			_Sleep($DELAYRUNBOT3)
 		Case "Humanization"
 			BotHumanization()
+		;------------------ADDED By IMMOD - END------------------
 		Case "CollectFreeMagicItems"
 			CollectFreeMagicItems()
 			_Sleep($DELAYRUNBOT3)
@@ -1285,7 +1300,12 @@ Func FirstCheck()
 	$g_iCommandStop = -1
 
 	BotHumanization() ; Added By IMMOD
-	
+
+	If $g_bEnableSuperXP = True And $g_irbSXTraining = 2 Then ;Added By IMMOD when Super Xp Only Farm Option is on skip all and just do the Goblin Xp Farming
+		MainSuperXPHandler()
+		Return
+	EndIf
+
 	;------------------CUSTOM LOGIC By IMMOD - START------------------
 	MainGTFO()
 	MainKickout()
