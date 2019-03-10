@@ -42,7 +42,28 @@ Func UpgradeBuilding()
 			$iUpgradeAction += 2 ^ ($iz + 1)
 		EndIf
 	Next
-	If $iUpgradeAction < 0 Then Return False
+	;------------------EDITED By IMMOD - START------------------
+	If $iUpgradeAction < 0 And $g_bSmartSwitchUpgrade = True Then
+		If $g_bAutoUpgradeEnabled Then
+			EnableGuiControls()
+			GUICtrlSetState($g_hChkAutoUpgrade,$GUI_CHECKED)
+			DisableGuiControls()
+			chkAutoUpgrade()
+			SetLog("Auto Upgrade Enabled By Smart Switch.", $COLOR_INFO)
+		EndIf
+		Return False
+	ElseIf $iUpgradeAction >= 0 And $g_bSmartSwitchUpgrade = True Then
+		If Not $g_bAutoUpgradeEnabled Then
+			EnableGuiControls()
+			GUICtrlSetState($g_hChkAutoUpgrade, $GUI_UNCHECKED)
+			DisableGuiControls()
+			chkAutoUpgrade()
+			SetLog("Auto Upgrade Disabled By Smart Switch.", $COLOR_INFO)
+		EndIf
+	ElseIf $iUpgradeAction < 0 Then
+		Return False
+	EndIf
+	;------------------EDITED By IMMOD - END------------------
 	$iUpgradeAction = 0 ; Reset action
 
 	SetLog("Checking Upgrades", $COLOR_INFO)

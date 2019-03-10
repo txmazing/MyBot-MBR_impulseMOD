@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.1"
-Global $g_sModversion = "v1.0.6"
+Global $g_sModversion = "v1.0.7"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -1710,6 +1710,7 @@ If Not IsNumber($iNum1) Then Return SetError(1, 0, 0)
 If Not IsNumber($iNum2) Then Return SetError(2, 0, 0)
 Return($iNum1 > $iNum2) ? $iNum2 : $iNum1
 EndFunc
+Global Const $BS_CENTER = 0x0300
 Global Const $BS_DEFPUSHBUTTON = 0x0001
 Global Const $BS_MULTILINE = 0x2000
 Global Const $BS_PUSHLIKE = 0x1000
@@ -3962,6 +3963,56 @@ WEnd
 __ArrayDualPivotSort($aArray, $iPivot_Left, $iLess - 1, True)
 __ArrayDualPivotSort($aArray, $iGreater + 1, $iPivot_Right, False)
 EndIf
+EndFunc
+Func _ArraySwap(ByRef $aArray, $iIndex_1, $iIndex_2, $bCol = False, $iStart = -1, $iEnd = -1)
+If $bCol = Default Then $bCol = False
+If $iStart = Default Then $iStart = -1
+If $iEnd = Default Then $iEnd = -1
+If Not IsArray($aArray) Then Return SetError(1, 0, -1)
+Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
+Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
+If $iDim_2 = -1 Then
+$bCol = False
+$iStart = -1
+$iEnd = -1
+EndIf
+If $iStart > $iEnd Then Return SetError(5, 0, -1)
+If $bCol Then
+If $iIndex_1 < 0 Or $iIndex_2 > $iDim_2 Then Return SetError(3, 0, -1)
+If $iStart = -1 Then $iStart = 0
+If $iEnd = -1 Then $iEnd = $iDim_1
+Else
+If $iIndex_1 < 0 Or $iIndex_2 > $iDim_1 Then Return SetError(3, 0, -1)
+If $iStart = -1 Then $iStart = 0
+If $iEnd = -1 Then $iEnd = $iDim_2
+EndIf
+Local $vTmp
+Switch UBound($aArray, $UBOUND_DIMENSIONS)
+Case 1
+$vTmp = $aArray[$iIndex_1]
+$aArray[$iIndex_1] = $aArray[$iIndex_2]
+$aArray[$iIndex_2] = $vTmp
+Case 2
+If $iStart < -1 Or $iEnd < -1 Then Return SetError(4, 0, -1)
+If $bCol Then
+If $iStart > $iDim_1 Or $iEnd > $iDim_1 Then Return SetError(4, 0, -1)
+For $j = $iStart To $iEnd
+$vTmp = $aArray[$j][$iIndex_1]
+$aArray[$j][$iIndex_1] = $aArray[$j][$iIndex_2]
+$aArray[$j][$iIndex_2] = $vTmp
+Next
+Else
+If $iStart > $iDim_2 Or $iEnd > $iDim_2 Then Return SetError(4, 0, -1)
+For $j = $iStart To $iEnd
+$vTmp = $aArray[$iIndex_1][$j]
+$aArray[$iIndex_1][$j] = $aArray[$iIndex_2][$j]
+$aArray[$iIndex_2][$j] = $vTmp
+Next
+EndIf
+Case Else
+Return SetError(2, 0, -1)
+EndSwitch
+Return 1
 EndFunc
 Func _ArrayToString(Const ByRef $aArray, $sDelim_Col = "|", $iStart_Row = -1, $iEnd_Row = -1, $sDelim_Row = @CRLF, $iStart_Col = -1, $iEnd_Col = -1)
 If $sDelim_Col = Default Then $sDelim_Col = "|"
@@ -7035,6 +7086,9 @@ Global Const $g_iLimitBreakGE[12] = [2500, 7000, 100000, 500000, 1000000, 200000
 Global Const $g_iLimitBreakDE[12] = [0, 0, 0, 0, 0, 0, 20000, 80000, 190000, 200000, 20000, 240000]
 Global $g_iLabUpgradeProgress = 0
 Global $g_iWallWarden = 0
+Global $g_ibUpdateNewUpgradesOnly = 0
+Global Const $UP = True, $DOWN = False, $TILL_END = True
+Global $g_bSmartSwitchUpgrade = False
 Global $g_bChkBB_DropTrophies = False
 Global $g_bChkBB_OnlyWithLoot = False
 Global $g_iTxtBB_DropTrophies = 0
@@ -14583,7 +14637,9 @@ Global $g_hChkAutoUpgrade = 0, $g_hLblAutoUpgrade = 0, $g_hTxtAutoUpgradeLog = 0
 Global $g_hTxtSmartMinGold = 0, $g_hTxtSmartMinElixir = 0, $g_hTxtSmartMinDark = 0
 Global $g_hChkResourcesToIgnore[3] = [0, 0, 0]
 Global $g_hChkUpgradesToIgnore[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_hChkUpgradeAllOrNone = 0, $g_hChkUpgradeRepeatAllOrNone = 0, $g_hChkUpdateNewUpgradesOnly = 0, $g_hBtnTop = 0, $g_hBtnBottom = 0, $g_hBtnUp = 0, $g_hBtnDown = 0
 Global $g_hChkUpgrPriority = 0, $g_hCmbUpgrdPriority = 0
+Global $g_hChkPrioritySystem = 0, $g_hCmbPrioritySystem = 0, $g_hChkSmartSwitchUpgrade = 0
 Func CreateVillageUpgrade()
 InitTranslatedTextUpgradeTab()
 $g_hGUI_UPGRADE = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)
@@ -14709,12 +14765,22 @@ Local $x = 25, $y = 45
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Group_01", "Buildings or Heroes"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 30 +($g_iUpgradeSlots * 22))
 $x -= 7
 $y -= 7
+$g_hChkUpgradeAllOrNone = GUICtrlCreateCheckbox("", $x + 4, $y, 13, 13, BitOR($BS_PUSHLIKE, $BS_ICON))
+GUICtrlSetImage(-1, $g_sLibIconPath, $eIcnGoldStar, 0)
+Local $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "ChkUpgradeAllOrNone", "This button will clear or set the entire column of checkboxes")
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetTip(-1, $sTxtTip)
+GUICtrlSetOnEvent(-1, "chkUpgradeAllOrNone")
+$g_hChkUpgradeRepeatAllOrNone = GUICtrlCreateCheckbox("", $x + 394, $y, 13, 13, BitOR($BS_PUSHLIKE, $BS_ICON))
+GUICtrlSetImage(-1, $g_sLibIconPath, $eIcnGoldStar, 0)
+GUICtrlSetState(-1, $GUI_UNCHECKED)
+GUICtrlSetTip(-1, $sTxtTip)
+GUICtrlSetOnEvent(-1, "chkUpgradeRepeatAllOrNone")
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_01", "Unit Name"), $x + 71, $y, 70, 18)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_02", "Lvl"), $x + 153, $y, 40, 18)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_03", "Type"), $x + 173, $y, 50, 18)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_04", "Cost"), $x + 219, $y, 50, 18)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_05", "Time"), $x + 270, $y, 50, 18)
-GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_06", "Rep."), $x + 392, $y, 50, 18)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "Table header_07", "Estimate End"), $x + 314, $y, 70, 18)
 $y += 13
 For $i = 0 To $g_iUpgradeSlots - 1
@@ -14757,17 +14823,33 @@ $g_hTxtUpgrMinElixir = GUICtrlCreateInput("250000", $x + 55, $y, 61, 17, BitOR($
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinElixir_Info_01", "Save this much Elixir after the upgrade completes") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinElixir_Info_02", "Set this value as needed to save for making troops or wall upgrades."))
 GUICtrlSetLimit(-1, 7)
 $x -= 15
-$y -= 8
+$y -= 18
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 140, $y, 15, 15)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "LblUpgrMinDark", "Min. Dark") & ":", $x + 160, $y + 3, -1, -1)
-$g_hTxtUpgrMinDark = GUICtrlCreateInput("3000", $x + 210, $y, 61, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+$g_hTxtUpgrMinDark = GUICtrlCreateInput("3000", $x + 218, $y, 61, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinDark_Info_01", "Save this amount of Dark Elixir after the upgrade completes.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinDark_Info_02", "Set this value higher if you want make war troops."))
 GUICtrlSetLimit(-1, 6)
-$y -= 8
-GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnLocateUpgrades", "Locate Upgrades"), $x + 290, $y - 4, 120, 18, BitOR($BS_MULTILINE, $BS_VCENTER))
+$g_hChkUpdateNewUpgradesOnly = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "ChkUpdateNewUpgradesOnly_Info_01", "New Only"), $x + 141, $y + 15, -1, -1)
+GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "ChkUpdateNewUpgradesOnly_Info_02", "Update NEW upgrades only for speed"))
+GUICtrlSetOnEvent(-1, "chkUpdateNewUpgradesOnly")
+$g_hBtnTop = GUICtrlCreateButton("T", $x + 209, $y + 18, 23, 17, $BS_CENTER)
+GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnTop_Info_01", "Push button to move upgrade-box-checked buildings to the TOP of the list"))
+GUICtrlSetOnEvent(-1, "btnTop")
+$g_hBtnBottom = GUICtrlCreateButton("B", $x + 233, $y + 18, 23, 17, $BS_CENTER)
+GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnBottom_Info_01", "Push button to move upgrade-box-checked buildings to the BOTTOM of the list"))
+GUICtrlSetOnEvent(-1, "btnBottom")
+$g_hBtnUp = GUICtrlCreateButton("▲", $x + 257, $y + 18, 23, 17, $BS_CENTER)
+GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnUp_Info_01", "Push button to move UP upgrade-box-checked buildings a row"))
+GUICtrlSetOnEvent(-1, "btnUp")
+$g_hBtnDown = GUICtrlCreateButton("▼", $x + 281, $y + 18, 23, 17, $BS_CENTER)
+GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnDown_Info_01", "Push button to move DOWN upgrade-box-checked buildings a row"))
+GUICtrlSetOnEvent(-1, "btnDown")
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+$y -= 2
+GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnLocateUpgrades", "Locate Upgrades"), $x + 305, $y - 4, 120, 18, BitOR($BS_MULTILINE, $BS_VCENTER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnLocateUpgrades_Info_01", "Push button to locate and record information on building/Hero upgrades") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnLocateUpgrades_Info_02", "Any upgrades with repeat enabled are skipped and can not be located again"))
 GUICtrlSetOnEvent(-1, "btnLocateUpgrades")
-GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnResetUpgrades", "Reset Upgrades"), $x + 290, $y + 16, 120, 18, BitOR($BS_MULTILINE, $BS_VCENTER))
+GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnResetUpgrades", "Reset Upgrades"), $x + 305, $y + 16, 120, 18, BitOR($BS_MULTILINE, $BS_VCENTER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnResetUpgrades_Info_01", "Push button to reset & remove upgrade information") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "BtnResetUpgrades_Info_02", "If repeat box is checked, data will not be reset"))
 GUICtrlSetOnEvent(-1, "btnResetUpgrade")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -14880,6 +14962,9 @@ GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "Group_0
 $g_hChkAutoUpgrade = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "ChkAutoUpgrade", "Enable Auto Upgrade"), $x - 5, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "ChkAutoUpgrade_Info_01", "Check box to enable automatically starting Upgrades from builders menu"))
 GUICtrlSetOnEvent(-1, "chkAutoUpgrade")
+$g_hChkSmartSwitchUpgrade = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "ChkSmartSwitchUpgrade", "Smart Switch Upgrades"), $x +130, $y, -1, -1)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "ChkSmartSwitchUpgrade_Info_01", "Switches between Auto Upgrade and Building tab when Building tab has upgrades enabled."))
+GUICtrlSetOnEvent(-1, "chkSmartSwitchUpgrade")
 $g_hLblAutoUpgrade = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "Label_01", "Save"), $x, $y + 32, -1, -1)
 $g_hTxtSmartMinGold = GUICtrlCreateInput("150000", $x + 33, $y + 29, 60, 21, BitOR($ES_CENTER, $ES_NUMBER))
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 98, $y + 32, 16, 16)
@@ -61774,7 +61859,26 @@ If $g_abBuildingUpgradeEnable[$iz] = True Then
 $iUpgradeAction += 2 ^($iz + 1)
 EndIf
 Next
-If $iUpgradeAction < 0 Then Return False
+If $iUpgradeAction < 0 And $g_bSmartSwitchUpgrade = True Then
+If $g_bAutoUpgradeEnabled Then
+EnableGuiControls()
+GUICtrlSetState($g_hChkAutoUpgrade,$GUI_CHECKED)
+DisableGuiControls()
+chkAutoUpgrade()
+SetLog("Auto Upgrade Enabled By Smart Switch.", $COLOR_INFO)
+EndIf
+Return False
+ElseIf $iUpgradeAction >= 0 And $g_bSmartSwitchUpgrade = True Then
+If Not $g_bAutoUpgradeEnabled Then
+EnableGuiControls()
+GUICtrlSetState($g_hChkAutoUpgrade, $GUI_UNCHECKED)
+DisableGuiControls()
+chkAutoUpgrade()
+SetLog("Auto Upgrade Disabled By Smart Switch.", $COLOR_INFO)
+EndIf
+ElseIf $iUpgradeAction < 0 Then
+Return False
+EndIf
 $iUpgradeAction = 0
 SetLog("Checking Upgrades", $COLOR_INFO)
 VillageReport(True, True)
@@ -76269,6 +76373,122 @@ Case "Building"
 $g_iCmbUpgrdPriority = 1
 EndSwitch
 EndFunc
+Func MoveUpgrades($bDirUp, $bTillEnd = False)
+btnchkbxUpgrade()
+btnchkbxRepeat()
+Local $iStart, $iStop, $iStep, $bSwap
+If $bDirUp Then
+$iStart = 0
+$iStop = $g_iUpgradeSlots - 1
+$iStep = 1
+Else
+$iStart = $g_iUpgradeSlots - 1
+$iStop = 0
+$iStep = -1
+EndIf
+Do
+$bSwap = False
+For $i = $iStart To $iStop Step $iStep
+If $g_abBuildingUpgradeEnable[$i] <> 1 Or $i = $iStart Then ContinueLoop
+If $g_abBuildingUpgradeEnable[$i - $iStep] <> 1 Then
+$bSwap = True
+SwapUpgrades($i, $i - $iStep)
+EndIf
+Next
+Until(Not $bTillEnd) Or(Not $bSwap)
+applyUpgradesGUI()
+EndFunc
+Func SwapUpgrades($i, $j)
+_ArraySwap($g_aiPicUpgradeStatus, $i, $j)
+_ArraySwap($g_abBuildingUpgradeEnable, $i, $j)
+_ArraySwap($g_avBuildingUpgrades, $i, $j)
+_ArraySwap($g_abUpgradeRepeatEnable, $i, $j)
+EndFunc
+Func applyUpgradesGUI()
+For $i = 0 To $g_iUpgradeSlots - 1
+GUICtrlSetImage($g_hPicUpgradeStatus[$i], $g_sLibIconPath, $g_aiPicUpgradeStatus[$i])
+If $g_abBuildingUpgradeEnable[$i] = 1 Then
+GUICtrlSetState($g_hChkUpgrade[$i], $GUI_CHECKED)
+Else
+GUICtrlSetState($g_hChkUpgrade[$i], $GUI_UNCHECKED)
+EndIf
+GUICtrlSetData($g_hTxtUpgradeName[$i], $g_avBuildingUpgrades[$i][4])
+GUICtrlSetData($g_hTxtUpgradeLevel[$i], $g_avBuildingUpgrades[$i][5])
+Switch $g_avBuildingUpgrades[$i][3]
+Case "Gold"
+GUICtrlSetImage($g_hPicUpgradeType[$i], $g_sLibIconPath, $eIcnGold)
+Case "Elixir"
+GUICtrlSetImage($g_hPicUpgradeType[$i], $g_sLibIconPath, $eIcnElixir)
+Case "Dark"
+GUICtrlSetImage($g_hPicUpgradeType[$i], $g_sLibIconPath, $eIcnDark)
+Case Else
+GUICtrlSetImage($g_hPicUpgradeType[$i], $g_sLibIconPath, $eIcnBlank)
+EndSwitch
+If $g_avBuildingUpgrades[$i][2] > 0 Then
+GUICtrlSetData($g_hTxtUpgradeValue[$i], _NumberFormat($g_avBuildingUpgrades[$i][2]))
+Else
+GUICtrlSetData($g_hTxtUpgradeValue[$i], "")
+EndIf
+GUICtrlSetData($g_hTxtUpgradeTime[$i], StringStripWS($g_avBuildingUpgrades[$i][6], $STR_STRIPALL))
+If $g_abUpgradeRepeatEnable[$i] = 1 Then
+GUICtrlSetState($g_hChkUpgradeRepeat[$i], $GUI_CHECKED)
+Else
+GUICtrlSetState($g_hChkUpgradeRepeat[$i], $GUI_UNCHECKED)
+EndIf
+Next
+EndFunc
+Func chkUpgradeAllOrNone()
+If GUICtrlRead($g_hChkUpgradeAllOrNone) = $GUI_CHECKED And GUICtrlRead($g_hChkUpgrade[0]) = $GUI_CHECKED Then
+For $i = 0 To $g_iUpgradeSlots - 1
+GUICtrlSetState($g_hChkUpgrade[$i], $GUI_UNCHECKED)
+Next
+Else
+For $i = 0 To $g_iUpgradeSlots - 1
+GUICtrlSetState($g_hChkUpgrade[$i], $GUI_CHECKED)
+Next
+EndIf
+Sleep(300)
+GUICtrlSetState($g_hChkUpgradeAllOrNone, $GUI_UNCHECKED)
+EndFunc
+Func chkUpgradeRepeatAllOrNone()
+If GUICtrlRead($g_hChkUpgradeRepeatAllOrNone) = $GUI_CHECKED And GUICtrlRead($g_hChkUpgradeRepeat[0]) = $GUI_CHECKED Then
+For $i = 0 To $g_iUpgradeSlots - 1
+GUICtrlSetState($g_hChkUpgradeRepeat[$i], $GUI_UNCHECKED)
+Next
+Else
+For $i = 0 To $g_iUpgradeSlots - 1
+GUICtrlSetState($g_hChkUpgradeRepeat[$i], $GUI_CHECKED)
+Next
+EndIf
+Sleep(300)
+GUICtrlSetState($g_hChkUpgradeRepeatAllOrNone, $GUI_UNCHECKED)
+EndFunc
+Func chkUpdateNewUpgradesOnly()
+If GUICtrlRead($g_hChkUpdateNewUpgradesOnly) = $GUI_CHECKED Then
+$g_ibUpdateNewUpgradesOnly = 1
+Else
+$g_ibUpdateNewUpgradesOnly = 0
+EndIf
+EndFunc
+Func chkSmartSwitchUpgrade()
+If GUICtrlRead($g_hChkSmartSwitchUpgrade) = $GUI_CHECKED Then
+$g_bSmartSwitchUpgrade = True
+Else
+$g_bSmartSwitchUpgrade = False
+EndIf
+EndFunc
+Func btnTop()
+MoveUpgrades($UP, $TILL_END)
+EndFunc
+Func btnUp()
+MoveUpgrades($UP)
+EndFunc
+Func btnDown()
+MoveUpgrades($DOWN)
+EndFunc
+Func btnBottom()
+MoveUpgrades($DOWN, $TILL_END)
+EndFunc
 Func btnTestGlobalChatBot()
 SetLog("Test Global Chat Bot Started", $COLOR_DEBUG)
 Local $wasRunState = $g_bRunState
@@ -76388,6 +76608,8 @@ IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "Chatbot", "ChkUseGeneric", F
 IniReadS($g_bCleverbot, $g_sProfileConfigPath, "Chatbot", "ChkCleverbot", False, "Bool")
 IniReadS($g_bUseNotify, $g_sProfileConfigPath, "Chatbot", "ChkChatNotify", False, "Bool")
 IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "Chatbot", "ChkPbSendNewChats", False, "Bool")
+IniReadS($g_ibUpdateNewUpgradesOnly, $g_sProfileConfigPath, "upgrade", "UpdateNewUpgradesOnly", $g_ibUpdateNewUpgradesOnly, "int")
+IniReadS($g_bSmartSwitchUpgrade, $g_sProfileConfigPath, "upgrade", "SmartSwitchUpgrade", $g_bSmartSwitchUpgrade, "Bool")
 EndFunc
 Func SaveConfig_IMMod()
 ApplyConfig_IMMod(GetApplyConfigSaveAction())
@@ -76435,6 +76657,8 @@ _Ini_Add("Chatbot", "globalMsg1", $glb1)
 _Ini_Add("Chatbot", "globalMsg2", $glb2)
 _Ini_Add("Chatbot", "genericMsgClan", $cGeneric)
 _Ini_Add("Chatbot", "responseMsgClan", $cResp)
+_Ini_Add("upgrade", "UpdateNewUpgradesOnly", $g_ibUpdateNewUpgradesOnly ? 1 : 0)
+_Ini_Add("upgrade", "SmartSwitchUpgrade", $g_bSmartSwitchUpgrade ? True : False)
 EndFunc
 Func ApplyConfig_IMMod($TypeReadSave)
 Switch $TypeReadSave
@@ -76479,6 +76703,8 @@ $g_bClanAlwaysMsg =(GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
 $g_bCleverbot =(GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
 $g_bUseNotify =(GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
 $g_bPbSendNew =(GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
+$g_ibUpdateNewUpgradesOnly = GUICtrlRead($g_hChkUpdateNewUpgradesOnly) = $GUI_CHECKED ? 1 : 0
+$g_bSmartSwitchUpgrade =(GUICtrlRead($g_hChkSmartSwitchUpgrade) = $GUI_CHECKED)
 Case "Read"
 GUICtrlSetState($g_hChkEnableSuperXP, $g_bEnableSuperXP ? $GUI_CHECKED : $GUI_UNCHECKED)
 chkEnableSuperXP()
@@ -76537,6 +76763,10 @@ chkChatNotify()
 chkPbSendNewChats()
 ChatGuiEditUpdate()
 chkDelayTime()
+GUICtrlSetState($g_hChkUpdateNewUpgradesOnly, $g_ibUpdateNewUpgradesOnly = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+chkUpdateNewUpgradesOnly()
+GUICtrlSetState($g_hChkSmartSwitchUpgrade, $g_bSmartSwitchUpgrade = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+chkSmartSwitchUpgrade()
 EndSwitch
 EndFunc
 Func GetTranslatedParsedText($sText, $var1 = Default, $var2 = Default, $var3 = Default)

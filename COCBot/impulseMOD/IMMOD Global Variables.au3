@@ -123,6 +123,12 @@ Global Const $g_iLimitBreakDE[12] = [0, 0, 0, 0, 0, 0, 20000, 80000, 190000, 200
 Global $g_iLabUpgradeProgress = 0
 Global $g_iWallWarden = 0
 
+; ================================================== Upgrade Management - Added by IMMOD ================================== ;
+Global $g_ibUpdateNewUpgradesOnly = 0
+Global Const $UP = True, $DOWN = False, $TILL_END = True
+
+Global $g_bSmartSwitchUpgrade = False
+
 ; ================================================== BB Attack - Added by IMMOD ======================================== ;
 Global $g_bChkBB_DropTrophies = False
 Global $g_bChkBB_OnlyWithLoot = False

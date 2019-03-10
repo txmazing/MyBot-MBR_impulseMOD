@@ -46,6 +46,9 @@
 ; Wall/Building Upgrading Priority - Added by IMMOD
 #include "IM Upgrading Priority.au3"
 
+; Upgrade Management - Added by IMMOD
+#include "IM UpgradesMgmt.au3"
+
 ; Debug/Config - Added by IMMOD
 #include "IM Debug GUI Control.au3"
 #include "IM Config.au3"

@@ -1,5 +1,9 @@
-﻿* **V1.0.6**
-* Added GoblinXP
+﻿* **V1.0.7**
+* Added Smart Upgrade
+* Added Upgrade Management
+
+* **V1.0.6**
+* Added GoblinXP (Fixed for 2019)
 * Fixed Humanization (Friendrequest - distinguish Player in Clan or not & Finally click "I UNDERSTAND" Button in Clanchat)
 * Fixed ChatBot (Finally click "I UNDERSTAND" Button in Clanchat)
 * Fixed GTFO (Click "I UNDERSTAND" Button in Clanchat)

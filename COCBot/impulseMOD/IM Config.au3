@@ -61,6 +61,10 @@ Func ReadConfig_IMMod()
 	IniReadS($g_bUseNotify, $g_sProfileConfigPath, "Chatbot", "ChkChatNotify", False, "Bool")
 	IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "Chatbot", "ChkPbSendNewChats", False, "Bool")
 
+	; ==================================================  Upgrade Management - Added by IMMOD ==================== ;
+	IniReadS($g_ibUpdateNewUpgradesOnly, $g_sProfileConfigPath, "upgrade", "UpdateNewUpgradesOnly", $g_ibUpdateNewUpgradesOnly, "int")
+	IniReadS($g_bSmartSwitchUpgrade, $g_sProfileConfigPath, "upgrade", "SmartSwitchUpgrade", $g_bSmartSwitchUpgrade, "Bool")
+	
 EndFunc   ;==>ReadConfig_IMMod
 
 Func SaveConfig_IMMod() ; due to mini mode no guitCtrols Reads in this function
@@ -117,6 +121,11 @@ Func SaveConfig_IMMod() ; due to mini mode no guitCtrols Reads in this function
 	_Ini_Add("Chatbot", "globalMsg2", $glb2)
 	_Ini_Add("Chatbot", "genericMsgClan", $cGeneric)
 	_Ini_Add("Chatbot", "responseMsgClan", $cResp)
+	
+	; ================================================== Upgrade Management - Added by IMMOD ================================== ;
+
+	_Ini_Add("upgrade", "UpdateNewUpgradesOnly", $g_ibUpdateNewUpgradesOnly ? 1 : 0)
+	_Ini_Add("upgrade", "SmartSwitchUpgrade", $g_bSmartSwitchUpgrade ? True : False)
 
 EndFunc   ;==>SaveConfig_IMMod
 
@@ -171,6 +180,11 @@ Func ApplyConfig_IMMod($TypeReadSave)
 			$g_bCleverbot = (GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
 			$g_bUseNotify = (GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
 			$g_bPbSendNew = (GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
+			
+			; ================================================== Upgrade Management - Added by IMMOD ============================= ;
+
+			$g_ibUpdateNewUpgradesOnly = GUICtrlRead($g_hChkUpdateNewUpgradesOnly) = $GUI_CHECKED ? 1 : 0
+			$g_bSmartSwitchUpgrade = (GUICtrlRead($g_hChkSmartSwitchUpgrade) = $GUI_CHECKED)
 
 		Case "Read"
 
@@ -236,6 +250,13 @@ Func ApplyConfig_IMMod($TypeReadSave)
 			chkPbSendNewChats()
 			ChatGuiEditUpdate()
 			chkDelayTime()
+
+			; ==================================================  Upgrade Management - Added by IMMOD ======================================== ;
+
+			GUICtrlSetState($g_hChkUpdateNewUpgradesOnly, $g_ibUpdateNewUpgradesOnly = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkUpdateNewUpgradesOnly()
+			GUICtrlSetState($g_hChkSmartSwitchUpgrade, $g_bSmartSwitchUpgrade = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkSmartSwitchUpgrade()
 
 	EndSwitch
 
