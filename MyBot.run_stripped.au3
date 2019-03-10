@@ -6981,7 +6981,7 @@ Global Const $g_aButtonChatWindowClose[6] = [321, 355, 330, 400, 0xC55115, 20]
 Global Const $g_aButtonChatSelectTabGlobal[6] = [74, 23, 20, 10, 0x79755B, 20]
 Global Const $g_aButtonChatSelectTabClan[6] = [222, 27, 170, 10, 0x79755B, 20]
 Global Const $g_aButtonChatSelectTextBox[6] = [277, 706, 100, 700, 0xFFFFFF, 20]
-Global Const $g_aButtonChatSendButton[6] = [825, 700, 835, 710, 0xFFFFFF, 20]
+Global Const $g_aButtonChatSendButton[6] = [825, 700, 830, 710, 0xFFFFFF, 20]
 Global Const $g_aButtonChatSelectTextBoxBottomNav[6] = [277, 706, 100, 690, 0xFFFFFF, 20]
 Global Const $g_aButtonChatJoinClan[4] = [157, 510, 0x6CBB1F, 20]
 Global Const $g_aButtonChatRulesGlobal[6] = [ 155, 500, 70, 483, 0xDDF585, 20]
@@ -73965,6 +73965,11 @@ $iErrors += 1
 ContinueLoop
 EndIf
 ClickP($aClanPageJoin)
+If _Sleep(1000) Then Return
+If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesClanChk") Then
+Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
+SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+EndIf
 If Not _WaitForCheckPixel($aClanChat, $g_bCapturePixel, Default, "Wait For Clan Chat:") Then
 SetLog("Could not verify loaded Clan Chat. Starting over again", $COLOR_ERROR)
 $iErrors += 1
@@ -75691,7 +75696,7 @@ EndFunc
 Func ChatbotSendChat($fromTab)
 Click($g_aButtonChatSendButton[0], $g_aButtonChatSendButton[1], 1)
 If _Sleep(300) Then Return
-If _Wait4PixelGone($g_aButtonChatSendButton[2], $g_aButtonChatSendButton[3], $g_aButtonChatSendButton[4], $g_aButtonChatSendButton[5], 5000, 100, "ChatbotSendChat(" & $fromTab & ")") Then
+If _Wait4PixelGone($g_aButtonChatSendButton[2], $g_aButtonChatSendButton[3], $g_aButtonChatSendButton[4], $g_aButtonChatSendButton[5], 5000, "ChatbotSendChat(" & $fromTab & ")") Then
 Return True
 Else
 SetLog("Chatbot: Sorry, " & $fromTab & " Chat Send Button Not Clicked.", $COLOR_ERROR)
