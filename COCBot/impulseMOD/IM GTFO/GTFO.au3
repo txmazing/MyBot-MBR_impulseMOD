@@ -557,12 +557,6 @@ Func OpenClanChat()
 	SetLog("Checking for Donate Requests in Clan Chat", $COLOR_INFO)
 	ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
 	If _Sleep($DELAYDONATECC4) Then Return
-
-	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
-	If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesChk") Then
-		Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
-		SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
-	EndIf
 	
 	Local $iLoopCount = 0
 	While 1
@@ -595,6 +589,12 @@ Func OpenClanChat()
 		If _Sleep($DELAYDONATECC1) Then Return ; delay Allow 15x
 	WEnd
 
+	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+	If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesClanChk") Then
+		Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
+		SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+	EndIf
+	
 EndFunc   ;==>OpenClanChat
 
 Func CloseClanChat()
