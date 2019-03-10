@@ -321,7 +321,7 @@ EndFunc   ;==>ChatbotChatInput
 Func ChatbotSendChat($fromTab) ; click send for global or clan chat
 	Click($g_aButtonChatSendButton[0], $g_aButtonChatSendButton[1], 1) ; send
 	If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
-	If _Wait4PixelGone($g_aButtonChatSendButton[2], $g_aButtonChatSendButton[3], $g_aButtonChatSendButton[4], $g_aButtonChatSendButton[5], 5000, 100, "ChatbotSendChat(" & $fromTab & ")") Then ;Wait for Textbox to be disappear if it is not gone in 5 sec show error
+	If _Wait4PixelGone($g_aButtonChatSendButton[2], $g_aButtonChatSendButton[3], $g_aButtonChatSendButton[4], $g_aButtonChatSendButton[5], 5000, "ChatbotSendChat(" & $fromTab & ")") Then ;Wait for Textbox to be disappear if it is not gone in 5 sec show error
 		Return True
 	Else
 		SetLog("Chatbot: Sorry, " & $fromTab & " Chat Send Button Not Clicked.", $COLOR_ERROR)

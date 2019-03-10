@@ -531,6 +531,12 @@ Func ClanHop($sClanJoin = False)
 
 		ClickP($aClanPageJoin) ; Join Clan
 
+		If _Sleep(1000) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+		If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesClanChk") Then
+			Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
+			SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+		EndIf
+		
 		If Not _WaitForCheckPixel($aClanChat, $g_bCapturePixel, Default, "Wait For Clan Chat:") Then ; Check for your "joined the Clan" Message to verify that Chat loaded successfully
 			SetLog("Could not verify loaded Clan Chat. Starting over again", $COLOR_ERROR)
 			$iErrors += 1
