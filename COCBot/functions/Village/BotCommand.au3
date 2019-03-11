@@ -96,11 +96,20 @@ Func BotCommand()
 					$g_bTrainEnabled = False
 					$g_bDonationEnabled = False
 				EndIf
+			Case 22 ; Donate when resources are maxed and no available upgrades
+				If HaltTrigger() Then 
+					$g_bMeetCondStop = True
+				Else
+					$g_bMeetCondStop = False
+				EndIf
 		EndSwitch
 
 		If $g_bMeetCondStop Then
 			Switch $iCmbBotCommand
 				Case 0
+				    If $g_bChatGlobal = True Or $g_bChatClan = True Then ;ChatBot by IMMOD
+					    ChatbotMessage()
+					EndIf
 					If $g_bDonationEnabled = False Then
 						SetLog("Halt Attack, Stay Online/Collect...", $COLOR_INFO)
 					ElseIf $g_bTrainEnabled = False Then

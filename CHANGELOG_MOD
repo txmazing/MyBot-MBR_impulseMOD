@@ -1,9 +1,14 @@
-﻿* **V1.0.7**
+﻿* **V1.0.8**
+* Added some Telegrammessages
+* Added "Donate when resources are maxed and no available upgrades"
+* Fixed GTFO (Find "Edit"-Button)
+
+* **V1.0.7**
 * Added Smart Upgrade
 * Added Upgrade Management
 
 * **V1.0.6**
-* Added GoblinXP (Fixed for 2019)
+* Added GoblinXP (Fixed 2019)
 * Fixed Humanization (Friendrequest - distinguish Player in Clan or not & Finally click "I UNDERSTAND" Button in Clanchat)
 * Fixed ChatBot (Finally click "I UNDERSTAND" Button in Clanchat)
 * Fixed GTFO (Click "I UNDERSTAND" Button in Clanchat)

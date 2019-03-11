@@ -299,7 +299,9 @@ Func NotifyRemoteControlProc()
 						$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "HIBERNATE", "HIBERNATE") & " " & GetTranslatedFileIni("MBR Func_Notify", "HIBERNATE_Info_01", "- Hibernate host PC")
 						$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "SHUTDOWN", "SHUTDOWN") & " " & GetTranslatedFileIni("MBR Func_Notify", "SHUTDOWN_Info_01", "- Shut down host PC")
 						$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "STANDBY", "STANDBY") & " " & GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_01", "- Standby host PC")
-
+						$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- GETCHATS <INTERVAL|NOW|STOP> - to get the latest clan chat as an image")
+						$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT") & " " & GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_01", "- SENDCHAT <chat message> - to send a chat to your clan")
+						
 						NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Request-For-Help_Info_02", "Request for Help") & "%0A" & $txtHelp)
 						SetLog("Notify Telegram: Your request has been received from " & $g_sNotifyOrigin & ". Help has been sent", $COLOR_SUCCESS)
 					Case GetTranslatedFileIni("MBR Func_Notify", "RESTART", "RESTART"), '\UD83D\UDD01 ' & GetTranslatedFileIni("MBR Func_Notify", "RESTART", "RESTART")
@@ -483,8 +485,32 @@ Func NotifyRemoteControlProc()
 						$bHibernate = False
 						$bStandby = False
 					Case Else
+						Local $bFoundChatMessage = False
+						If StringInStr($TGActionMSG, "SENDCHAT") Then
+							$bFoundChatMessage = True
+							Local $chatMessage = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("SENDCHAT "))
+							$chatMessage = StringLower($chatMessage)
+							ChatbotNotifyQueueChat($chatMessage)
+							NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Chat queued, will send on next idle")
+						ElseIf StringInStr($TGActionMSG, "GETCHATS") Then
+							$bFoundChatMessage = True
+							Local $Interval = 1
+							$Interval = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("GETCHATS "))
+							If $Interval = "STOP" Then
+								ChatbotNotifyStopChatRead()
+								NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Stopping interval sending")
+							Else
+								If $Interval = "NOW" Then
+									ChatbotNotifySendChat()
+									NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on next idle")
+								EndIf
+							EndIf
+						EndIf
+						If Not $bFoundChatMessage Then
 						NotifyPushToTelegram(GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_01", "Sorry Chief!, ") & $TGActionMSG & _
 								GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_02", " is not a valid command."))
+						EndIf
+						;=========================>
 				EndSwitch
 			EndIf
 		EndIf
@@ -527,7 +553,7 @@ Func NotifyPushMessageToBoth($Message, $Source = "")
 				"k  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-DE_Info_01", "DE") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootDarkElixir]) & _
 				"k %0A[" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "T") & "]: " & $g_iStatsLastAttack[$eLootTrophy] & _
 				"  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "%") & "]: " & $g_sTotalDamage & _
-				"  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "*") & "]: " & $g_sStarsEarned & _
+				"%  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "*") & "]: " & $g_sStarsEarned & _
 				"  [Tr#]: " & $g_aiCurrentLoot[$eLootTrophy])
 				If _Sleep($DELAYPUSHMSG1) Then Return
 				SetLog("Notify Telegram: Last Raid Text has been sent!", $COLOR_SUCCESS)
@@ -681,6 +707,14 @@ Func NotifyPushMessageToBoth($Message, $Source = "")
 			EndIf
 		Case "Misc"
 			NotifyPushToTelegram($Message)
+			;------------------ADDED By IMMOD - START------------------
+		Case "TroopUpgrading"
+			NotifyPushToTelegram($g_sNotifyOrigin & " | " & $g_avLabTroops[$g_iCmbLaboratory][3] & " started upgrading in the Laboratory! | Duration: " & $g_sLabUpgradeTime)
+			SetLog("Notify Telegram: Troop Upgrade", $COLOR_SUCCESS)
+		Case "BuildingUpgrading"
+			NotifyPushToTelegram($g_sNotifyOrigin & " | " & $g_aUpgradeNameLevel[1] & " started upgrading to Level: " & $g_aUpgradeNameLevel[2] + 1 & " | Duration: " & $g_aUpgradeResourceCostDuration[2])
+			SetLog("Notify Telegram: Building Upgrade", $COLOR_SUCCESS)
+			;------------------ADDED By IMMOD - END------------------
 	EndSwitch
 EndFunc   ;==>NotifyPushMessageToBoth
 

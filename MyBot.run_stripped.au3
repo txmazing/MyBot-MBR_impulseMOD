@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.2"
-Global $g_sModversion = "v1.0.7"
+Global $g_sModversion = "v1.0.8"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -7092,6 +7092,7 @@ Global $g_bSmartSwitchUpgrade = False
 Global $g_bChkBB_DropTrophies = False
 Global $g_bChkBB_OnlyWithLoot = False
 Global $g_iTxtBB_DropTrophies = 0
+Global $g_iHaltTrigger = 0
 Global Const $DELAYSLEEP = 100
 Global Const $DELAYWAITFORPOPUP = 1500
 Global Const $DELAYCLOUDSCLEARED = 1000
@@ -12248,7 +12249,7 @@ GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "LblBotCommand", "When..."), $x + 125, $y, 45, 17)
 $g_hCmbBotCond = GUICtrlCreateCombo("", $x + 173, $y - 3, 160, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 _GUICtrlSetTip(-1, $sTxtTip)
-GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_01", "G and E Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_02", "(G and E) Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_03", "(G or E) Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_04", "G or E Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_05", "Gold and Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_06", "Gold or Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_07", "Gold Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_08", "Elixir Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_09", "Gold Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_10", "Elixir Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_11", "Gold Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_12", "Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_13", "Reach Max. Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_14", "Dark Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_15", "All Storage (G+E+DE) Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_16", "Bot running for...") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_17", "Now (Train/Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_18", "Now (Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_19", "Now (Only stay online)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_20", "W/Shield (Train/Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_21", "W/Shield (Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_22", "W/Shield (Only stay online)"), GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_17", -1))
+GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_01", "G and E Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_02", "(G and E) Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_03", "(G or E) Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_04", "G or E Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_05", "Gold and Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_06", "Gold or Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_07", "Gold Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_08", "Elixir Full and Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_09", "Gold Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_10", "Elixir Full or Max.Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_11", "Gold Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_12", "Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_13", "Reach Max. Trophy") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_14", "Dark Elixir Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_15", "All Storage (G+E+DE) Full") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_16", "Bot running for...") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_17", "Now (Train/Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_18", "Now (Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_19", "Now (Only stay online)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_20", "W/Shield (Train/Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_21", "W/Shield (Donate Only)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_22", "W/Shield (Only stay online)") & "|" & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_23", "Max Storage/No Upgrades"), GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "CmbBotCond_Item_17", -1))
 GUICtrlSetOnEvent(-1, "cmbBotCond")
 GUICtrlSetState(-1, $GUI_DISABLE)
 $g_hCmbHoursStop = GUICtrlCreateCombo("", $x + 337, $y - 3, 80, 35, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -58385,10 +58386,19 @@ $g_bMeetCondStop = True
 $g_bTrainEnabled = False
 $g_bDonationEnabled = False
 EndIf
+Case 22
+If HaltTrigger() Then
+$g_bMeetCondStop = True
+Else
+$g_bMeetCondStop = False
+EndIf
 EndSwitch
 If $g_bMeetCondStop Then
 Switch $iCmbBotCommand
 Case 0
+If $g_bChatGlobal = True Or $g_bChatClan = True Then
+ChatbotMessage()
+EndIf
 If $g_bDonationEnabled = False Then
 SetLog("Halt Attack, Stay Online/Collect...", $COLOR_INFO)
 ElseIf $g_bTrainEnabled = False Then
@@ -60379,6 +60389,18 @@ EndIf
 SetLog(" Trophy loss = " & $sTrophyLoss, $COLOR_DEBUG)
 $g_iDroppedTrophyCount -= Number($sTrophyLoss)
 UpdateStats()
+EndFunc
+Func HaltTrigger()
+If isGoldFull() And isElixirFull() And isDarkElixirFull() And($g_iLabUpgradeProgress = 1) And($g_iTotalBuilderCount = 0 Or $g_iTotalBuilderCount = 5) And $g_iHaltTrigger = 0 Then
+$g_iHaltTrigger = 1
+Return True
+ElseIf(($g_hTxtSmartMinGold >= $g_hLblResultGoldNow) Or($g_hTxtSmartMinElixir >= $g_hLblResultElixirNow) Or($g_hTxtSmartMinDark >= $g_hLblResultDENow) Or($g_iTotalBuilderCount > 0 Or $g_iTotalBuilderCount < 5)) And $g_iHaltTrigger = 1 Then
+$g_iHaltTrigger = 0
+Return False
+Else
+$g_iHaltTrigger = 0
+Return False
+EndIf
 EndFunc
 Func GetTownHallLevel($bFirstTime = False)
 Local $aTHInfo[3] = ["", "", ""]
@@ -63005,6 +63027,8 @@ $txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "HALTATTACKOFF", "HA
 $txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "HIBERNATE", "HIBERNATE") & " " & GetTranslatedFileIni("MBR Func_Notify", "HIBERNATE_Info_01", "- Hibernate host PC")
 $txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "SHUTDOWN", "SHUTDOWN") & " " & GetTranslatedFileIni("MBR Func_Notify", "SHUTDOWN_Info_01", "- Shut down host PC")
 $txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "STANDBY", "STANDBY") & " " & GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_01", "- Standby host PC")
+$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- GETCHATS <INTERVAL|NOW|STOP> - to get the latest clan chat as an image")
+$txtHelp &= "%0A" & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT") & " " & GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_01", "- SENDCHAT <chat message> - to send a chat to your clan")
 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Request-For-Help_Info_02", "Request for Help") & "%0A" & $txtHelp)
 SetLog("Notify Telegram: Your request has been received from " & $g_sNotifyOrigin & ". Help has been sent", $COLOR_SUCCESS)
 Case GetTranslatedFileIni("MBR Func_Notify", "RESTART", "RESTART"), '\UD83D\UDD01 ' & GetTranslatedFileIni("MBR Func_Notify", "RESTART", "RESTART")
@@ -63184,7 +63208,30 @@ $bShutdown = False
 $bHibernate = False
 $bStandby = False
 Case Else
+Local $bFoundChatMessage = False
+If StringInStr($TGActionMSG, "SENDCHAT") Then
+$bFoundChatMessage = True
+Local $chatMessage = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("SENDCHAT "))
+$chatMessage = StringLower($chatMessage)
+ChatbotNotifyQueueChat($chatMessage)
+NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Chat queued, will send on next idle")
+ElseIf StringInStr($TGActionMSG, "GETCHATS") Then
+$bFoundChatMessage = True
+Local $Interval = 1
+$Interval = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("GETCHATS "))
+If $Interval = "STOP" Then
+ChatbotNotifyStopChatRead()
+NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Stopping interval sending")
+Else
+If $Interval = "NOW" Then
+ChatbotNotifySendChat()
+NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on next idle")
+EndIf
+EndIf
+EndIf
+If Not $bFoundChatMessage Then
 NotifyPushToTelegram(GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_01", "Sorry Chief!, ") & $TGActionMSG & GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_02", " is not a valid command."))
+EndIf
 EndSwitch
 EndIf
 EndIf
@@ -63211,7 +63258,7 @@ $g_iStatsLastAttack[$eLootDarkElixir]=$g_iStatsLastAttack[$eLootDarkElixir]/1000
 $g_iStatsLastAttack[$eLootGold]=round($g_iStatsLastAttack[$eLootGold],-1)
 $g_iStatsLastAttack[$eLootElixir]=round($g_iStatsLastAttack[$eLootElixir],-1)
 $g_iStatsLastAttack[$eLootDarkElixir]=round($g_iStatsLastAttack[$eLootDarkElixir],1)
-NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Last-Raid_Info_02", "Last Raid txt") & "%0A" & "[" & GetTranslatedFileIni("MBR Func_Notify", "Stats-G_Info_01", "G") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootGold]) & "k  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-E_Info_01", "E") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootElixir]) & "k  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-DE_Info_01", "DE") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootDarkElixir]) & "k %0A[" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "T") & "]: " & $g_iStatsLastAttack[$eLootTrophy] & "  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "%") & "]: " & $g_sTotalDamage & "  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "*") & "]: " & $g_sStarsEarned & "  [Tr#]: " & $g_aiCurrentLoot[$eLootTrophy])
+NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Last-Raid_Info_02", "Last Raid txt") & "%0A" & "[" & GetTranslatedFileIni("MBR Func_Notify", "Stats-G_Info_01", "G") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootGold]) & "k  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-E_Info_01", "E") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootElixir]) & "k  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-DE_Info_01", "DE") & "]: " & _NumberFormat($g_iStatsLastAttack[$eLootDarkElixir]) & "k %0A[" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "T") & "]: " & $g_iStatsLastAttack[$eLootTrophy] & "  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "%") & "]: " & $g_sTotalDamage & "%  [" & GetTranslatedFileIni("MBR Func_Notify", "Stats-T_Info_01", "*") & "]: " & $g_sStarsEarned & "  [Tr#]: " & $g_aiCurrentLoot[$eLootTrophy])
 If _Sleep($DELAYPUSHMSG1) Then Return
 SetLog("Notify Telegram: Last Raid Text has been sent!", $COLOR_SUCCESS)
 EndIf
@@ -63356,6 +63403,12 @@ SetLog("Notify Telegram: Your Army Camps are now Full", $COLOR_SUCCESS)
 EndIf
 Case "Misc"
 NotifyPushToTelegram($Message)
+Case "TroopUpgrading"
+NotifyPushToTelegram($g_sNotifyOrigin & " | " & $g_avLabTroops[$g_iCmbLaboratory][3] & " started upgrading in the Laboratory! | Duration: " & $g_sLabUpgradeTime)
+SetLog("Notify Telegram: Troop Upgrade", $COLOR_SUCCESS)
+Case "BuildingUpgrading"
+NotifyPushToTelegram($g_sNotifyOrigin & " | " & $g_aUpgradeNameLevel[1] & " started upgrading to Level: " & $g_aUpgradeNameLevel[2] + 1 & " | Duration: " & $g_aUpgradeResourceCostDuration[2])
+SetLog("Notify Telegram: Building Upgrade", $COLOR_SUCCESS)
 EndSwitch
 EndFunc
 Func IsPlanUseTelegram($Message)
@@ -74473,7 +74526,7 @@ SetLog(" ## OpenClanPage ## didn't Openned", $COLOR_DEBUG)
 Return False
 EndFunc
 Func Go2Bottom()
-Local $CheckEditButton[4] = [500, 380, 0xd5f17d, 5]
+Local $CheckEditButton[4] = [500, 400, 0xD8F480, 5]
 If _Sleep(1500) Then Return
 If Not _ColorCheck(_GetPixelColor($CheckEditButton[0], $CheckEditButton[1], True), Hex($CheckEditButton[2], 6), $CheckEditButton[3]) = True Then
 SetLog("You are not a Co-Leader/Leader of your clan! ", $COLOR_DEBUG)
@@ -75838,6 +75891,15 @@ NotifyPushFileToTelegram($ChatFile, "Loots", "image/jpeg", $g_sNotifyOrigin & " 
 If _Sleep($DELAYPUSHMSG2) Then Return
 Local $iDelete = FileDelete($g_sProfileLootsPath & $ChatFile)
 If Not($iDelete) Then SetLog("Chatbot: Failed to delete temp file", $COLOR_RED)
+EndFunc
+Func ChatbotNotifyQueueChat($Chat)
+If Not $g_bUseNotify Then Return
+_ArrayAdd($ChatbotQueuedChats, $Chat)
+EndFunc
+Func ChatbotNotifyStopChatRead()
+If Not $g_bUseNotify Then Return
+$ChatbotReadInterval = 0
+$ChatbotIsOnInterval = False
 EndFunc
 Func ChangeLanguageLifeCycle($lButtonLanguage, $lngMsg)
 If Not ChatbotSettingOpen() Then Return False
@@ -79317,6 +79379,10 @@ Case "UpgradeHeroes"
 UpgradeHeroes()
 _Sleep($DELAYRUNBOT3)
 Case "UpgradeBuilding"
+If $g_iFreeBuilderCount > 0 Then
+Collect()
+_Sleep($DELAYRUNBOT1)
+EndIf
 UpgradeBuilding()
 _Sleep($DELAYRUNBOT3)
 AutoUpgrade()

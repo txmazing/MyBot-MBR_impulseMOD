@@ -133,3 +133,6 @@ Global $g_bSmartSwitchUpgrade = False
 Global $g_bChkBB_DropTrophies = False
 Global $g_bChkBB_OnlyWithLoot = False
 Global $g_iTxtBB_DropTrophies = 0
+
+; ================================================== Halt Attack Addons - Added by IMMOD =========================================== ;
+Global $g_iHaltTrigger = 0

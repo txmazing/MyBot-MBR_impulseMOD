@@ -204,7 +204,7 @@ EndFunc   ;==>OpenClanPage
 Func Go2Bottom()
 
 	; Clan Edit Button
-	Local $CheckEditButton[4] = [500, 380, 0xd5f17d, 5]
+	Local $CheckEditButton[4] = [500, 400, 0xD8F480, 5]
 	If _Sleep(1500) Then Return
 
 	If Not _ColorCheck(_GetPixelColor($CheckEditButton[0], $CheckEditButton[1], True), Hex($CheckEditButton[2], 6), $CheckEditButton[3]) = True Then

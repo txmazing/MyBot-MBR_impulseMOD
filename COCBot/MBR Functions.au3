@@ -255,6 +255,7 @@
 #include "functions\Village\DonateCC.au3"
 #include "functions\Village\DonateCCWBL.au3"
 #include "functions\Village\DropTrophy.au3"
+#include "functions\Village\HaltTrigger.au3" ;Added By IMMOD
 #include "functions\Village\GetTownHallLevel.au3"
 #include "functions\Village\isAtkDarkElixirFull.au3"
 #include "functions\Village\isDarkElixirFull.au3"

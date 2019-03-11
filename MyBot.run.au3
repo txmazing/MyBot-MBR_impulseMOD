@@ -1251,6 +1251,12 @@ Func _RunFunction($action)
 			UpgradeHeroes()
 			_Sleep($DELAYRUNBOT3)
 		Case "UpgradeBuilding"
+			;------------------ADDED By IMMOD - START------------------
+			If $g_iFreeBuilderCount > 0 Then
+				Collect()
+				_Sleep($DELAYRUNBOT1)
+			EndIf
+			;------------------ADDED By IMMOD - END------------------
 			UpgradeBuilding()
 			_Sleep($DELAYRUNBOT3)
 			AutoUpgrade()

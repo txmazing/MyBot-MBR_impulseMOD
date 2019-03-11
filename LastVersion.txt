@@ -1,5 +1,5 @@
 [mod]
-version    = "v1.0.7"
+version    = "v1.0.8"
 
 messagenew = "For more information, go to \nhttps://mybot.run\n\n Always free and open source."
-messageold = "A new version of MyBot impulseMOD 1.0.7 is available!\nPlease download the latest from:\https://github.com/txmazing/MyBot-MBR_impulseMOD"
+messageold = "A new version of MyBot impulseMOD 1.0.8 is available!\nPlease download the latest from:\https://github.com/txmazing/MyBot-MBR_impulseMOD"
