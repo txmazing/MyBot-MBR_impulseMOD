@@ -20,22 +20,24 @@ Global $g_OutOfTroops = False
 Global $g_bSetDoubleArmy = False
 Global $g_iLoop = 0
 Global $g_iLoop2 = 0
-Global $g_sClanJoin = True
+;Global $g_sClanJoin = True
 Global $g_bFirstHop = True
 Global $g_bLeader = False
+Global $bDonate = True
+Global $ClanHop = False
+Global $HopFinished = False
+Global $CopiedClanTag = False
 
 ; Make a Main Loop , replacing the Original Main Loop / Necessary Functions : Train - Donate - CheckResourcesValues
 Func MainGTFO()
 
 	If $g_bChkUseGTFO = False Then Return
 
+	$g_iLoop2 = 0
+
 	; Donate Loop on Clan Chat
 	If $g_iLoop2 > $g_iTxtCyclesGTFO Then
 		Setlog("Finished GTFO " & $g_iLoop2 & " Loop(s)", $COLOR_INFO)
-		If $g_sClanJoin = True Then
-			ClanHop(True)
-			Return
-		EndIf
 	EndIf
 
 
@@ -56,7 +58,7 @@ Func MainGTFO()
 
 	; GTFO Main Loop
 	While 1
-		SetLogCentered(" GTFO v1.4 ", Default, Default, True)
+		SetLogCentered(" GTFO v1.0! REPORT ISSUES IN FORUM! ", Default, Default, True)
 		; Just a user log
 		$_diffTimer = (TimerDiff($_timer) / 1000) / 60
 		If Not $_bFirstLoop Then
@@ -117,19 +119,12 @@ Func MainGTFO()
 		Local $bDonate = DonateGTFO()
 		If Not $bDonate Then
 			Setlog("Finished GTFO", $COLOR_INFO)
-			If $g_sClanJoin = True Then
-				ClanHop($g_sClanJoin)
-				$g_sClanJoin = False
-				Return
-			EndIf
 			Return
 		EndIf
 
 		; Update the Resources values , compare with a Limit to stop The GTFO and return to Farm
 		If Not IfIsToStayInGTFO() Then
-			; TurnOFF the GTFO
-			; $g_ichkGTFO = false
-			Return
+			Return ;TurnOFF the GTFO
 		EndIf
 	WEnd
 
@@ -141,24 +136,18 @@ Func TrainGTFO()
 	; Check Resources values
 	StartGainCost()
 
-	CheckIfArmyIsReady()
-
 	If Not $g_bRunState Then Return
 
-	; Smart Train - IMMOD TODO: Reactivate except #REMOVED
+	; Smart Train - IMMOD
 ;	If $g_bChkSmartTrain Then
 ;		SmartTrain()
-;~ 		ResetVariables("donated") #REMOVED
+;~ 		ResetVariables("donated")
 ;		EndGainCost("Train")
 ;		Return
 ;	EndIf
-	
-	ClickP($aAway, 2, 0, "#0346") ;Click Away
-	If _Sleep(1000) Then Return ; Delay AFTER the click Away Prevents lots of coc restarts
-	SetLog("Army Window Closed", $COLOR_INFO)
-	
+
 	; Is necessary to be Custom Train Troops to be accurate
-	If Not OpenArmyOverview(True, "TrainGTFO()") Then Return
+	CheckIfArmyIsReady()
 
 	If _Sleep(250) Then Return
 
@@ -223,6 +212,8 @@ EndFunc   ;==>TrainGTFO
 ; Open Chat / Click on Donate Button / Donate Slot 1 or 2 / Close donate window / stay on chat for [XX] remain train Troops
 Func DonateGTFO()
 
+	Local $bOpen = True, $bClose = False
+
 	AutoItSetOption("MouseClickDelay", 1)
 	AutoItSetOption("MouseClickDownDelay", 1)
 
@@ -230,7 +221,7 @@ Func DonateGTFO()
 	Local $_diffTimer = 0, $iTime2Exit = 20
 	Local $_bReturnT = False
 	Local $_bReturnS = False
-	Local $y = 90, $firstrun = True
+	Local $y = 90
 
 	$g_OutOfTroops = False
 
@@ -239,115 +230,128 @@ Func DonateGTFO()
 
 	If _Sleep($DELAYRUNBOT3) Then Return
 
-;~ 	; Scroll Up
-;~ 	ScrollUp()
+	; Function to take nmore responsive the GUI /STOP and PASUE
+	If Not $g_bRunState Then Return
+	If _Sleep($DELAYRUNBOT3) Then Return
 
-	; +++++++++++++++++++++++++++++
-	; MAIN DONATE LOOP ON CLAN CHAT
-	; +++++++++++++++++++++++++++++
-	While 1
-
-		; Function to take nmore responsive the GUI /STOP and PASUE
-		If Not $g_bRunState Then Return
-		If _Sleep($DELAYRUNBOT3) Then Return
-
-		If $y < 620 And Not $firstrun Then
-			$y += 30
-		Else
-			; Scroll Up
-			ScrollUp()
-
-			$y = 90
+	While $bDonate
+		$y = 90
+		; check for "I Understand" button
+		Local $aCoord = decodeSingleCoord(findImage("I Understand", $g_sImgChatIUnterstand, GetDiamondFromRect("50,400,280,550")))
+		If UBound($aCoord) > 1 Then
+			SetLog("Clicking 'I Understand' button", $COLOR_ACTION)
+				ClickP($aCoord)
+			If _Sleep($DELAYDONATECC2) Then Return
 		EndIf
 
-		; Verify if the remain train time is zero
-		$_diffTimer = (TimerDiff($_timer) / 1000) / 60
-		If $g_aiTimeTrain[0] <> 0 Then $iTime2Exit = $g_aiTimeTrain[0]
-		If $g_aiTimeTrain[1] <> 0 And $g_aiTimeTrain[1] < $g_aiTimeTrain[0] Then $iTime2Exit = $g_aiTimeTrain[1]
-
-		If $_diffTimer > $iTime2Exit Then ExitLoop
-
-		If $g_iLoop2 > $g_iTxtCyclesGTFO Then ExitLoop
-
-		; +++++++++++++++++++++++++
-		; DONATE IT - WHEN EXIST REQUESTS
-		; +++++++++++++++++++++++++
+		Local $Scroll
+		; add scroll here
 		While 1
-			$g_iLoop += 1
-			$g_iLoop2 += 1
-			If $g_iLoop2 > $g_iTxtCyclesGTFO Then ExitLoop
-			If $g_iLoop >= 10 Then ExitLoop
-
-			$_bReturnT = False
-			$_bReturnS = False
-			$firstrun = False
-
-			; Check Donate Pixel
-			$g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
-			If IsArray($g_aiDonatePixel) Then
-				$y = $g_aiDonatePixel[1] + 30
-
-				; Open Donate Window
-				If Not _DonateWindow() Then ContinueLoop
-
-				; Donate It : Troops & Spells [slot 2] is the Third slot from the left : [0 ,1 ,2 ,3 ,4 ]
-				If DonateIT(0) Then $_bReturnT = True ; Donated troops, lets Train it
-				If $g_OutOfTroops Then
-					ClickAwayChat()
-					CloseClanChat()
-					Return
-				EndIf
-				If DonateIT(10) Then $_bReturnS = True ; Donated Spells , lets Train it
-
-				; Close Donate Window - Return to Chat
-				ClickAwayChat()
-			Else
-				; Doesn't exist Requests lets exits from this loop
-;~ 				ClickP($aAway, 1, 0)
-				If ScrollDown() Then
-					$y = 200
-				Else
-					$firstrun = True
-				EndIf
-				ExitLoop
-			EndIf
-
-			If ($_bReturnT = False And $_bReturnS = False) Then $y += 50
-
-			; Check if exist other Donate button
-			$g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
-			If IsArray($g_aiDonatePixel) Then
-				If $g_bDebugSetlog Then SetDebugLog("More Donate buttons found, new $g_aiDonatePixel: (" & $g_aiDonatePixel[0] & "," & $g_aiDonatePixel[1] & ")", $COLOR_DEBUG)
-				ContinueLoop
-			Else
-				If ScrollDown() Then $y = 200
+			ForceCaptureRegion()
+			$y = 90
+			$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 20)
+			If IsArray($Scroll) And _ColorCheck(_GetPixelColor(300, 110, True), Hex(0x509808, 6), 20) Then ; a second pixel for the green
+				$bDonate = True
+				Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
+				$y = 90
+				If _Sleep($DELAYDONATECC2 + 100) Then ExitLoop
 				ContinueLoop
 			EndIf
+			ExitLoop
 		WEnd
 
-		; A click just to mantain the 'Game active'
-		If $g_iLoop >= 5 Then
-			If $g_bChkGTFOClanHop = True Then
-				ClanHop() ; Hop!!!
-				$firstrun = True
-				$g_iLoop = 0
+	; Verify if the remain train time is zero
+	$_diffTimer = (TimerDiff($_timer) / 1000) / 60
+	If $g_aiTimeTrain[0] <> 0 Then $iTime2Exit = $g_aiTimeTrain[0]
+	If $g_aiTimeTrain[1] <> 0 And $g_aiTimeTrain[1] < $g_aiTimeTrain[0] Then $iTime2Exit = $g_aiTimeTrain[1]
+
+	If $_diffTimer > $iTime2Exit Then ExitLoop
+
+	; +++++++++++++++++++++++++
+	; DONATE IT - WHEN EXIST REQUESTS
+	; +++++++++++++++++++++++++
+	Local $Buttons = 0
+	While 1
+		$_bReturnT = False
+		$_bReturnS = False
+
+		; Check Donate Pixel
+		$g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
+
+		If IsArray($g_aiDonatePixel) Then
+			$Buttons += 1
+			If $g_bDebugSetlog Then SetDebugLog("***** Donate Request Number " & $Buttons & " *****", $COLOR_ACTION)
+			If $g_bDebugSetlog Then SetDebugLog("$g_aiDonatePixel: (" & $g_aiDonatePixel[0] & "," & $g_aiDonatePixel[1] & ")", $COLOR_DEBUG)
+
+			;;; reset every run
+			$bDonate = False
+
+			$y = $g_aiDonatePixel[1] + 50
+
+			; Open Donate Window
+			If Not _DonateWindow() Then ContinueLoop
+
+			; Donate It : Troops & Spells [slot 2] is the Third slot from the left : [0 ,1 ,2 ,3 ,4 ]
+			If DonateIT(0) Then $_bReturnT = True ; Donated troops, lets Train it
+			If $g_OutOfTroops Then
+				$HopFinished = True
+				ClickAwayChat()
+				ReturnToClan()
+				CloseClanChat()
+				Return
 			EndIf
-		Else
-			If $g_iLoop >= 10 Then
-				ClickAwayChat(250)
-				$g_iLoop = 0
-			EndIf
+			If DonateIT(10) Then $_bReturnS = True ; Donated Spells , lets Train it
+
+			; Close Donate Window - Return to Chat
+			ClickAwayChat()
+			$bDonate = True
+			If _Sleep(1200) Then ExitLoop
 		EndIf
+
+		;If ($_bReturnT = False And $_bReturnS = False) Then $y += 50
+
+		;;; Check for more donate buttons
+		ForceCaptureRegion()
+		$g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
+		If IsArray($g_aiDonatePixel) Then
+			If $g_bDebugSetlog Then SetDebugLog("More Donate buttons found, new $g_aiDonatePixel: (" & $g_aiDonatePixel[0] & "," & $g_aiDonatePixel[1] & ")", $COLOR_DEBUG)
+			ContinueLoop
+		Else
+			If $g_bDebugSetlog Then SetDebugLog("No more Donate buttons found, closing chat ($y=" & $y & ")", $COLOR_DEBUG)
+			$bDonate = False
+		EndIf
+
+		;;; Scroll Down
+		ForceCaptureRegion()
+		$Scroll = _PixelSearch(293, 687 - 30, 295, 693 - 30, Hex(0xFFFFFF, 6), 20)
+
+		If IsArray($Scroll) Then
+			$bDonate = True
+			Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
+			$y = 600
+
+			If _Sleep($DELAYDONATECC2) Then ExitLoop
+			ContinueLoop
+		EndIf
+
+			; A click just to mantain the 'Game active'
+			If $bDonate = False Then
+				If $g_bChkGTFOClanHop = True Then
+					$ClanHop = True
+					ClanHop() ; Hop!!!
+				EndIf
+			EndIf
+		ExitLoop
+		WEnd
 	WEnd
 
 	AutoItSetOption("MouseClickDelay", 10)
 	AutoItSetOption("MouseClickDownDelay", 10)
 	CloseClanChat()
 
-	If $g_iLoop2 > $g_iTxtCyclesGTFO Then Return False
 EndFunc   ;==>DonateGTFO
 
-Func ClanHop($sClanJoin = False)
+Func ClanHop()
 
 	If Not $g_bChkGTFOClanHop Then Return
 
@@ -361,20 +365,20 @@ Func ClanHop($sClanJoin = False)
 	Local $aClanPageJoin[4] = [768, 398, 0xDCF583, 20] ; Green Join Clan Button on Clan Page
 	Local $aJoinClanPage[4] = [720, 310, 0xEBCC80, 20] ; Trophy Amount of Clan Background of first Clan
 	Local $aClanChat[4] = [105, 650, 0x87C907, 40] ; *Your Name* joined the Clan Message Check to verify loaded Clan Chat
-	Local $aChatTab[4] = [189, 24, 0x706C50, 20] ; Clan Chat Tab on Top, check if right one is selected
-	Local $aGlobalTab[4] = [189, 24, 0x383828, 20] ; Global Chat Tab on Top, check if right one is selected
+;	Local $aChatTab[4] = [189, 24, 0x706C50, 20] ; Clan Chat Tab on Top, check if right one is selected
+;	Local $aGlobalTab[4] = [189, 24, 0x383828, 20] ; Global Chat Tab on Top, check if right one is selected
 	Local $aClanBadgeNoClan[4] = [151, 307, 0xF05538, 20] ; Orange Tile of Clan Logo on Chat Tab if you are not in a Clan
 	Local $aShare[4] = [575, 175, 0xFFFFFF, 20]
 	Local $aCopy[4] = [598, 176, 0xD9F481, 20]
 	Local $aClick[2] = [176, 216]
 	Local $aSearchClan[4] = [569, 202, 0xDCF684, 20]
 	Local $aClanNameBtn[2] = [89, 63] ; Button to open Clan Page from Chat Tab
-	;Local $aClanMod[4] = [215, 297, 0xCECDC6, 20] ; Not in use
 	Local $aSendRequest[4] = [528, 213, 0xE2F98A, 20]
 
 	$g_iCommandStop = 0 ; Halt Attacking
+	$g_bFirstHop = True
 
-	While 1
+	While $ClanHop
 		If $iErrors >= 10 Then
 			Local $y = 0
 			SetLog("Too Many Errors occured in current ClanHop Loop. Leaving ClanHopping!", $COLOR_ERROR)
@@ -403,71 +407,30 @@ Func ClanHop($sClanJoin = False)
 			$iPosJoinedClans = 0
 		EndIf
 
-		ForceCaptureRegion()
-
-		OpenClanChat()
-
-		If $sClanJoin = True And $g_sClanJoin = True And $g_bChkGTFOClanHop = True Then
-			If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then ; If Still in Clan
-				SetLog("Still in a Clan! Leaving the Clan now")
-				ClickP($aClanNameBtn)
-				If _WaitForCheckPixel($aClanPage, $g_bCapturePixel, Default, "Wait for Clan Page:") Then
-					ClickP($aClanPage)
-					If Not ClickOkay("ClanHop") Then
-						$g_bLeader = True
-						SetLog("Okay Button not found! Starting over again", $COLOR_ERROR)
-						$iErrors += 1
-						ContinueLoop
-					Else
-						SetLog("Successfully left Clan", $COLOR_SUCCESS)
-						If _Sleep(400) Then Return
-						Return
-					EndIf
-				Else
-					SetLog("Clan Page did not open! Starting over again", $COLOR_ERROR)
-					$iErrors += 1
-					ContinueLoop
-				EndIf
-			EndIf
-
-			If _Sleep(400) Then Return
-			ClickP($aClick)
-			If _Sleep(400) Then Return
-
-			Local $g_sTxtClanID = GUICtrlRead($g_hTxtClanID)
-
-			Local $sClaID = StringReplace($g_sTxtClanID, "#", "")
-			Setlog("Send : " & $sClaID, $COLOR_INFO)
-			AndroidAdbSendShellCommand("am start -n com.supercell.clashofclans/com.supercell.clashofclans.GameApp -a android.intent.action.VIEW -d 'https://link.clashofclans.com/?action=OpenClanProfile&tag=" & $sClaID & "'", Default)
-			Setlog("Wait")
-			If _Sleep(5500) Then Return
-			$sClanJoin = False
-
-			If _Sleep(100) Then Return
-			ClickP($aClanPageJoin)
-			If _Sleep(100) Then Return
-			ClickP($aSendRequest)
-			If _Sleep(100) Then Return
-
-			CloseClanChat()
-			Return
-
-		EndIf
-
 		If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then ; If Still in Clan
 			SetLog("Still in a Clan! Leaving the Clan now")
+
+			If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+			If _Wait4Pixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], 5000 , "ChatbotChatRulesClanChk") = True Then
+				Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
+				SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+			EndIf
+
 			ClickP($aClanNameBtn)
-			If $g_bFirstHop = True Then
+
+			If $g_bFirstHop = True And $g_hChkGTFOReturnClan = True And $CopiedClanTag = False Then
 				If _WaitForCheckPixel($aShare, $g_bCapturePixel, Default, "Wait for Share") Then
 					ClickP($aShare)
 					If _WaitForCheckPixel($aCopy, $g_bCapturePixel, Default, "Wait for Copy") Then
 						Local $sData = 0
 						ClickP($aCopy)
+						If _Sleep(400) Then Return
 						Local $sData = ClipGet()
 						If _Sleep(250) Then Return
 						GUICtrlSetData($g_hTxtClanID, $sData)
 						$g_sTxtClanID = $sData
 						$g_bFirstHop = False
+						$CopiedClanTag = True
 					Else
 						SetLog("No Copy Button", $COLOR_ERROR)
 						$iErrors += 1
@@ -520,8 +483,9 @@ Func ClanHop($sClanJoin = False)
 			$iPosJoinedClans = 0
 		EndIf
 
-		Click(161, 286 + ($iPosJoinedClans * 55)) ; Open specific Clans Page
+		Click(161, 286 + ($iPosJoinedClans * 55)) ; Open the chosen clans page
 		$iPosJoinedClans += 1
+
 		If _Sleep(300) Then Return
 		If Not _WaitForCheckPixel($aClanPageJoin, $g_bCapturePixel, Default, "Wait For Clan Page:") Then ; Check if Clan Page itself opened up
 			SetLog("Clan Page did not open. Starting over again", $COLOR_ERROR)
@@ -531,21 +495,22 @@ Func ClanHop($sClanJoin = False)
 
 		ClickP($aClanPageJoin) ; Join Clan
 
-		If _Sleep(1000) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
-		If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesClanChk") Then
+		If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+		If _Wait4Pixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], 5000 , "ChatbotChatRulesClanChk") = True Then
 			Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
 			SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 		EndIf
-		
+
 		If Not _WaitForCheckPixel($aClanChat, $g_bCapturePixel, Default, "Wait For Clan Chat:") Then ; Check for your "joined the Clan" Message to verify that Chat loaded successfully
 			SetLog("Could not verify loaded Clan Chat. Starting over again", $COLOR_ERROR)
 			$iErrors += 1
 			ContinueLoop
 		EndIf
-		Return
+		$ClanHop = False
+		$bDonate = True
 	WEnd
-EndFunc   ;==>ClanHop
 
+EndFunc   ;==>ClanHop
 
 Func ClickAwayChat($iSleep = 10)
 	_Sleep($iSleep)
@@ -555,6 +520,62 @@ Func ClickAwayChat($iSleep = 10)
 	Click($ix, $iy, 1, 0)
 EndFunc   ;==>ClickAwayChat
 
+Func ReturnToClan()
+	Local $aClanPageJoin[4] = [768, 398, 0xDCF583, 20] ; Green Join Clan Button on Clan Page
+	Local $aClick[2] = [176, 216]
+	Local $aSendRequest[4] = [528, 213, 0xE2F98A, 20]
+	Local $aClanNameBtn[2] = [89, 63] ; Button to open Clan Page from Chat Tab
+	Local $aClanPage[4] = [768, 398, 0xFD5D64, 20] ; Red Leave Clan Button on Clan Page
+	Local $aClanBadgeNoClan[4] = [151, 307, 0xF05538, 20] ; Orange Tile of Clan Logo on Chat Tab if you are not in a Clan
+
+	If $g_hChkGTFOReturnClan = True and $ClanHop = False And $HopFinished = True And $CopiedClanTag = True Then
+		SetLog("Return to Clan now!")
+		If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then ; If Still in Clan
+				SetLog("Leaving the Clan now!")
+
+				If _Sleep(300) Then Return ; Delay Added Just For Human Like Behavior otherwise not needed
+				If _Wait4Pixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], 5000 , "ChatbotChatRulesClanChk") = True Then
+					Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
+					SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+				EndIf
+
+				ClickP($aClanNameBtn)
+
+				If _WaitForCheckPixel($aClanPage, $g_bCapturePixel, Default, "Wait for Clan Page:") Then
+					ClickP($aClanPage)
+						If Not ClickOkay("ClanHop") Then
+						$g_bLeader = True
+						SetLog("Okay Button not found! Starting over again", $COLOR_ERROR)
+					Else
+						SetLog("Successfully left Clan", $COLOR_SUCCESS)
+						If _Sleep(400) Then Return
+					EndIf
+				Else
+					SetLog("Clan Page did not open! Starting over again", $COLOR_ERROR)
+				EndIf
+			EndIf
+
+			If _Sleep(400) Then Return
+			ClickP($aClick)
+			If _Sleep(400) Then Return
+
+			Local $g_sTxtClanID = GUICtrlRead($g_hTxtClanID)
+
+			Local $sClaID = StringReplace($g_sTxtClanID, "#", "")
+			Setlog("Send : " & $sClaID, $COLOR_INFO)
+			AndroidAdbSendShellCommand("am start -n com.supercell.clashofclans/com.supercell.clashofclans.GameApp -a android.intent.action.VIEW -d 'https://link.clashofclans.com/?action=OpenClanProfile&tag=" & $sClaID & "'", Default)
+			Setlog("Wait")
+			If _Sleep(5500) Then Return
+
+			If _Sleep(100) Then Return
+			ClickP($aClanPageJoin)
+			If _Sleep(100) Then Return
+			ClickP($aSendRequest)
+			If _Sleep(100) Then Return
+
+	EndIf
+EndFunc
+
 Func OpenClanChat()
 
 	; OPEN CLAN CHAT and verbose in log
@@ -563,7 +584,7 @@ Func OpenClanChat()
 	SetLog("Checking for Donate Requests in Clan Chat", $COLOR_INFO)
 	ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
 	If _Sleep($DELAYDONATECC4) Then Return
-	
+
 	Local $iLoopCount = 0
 	While 1
 		;If Clan tab is selected.
@@ -600,7 +621,7 @@ Func OpenClanChat()
 		Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1) ;Click on Understand button
 		SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 	EndIf
-	
+
 EndFunc   ;==>OpenClanChat
 
 Func CloseClanChat()
@@ -774,8 +795,9 @@ Func _DonateWindow()
 
 	; Determinate the right position of the new Donation Window
 	; Will search in $Y column = 410 for the first pure white color and determinate that position the $DonationWindowTemp
-
 	$g_iDonationWindowY = 0
+
+	ForceCaptureRegion()
 	Local $aDonWinOffColors[1][3] = [[0xFFFFFF, 0, 2]]
 	Local $aDonationWindow = _MultiPixelSearch(628, 0, 630, $g_iDEFAULT_HEIGHT, 1, 1, Hex(0xFFFFFF, 6), $aDonWinOffColors, 10)
 

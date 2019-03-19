@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.2"
-Global $g_sModversion = "v1.0.8"
+Global $g_sModversion = "v1.0.9"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -21654,11 +21654,6 @@ $g_hTxtClanID = GUICtrlCreateInput("#XXXXXX", $x + 160, $y + 123, 56, 21)
 GUICtrlSetFont(-1, 9, $FW_BOLD, "Arial", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, $COLOR_BLACK)
 GUICtrlSetOnEvent(-1, "ApplyClanReturnGTFO")
-GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Misc", "LblMaxCyclesGTFO", "Exit after cycles") & ": ", $x + 25, $y + 150, -1, -1)
-$g_hTxtCyclesGTFO = GUICtrlCreateInput("200", $x + 160, $y + 147, 56, 21, BitOR($ES_CENTER, $ES_NUMBER))
-GUICtrlSetFont(-1, 9, $FW_BOLD, "Arial", $CLEARTYPE_QUALITY)
-GUICtrlSetColor(-1, $COLOR_BLACK)
-GUICtrlSetOnEvent(-1, "ApplyCyclesGTFO")
 $x += 210
 $y += 2
 GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Misc", "Label_01", "Goal of SKD is lightning fast donation"), $x + 2, $y, 250, -1, $SS_CENTER)
@@ -72382,6 +72377,7 @@ chkEnableSuperXP()
 EndFunc
 Func MainSuperXPHandler()
 If Not $g_bEnableSuperXP Then Return
+chkShieldStatus()
 If $g_bDebugSetlog Or $g_bDebugSX Then SetDebugLog("Begin MainSuperXPHandler, $g_irbSXTraining=" & $g_irbSXTraining & ", $IsFullArmywithHeroesAndSpells=" & $g_bIsFullArmywithHeroesAndSpells, $COLOR_DEBUG)
 If $g_irbSXTraining = 1 And $g_bIsFullArmywithHeroesAndSpells = True Then Return
 $g_iTxtXPRunTime = _NowCalc()
@@ -72416,6 +72412,7 @@ SXSetXP("S")
 EndIf
 Local $CurrentXPgain = 0
 While $g_canGainXP
+checkAttackDisable($g_iTaBChkIdle)
 If Not WaitForMain() Then
 SetLog("Cannot get in Main Screen!! Exiting SuperXP", $COLOR_RED)
 Return False
@@ -72708,31 +72705,12 @@ Return $ToReturn
 EndFunc
 Func PrepareSuperXPAttack()
 If $g_bDebugSX Then SetDebugLog("SX|PrepareSuperXPAttack", $COLOR_PURPLE)
-Local $troopsnumber = 0
 If _Sleep($DELAYPREPAREATTACK1) Then Return
+Local $troopsnumber = 0
 Local $avAttackBar = GetAttackBar()
 For $i = 0 To UBound($g_avAttackTroops, 1) - 1
 Local $bClearSlot = True
-Local $bDropped = Default
 Local $iTroopIndex = $g_avAttackTroops[$i][0]
-Switch $iTroopIndex
-Case $eKing
-$bDropped = $g_bDropKing
-Case $eQueen
-$bDropped = $g_bDropQueen
-Case $eWarden
-$bDropped = $g_bDropWarden
-EndSwitch
-If $bDropped = False Then
-SetDebugLog("Discard updating hero " & GetTroopName($g_avAttackTroops[$i][0]) & " because not dropped yet")
-$troopsnumber += $g_avAttackTroops[$i][2]
-ContinueLoop
-EndIf
-If $bDropped = True Then
-SetDebugLog("Discard updating hero " & GetTroopName($g_avAttackTroops[$i][0]) & " because already dropped")
-$troopsnumber += $g_avAttackTroops[$i][2]
-ContinueLoop
-EndIf
 If UBound($avAttackBar, 1) > 0 Then
 For $j = 0 To UBound($avAttackBar, 1) - 1
 If $avAttackBar[$j][1] = $i Then
@@ -72761,7 +72739,18 @@ $g_avAttackTroops[$i][4] = 0
 $g_avAttackTroops[$i][5] = 0
 EndIf
 Next
-SetSlotSpecialTroops()
+$g_iKingSlot = -1
+$g_iQueenSlot = -1
+$g_iWardenSlot = -1
+For $i = 0 To UBound($g_avAttackTroops) - 1
+If $g_avAttackTroops[$i][0] = $eKing Then
+$g_iKingSlot = $i
+ElseIf $g_avAttackTroops[$i][0] = $eQueen Then
+$g_iQueenSlot = $i
+ElseIf $g_avAttackTroops[$i][0] = $eWarden Then
+$g_iWardenSlot = $i
+EndIf
+Next
 If $g_bDebugSX Then SetDebugLog("SX|PrepareSuperXPAttack Finished", $COLOR_PURPLE)
 Return $troopsnumber
 EndFunc
@@ -72906,7 +72895,7 @@ EndIf
 If $g_bDebugSX Then SetDebugLog("SX|OGP|Clicking On GP Text: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1])
 Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1])
 Local $Counter = 0
-While _ColorCheck(_GetPixelColor(621, 665, True), Hex(0xFFFFFF, 6), 10) = False Or _ColorCheck(_GetPixelColor(663, 662, True), Hex(0xFFFFFF, 6), 10) = False
+While _ColorCheck(_GetPixelColor(621, 665, True), Hex(0xFEFEFE, 6), 10) = False Or _ColorCheck(_GetPixelColor(663, 662, True), Hex(0xFEFEFE, 6), 10) = False
 If _Sleep(50) Then ExitLoop
 $Counter += 1
 If $Counter > 200 Then
@@ -72916,7 +72905,10 @@ Return False
 EndIf
 WEnd
 $Counter = 0
-While _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 83, True), Hex(0xE04A00, 6), 30) = False
+Local $ButtonColor
+$ButtonColor = _GetPixelColor($rDragToGoblinPicnic[0] + 30, $rDragToGoblinPicnic[1] + 90, True)
+If $g_bDebugSX Then SetDebugLog("SX|OGP|Check Button: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1] + 90 & "," & $ButtonColor)
+While _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0] + 30, $rDragToGoblinPicnic[1] + 90, True), Hex(0xEE5613, 6), 40) = False
 If _Sleep(50) Then ExitLoop
 Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1])
 $Counter += 1
@@ -72933,6 +72925,7 @@ SafeReturnSX()
 Return False
 EndIf
 WEnd
+If _Sleep(500) Then Return
 If $g_bDebugSX Then SetDebugLog("SX|OGP|Clicking On Attack Btn: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1] + 78)
 Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 78)
 $Counter = 0
@@ -73748,19 +73741,18 @@ Global $g_iSpellsNumber = 0
 Global $g_iClanlevel = 8
 Global $g_OutOfTroops = False
 Global $g_bSetDoubleArmy = False
-Global $g_iLoop = 0
 Global $g_iLoop2 = 0
-Global $g_sClanJoin = True
 Global $g_bFirstHop = True
 Global $g_bLeader = False
+Global $bDonate = True
+Global $ClanHop = False
+Global $HopFinished = False
+Global $CopiedClanTag = False
 Func MainGTFO()
 If $g_bChkUseGTFO = False Then Return
+$g_iLoop2 = 0
 If $g_iLoop2 > $g_iTxtCyclesGTFO Then
 Setlog("Finished GTFO " & $g_iLoop2 & " Loop(s)", $COLOR_INFO)
-If $g_sClanJoin = True Then
-ClanHop(True)
-Return
-EndIf
 EndIf
 If $g_aiCurrentLoot[$eLootElixir] <> 0 And $g_aiCurrentLoot[$eLootElixir] < $g_iTxtMinSaveGTFO_Elixir Then
 SetLog("Elixir Limits Reached!! Let's farm!", $COLOR_INFO)
@@ -73776,7 +73768,7 @@ Local $_bFirstLoop = True
 $g_iTroosNumber = 0
 $g_iSpellsNumber = 0
 While 1
-SetLogCentered(" GTFO v1.4 ", Default, Default, True)
+SetLogCentered(" GTFO v1.0! REPORT ISSUES IN FORUM! ", Default, Default, True)
 $_diffTimer =(TimerDiff($_timer) / 1000) / 60
 If Not $_bFirstLoop Then
 SetLog(" - Running GTFO for " & StringFormat("%.2f", $_diffTimer) & " min", $COLOR_DEBUG)
@@ -73821,11 +73813,6 @@ EndIf
 Local $bDonate = DonateGTFO()
 If Not $bDonate Then
 Setlog("Finished GTFO", $COLOR_INFO)
-If $g_sClanJoin = True Then
-ClanHop($g_sClanJoin)
-$g_sClanJoin = False
-Return
-EndIf
 Return
 EndIf
 If Not IfIsToStayInGTFO() Then
@@ -73835,12 +73822,8 @@ WEnd
 EndFunc
 Func TrainGTFO()
 StartGainCost()
-CheckIfArmyIsReady()
 If Not $g_bRunState Then Return
-ClickP($aAway, 2, 0, "#0346")
-If _Sleep(1000) Then Return
-SetLog("Army Window Closed", $COLOR_INFO)
-If Not OpenArmyOverview(True, "TrainGTFO()") Then Return
+CheckIfArmyIsReady()
 If _Sleep(250) Then Return
 CheckArmyCamp(False, False, False, True)
 If Not $g_bRunState Then Return
@@ -73893,81 +73876,95 @@ Local $_timer = TimerInit()
 Local $_diffTimer = 0, $iTime2Exit = 20
 Local $_bReturnT = False
 Local $_bReturnS = False
-Local $y = 90, $firstrun = True
+Local $y = 90
 $g_OutOfTroops = False
 OpenClanChat()
 If _Sleep($DELAYRUNBOT3) Then Return
-While 1
 If Not $g_bRunState Then Return
 If _Sleep($DELAYRUNBOT3) Then Return
-If $y < 620 And Not $firstrun Then
-$y += 30
-Else
-ScrollUp()
+While $bDonate
 $y = 90
+Local $aCoord = decodeSingleCoord(findImage("I Understand", $g_sImgChatIUnterstand, GetDiamondFromRect("50,400,280,550")))
+If UBound($aCoord) > 1 Then
+SetLog("Clicking 'I Understand' button", $COLOR_ACTION)
+ClickP($aCoord)
+If _Sleep($DELAYDONATECC2) Then Return
 EndIf
+Local $Scroll
+While 1
+ForceCaptureRegion()
+$y = 90
+$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 20)
+If IsArray($Scroll) And _ColorCheck(_GetPixelColor(300, 110, True), Hex(0x509808, 6), 20) Then
+$bDonate = True
+Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
+$y = 90
+If _Sleep($DELAYDONATECC2 + 100) Then ExitLoop
+ContinueLoop
+EndIf
+ExitLoop
+WEnd
 $_diffTimer =(TimerDiff($_timer) / 1000) / 60
 If $g_aiTimeTrain[0] <> 0 Then $iTime2Exit = $g_aiTimeTrain[0]
 If $g_aiTimeTrain[1] <> 0 And $g_aiTimeTrain[1] < $g_aiTimeTrain[0] Then $iTime2Exit = $g_aiTimeTrain[1]
 If $_diffTimer > $iTime2Exit Then ExitLoop
-If $g_iLoop2 > $g_iTxtCyclesGTFO Then ExitLoop
+Local $Buttons = 0
 While 1
-$g_iLoop += 1
-$g_iLoop2 += 1
-If $g_iLoop2 > $g_iTxtCyclesGTFO Then ExitLoop
-If $g_iLoop >= 10 Then ExitLoop
 $_bReturnT = False
 $_bReturnS = False
-$firstrun = False
 $g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
 If IsArray($g_aiDonatePixel) Then
-$y = $g_aiDonatePixel[1] + 30
+$Buttons += 1
+If $g_bDebugSetlog Then SetDebugLog("***** Donate Request Number " & $Buttons & " *****", $COLOR_ACTION)
+If $g_bDebugSetlog Then SetDebugLog("$g_aiDonatePixel: (" & $g_aiDonatePixel[0] & "," & $g_aiDonatePixel[1] & ")", $COLOR_DEBUG)
+$bDonate = False
+$y = $g_aiDonatePixel[1] + 50
 If Not _DonateWindow() Then ContinueLoop
 If DonateIT(0) Then $_bReturnT = True
 If $g_OutOfTroops Then
+$HopFinished = True
 ClickAwayChat()
+ReturnToClan()
 CloseClanChat()
 Return
 EndIf
 If DonateIT(10) Then $_bReturnS = True
 ClickAwayChat()
-Else
-If ScrollDown() Then
-$y = 200
-Else
-$firstrun = True
+$bDonate = True
+If _Sleep(1200) Then ExitLoop
 EndIf
-ExitLoop
-EndIf
-If($_bReturnT = False And $_bReturnS = False) Then $y += 50
+ForceCaptureRegion()
 $g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
 If IsArray($g_aiDonatePixel) Then
 If $g_bDebugSetlog Then SetDebugLog("More Donate buttons found, new $g_aiDonatePixel: (" & $g_aiDonatePixel[0] & "," & $g_aiDonatePixel[1] & ")", $COLOR_DEBUG)
 ContinueLoop
 Else
-If ScrollDown() Then $y = 200
+If $g_bDebugSetlog Then SetDebugLog("No more Donate buttons found, closing chat ($y=" & $y & ")", $COLOR_DEBUG)
+$bDonate = False
+EndIf
+ForceCaptureRegion()
+$Scroll = _PixelSearch(293, 687 - 30, 295, 693 - 30, Hex(0xFFFFFF, 6), 20)
+If IsArray($Scroll) Then
+$bDonate = True
+Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
+$y = 600
+If _Sleep($DELAYDONATECC2) Then ExitLoop
 ContinueLoop
 EndIf
-WEnd
-If $g_iLoop >= 5 Then
+If $bDonate = False Then
 If $g_bChkGTFOClanHop = True Then
+$ClanHop = True
 ClanHop()
-$firstrun = True
-$g_iLoop = 0
-EndIf
-Else
-If $g_iLoop >= 10 Then
-ClickAwayChat(250)
-$g_iLoop = 0
 EndIf
 EndIf
+ExitLoop
+WEnd
 WEnd
 AutoItSetOption("MouseClickDelay", 10)
 AutoItSetOption("MouseClickDownDelay", 10)
 CloseClanChat()
-If $g_iLoop2 > $g_iTxtCyclesGTFO Then Return False
 EndFunc
-Func ClanHop($sClanJoin = False)
+Func ClanHop()
 If Not $g_bChkGTFOClanHop Then Return
 If $g_bLeader = True Then Return
 SetLog("Start Clan Hopping", $COLOR_INFO)
@@ -73981,11 +73978,10 @@ Local $aClanChat[4] = [105, 650, 0x87C907, 40]
 Local $aClanBadgeNoClan[4] = [151, 307, 0xF05538, 20]
 Local $aShare[4] = [575, 175, 0xFFFFFF, 20]
 Local $aCopy[4] = [598, 176, 0xD9F481, 20]
-Local $aClick[2] = [176, 216]
 Local $aClanNameBtn[2] = [89, 63]
-Local $aSendRequest[4] = [528, 213, 0xE2F98A, 20]
 $g_iCommandStop = 0
-While 1
+$g_bFirstHop = True
+While $ClanHop
 If $iErrors >= 10 Then
 Local $y = 0
 SetLog("Too Many Errors occured in current ClanHop Loop. Leaving ClanHopping!", $COLOR_ERROR)
@@ -74011,62 +74007,27 @@ CloseCoc(True)
 $iScrolls = 0
 $iPosJoinedClans = 0
 EndIf
-ForceCaptureRegion()
-OpenClanChat()
-If $sClanJoin = True And $g_sClanJoin = True And $g_bChkGTFOClanHop = True Then
 If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then
 SetLog("Still in a Clan! Leaving the Clan now")
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], 5000 , "ChatbotChatRulesClanChk") = True Then
+Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
+SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+EndIf
 ClickP($aClanNameBtn)
-If _WaitForCheckPixel($aClanPage, $g_bCapturePixel, Default, "Wait for Clan Page:") Then
-ClickP($aClanPage)
-If Not ClickOkay("ClanHop") Then
-$g_bLeader = True
-SetLog("Okay Button not found! Starting over again", $COLOR_ERROR)
-$iErrors += 1
-ContinueLoop
-Else
-SetLog("Successfully left Clan", $COLOR_SUCCESS)
-If _Sleep(400) Then Return
-Return
-EndIf
-Else
-SetLog("Clan Page did not open! Starting over again", $COLOR_ERROR)
-$iErrors += 1
-ContinueLoop
-EndIf
-EndIf
-If _Sleep(400) Then Return
-ClickP($aClick)
-If _Sleep(400) Then Return
-Local $g_sTxtClanID = GUICtrlRead($g_hTxtClanID)
-Local $sClaID = StringReplace($g_sTxtClanID, "#", "")
-Setlog("Send : " & $sClaID, $COLOR_INFO)
-AndroidAdbSendShellCommand("am start -n com.supercell.clashofclans/com.supercell.clashofclans.GameApp -a android.intent.action.VIEW -d 'https://link.clashofclans.com/?action=OpenClanProfile&tag=" & $sClaID & "'", Default)
-Setlog("Wait")
-If _Sleep(5500) Then Return
-$sClanJoin = False
-If _Sleep(100) Then Return
-ClickP($aClanPageJoin)
-If _Sleep(100) Then Return
-ClickP($aSendRequest)
-If _Sleep(100) Then Return
-CloseClanChat()
-Return
-EndIf
-If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then
-SetLog("Still in a Clan! Leaving the Clan now")
-ClickP($aClanNameBtn)
-If $g_bFirstHop = True Then
+If $g_bFirstHop = True And $g_hChkGTFOReturnClan = True And $CopiedClanTag = False Then
 If _WaitForCheckPixel($aShare, $g_bCapturePixel, Default, "Wait for Share") Then
 ClickP($aShare)
 If _WaitForCheckPixel($aCopy, $g_bCapturePixel, Default, "Wait for Copy") Then
 Local $sData = 0
 ClickP($aCopy)
+If _Sleep(400) Then Return
 Local $sData = ClipGet()
 If _Sleep(250) Then Return
 GUICtrlSetData($g_hTxtClanID, $sData)
 $g_sTxtClanID = $sData
 $g_bFirstHop = False
+$CopiedClanTag = True
 Else
 SetLog("No Copy Button", $COLOR_ERROR)
 $iErrors += 1
@@ -74122,8 +74083,8 @@ $iErrors += 1
 ContinueLoop
 EndIf
 ClickP($aClanPageJoin)
-If _Sleep(1000) Then Return
-If _CheckColorPixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], $g_bCapturePixel, "ChatbotChatRulesClanChk") Then
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], 5000 , "ChatbotChatRulesClanChk") = True Then
 Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
 SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
 EndIf
@@ -74132,7 +74093,8 @@ SetLog("Could not verify loaded Clan Chat. Starting over again", $COLOR_ERROR)
 $iErrors += 1
 ContinueLoop
 EndIf
-Return
+$ClanHop = False
+$bDonate = True
 WEnd
 EndFunc
 Func ClickAwayChat($iSleep = 10)
@@ -74140,6 +74102,52 @@ _Sleep($iSleep)
 Local $ix = Random(90, 129, 1)
 Local $iy = Random(687, 724, 1)
 Click($ix, $iy, 1, 0)
+EndFunc
+Func ReturnToClan()
+Local $aClanPageJoin[4] = [768, 398, 0xDCF583, 20]
+Local $aClick[2] = [176, 216]
+Local $aSendRequest[4] = [528, 213, 0xE2F98A, 20]
+Local $aClanNameBtn[2] = [89, 63]
+Local $aClanPage[4] = [768, 398, 0xFD5D64, 20]
+Local $aClanBadgeNoClan[4] = [151, 307, 0xF05538, 20]
+If $g_hChkGTFOReturnClan = True and $ClanHop = False And $HopFinished = True And $CopiedClanTag = True Then
+SetLog("Return to Clan now!")
+If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then
+SetLog("Leaving the Clan now!")
+If _Sleep(300) Then Return
+If _Wait4Pixel($g_aButtonChatRulesClan[2], $g_aButtonChatRulesClan[3], $g_aButtonChatRulesClan[4], $g_aButtonChatRulesClan[5], 5000 , "ChatbotChatRulesClanChk") = True Then
+Click($g_aButtonChatRulesClan[0], $g_aButtonChatRulesClan[1], 1)
+SetLog("Understand Chat Rules.", $COLOR_SUCCESS)
+EndIf
+ClickP($aClanNameBtn)
+If _WaitForCheckPixel($aClanPage, $g_bCapturePixel, Default, "Wait for Clan Page:") Then
+ClickP($aClanPage)
+If Not ClickOkay("ClanHop") Then
+$g_bLeader = True
+SetLog("Okay Button not found! Starting over again", $COLOR_ERROR)
+Else
+SetLog("Successfully left Clan", $COLOR_SUCCESS)
+If _Sleep(400) Then Return
+EndIf
+Else
+SetLog("Clan Page did not open! Starting over again", $COLOR_ERROR)
+EndIf
+EndIf
+If _Sleep(400) Then Return
+ClickP($aClick)
+If _Sleep(400) Then Return
+Local $g_sTxtClanID = GUICtrlRead($g_hTxtClanID)
+Local $sClaID = StringReplace($g_sTxtClanID, "#", "")
+Setlog("Send : " & $sClaID, $COLOR_INFO)
+AndroidAdbSendShellCommand("am start -n com.supercell.clashofclans/com.supercell.clashofclans.GameApp -a android.intent.action.VIEW -d 'https://link.clashofclans.com/?action=OpenClanProfile&tag=" & $sClaID & "'", Default)
+Setlog("Wait")
+If _Sleep(5500) Then Return
+If _Sleep(100) Then Return
+ClickP($aClanPageJoin)
+If _Sleep(100) Then Return
+ClickP($aSendRequest)
+If _Sleep(100) Then Return
+EndIf
 EndFunc
 Func OpenClanChat()
 ClickP($aAway, 1, 0, "#0167")
@@ -74196,32 +74204,6 @@ ExitLoop
 EndIf
 EndIf
 WEnd
-EndFunc
-Func ScrollUp()
-Local $Scroll, $i_attempts = 0
-While 1
-Local $y = 90
-$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 18)
-If IsArray($Scroll) And _ColorCheck(_GetPixelColor(300, 110, True), Hex(0x509808, 6), 20) Then
-Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
-If _Sleep($DELAYDONATECC2 + 100) Then Return
-ContinueLoop
-$i_attempts += 1
-If $i_attempts > 20 Then ExitLoop
-EndIf
-ExitLoop
-WEnd
-EndFunc
-Func ScrollDown()
-Local $Scroll
-$Scroll = _PixelSearch(293, 687 - 30, 295, 693 - 30, Hex(0xFFFFFF, 6), 10)
-If IsArray($Scroll) Then
-Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
-If _Sleep($DELAYDONATECC2) Then Return
-Return True
-Else
-Return False
-EndIf
 EndFunc
 Func DonateIT($Slot)
 Local $iTroopIndex = $Slot, $YComp = 0, $NumberClick = 5
@@ -74304,6 +74286,7 @@ $iCount += 1
 If $iCount = 20 Then ExitLoop
 WEnd
 $g_iDonationWindowY = 0
+ForceCaptureRegion()
 Local $aDonWinOffColors[1][3] = [[0xFFFFFF, 0, 2]]
 Local $aDonationWindow = _MultiPixelSearch(628, 0, 630, $g_iDEFAULT_HEIGHT, 1, 1, Hex(0xFFFFFF, 6), $aDonWinOffColors, 10)
 If IsArray($aDonationWindow) Then
@@ -75786,7 +75769,7 @@ EndFunc
 Func ChatbotSelectGlobalChat()
 Click($g_aButtonChatSelectTabGlobal[0], $g_aButtonChatSelectTabGlobal[1], 1)
 If _Sleep(300) Then Return
-If _CheckColorPixel($g_aButtonChatRulesGlobal[2], $g_aButtonChatRulesGlobal[3], $g_aButtonChatRulesGlobal[4], $g_aButtonChatRulesGlobal[5], $g_bCapturePixel, "ChatbotChatRulesClanChk") Then
+If _CheckColorPixel($g_aButtonChatRulesGlobal[2], $g_aButtonChatRulesGlobal[3], $g_aButtonChatRulesGlobal[4], $g_aButtonChatRulesGlobal[5], $g_bCapturePixel, "ChatbotChatRulesGlobalChk") Then
 Click($g_aButtonChatRulesGlobal[0], $g_aButtonChatRulesGlobal[1], 1)
 SetLog("Chatbot: Understand Chat Rules.", $COLOR_SUCCESS)
 EndIf

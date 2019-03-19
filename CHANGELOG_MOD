@@ -1,7 +1,13 @@
-﻿* **V1.0.8**
+﻿* **V1.0.9**
+* Fixed Cleverbot (Idiot forgot the "phantomjs.exe" lol)
+* Fixed GTFO (Please report every issue u find, edited the feature maybe I forgot sth)
+* Fixed GoblinXP (Find Attack-Button & relocate HeroSlot for each attack)
+
+* **V1.0.8**
 * Added some Telegrammessages
 * Added "Donate when resources are maxed and no available upgrades"
 * Fixed GTFO (Find "Edit"-Button)
+* Edited Telegramremoteicons ("/start" to update)
 
 * **V1.0.7**
 * Added Smart Upgrade

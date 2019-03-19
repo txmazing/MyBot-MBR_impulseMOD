@@ -341,11 +341,11 @@ Func TabGTFOGUI()
 	GUICtrlSetColor(-1, $COLOR_BLACK)
 	GUICtrlSetOnEvent(-1, "ApplyClanReturnGTFO")
 
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Misc", "LblMaxCyclesGTFO", "Exit after cycles") & ": ", $x + 25, $y + 150, -1, -1)
-	$g_hTxtCyclesGTFO = GUICtrlCreateInput("200", $x + 160, $y + 147, 56, 21, BitOR($ES_CENTER, $ES_NUMBER))
-	GUICtrlSetFont(-1, 9, $FW_BOLD, "Arial", $CLEARTYPE_QUALITY)
-	GUICtrlSetColor(-1, $COLOR_BLACK)
-	GUICtrlSetOnEvent(-1, "ApplyCyclesGTFO")
+	;GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Misc", "LblMaxCyclesGTFO", "Exit after cycles") & ": ", $x + 25, $y + 150, -1, -1)
+	;$g_hTxtCyclesGTFO = GUICtrlCreateInput("200", $x + 160, $y + 147, 56, 21, BitOR($ES_CENTER, $ES_NUMBER))
+	;GUICtrlSetFont(-1, 9, $FW_BOLD, "Arial", $CLEARTYPE_QUALITY)
+	;GUICtrlSetColor(-1, $COLOR_BLACK)
+	;GUICtrlSetOnEvent(-1, "ApplyCyclesGTFO")
 	$x += 210
 	$y += 2
 	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Misc", "Label_01", "Goal of SKD is lightning fast donation"), $x + 2, $y, 250, -1, $SS_CENTER)

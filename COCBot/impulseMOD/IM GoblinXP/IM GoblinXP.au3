@@ -143,6 +143,9 @@ EndFunc   ;==>chkEnableSuperXP2
 
 Func MainSuperXPHandler()
 	If Not $g_bEnableSuperXP Then Return
+
+	chkShieldStatus()
+
 	If $g_bDebugSetlog Or $g_bDebugSX Then SetDebugLog("Begin MainSuperXPHandler, $g_irbSXTraining=" & $g_irbSXTraining & ", $IsFullArmywithHeroesAndSpells=" & $g_bIsFullArmywithHeroesAndSpells, $COLOR_DEBUG)
 	If $g_irbSXTraining = 1 And $g_bIsFullArmywithHeroesAndSpells = True Then Return ; If Gain while Training Enabled but Army is Full Then Return
 	$g_iTxtXPRunTime = _NowCalc()
@@ -192,6 +195,10 @@ Func MainSuperXPHandler()
 
 	; Okay everything is Good, Attack Goblin Picnic
 	While $g_canGainXP
+
+		; Early Take-A-Break detection
+		checkAttackDisable($g_iTaBChkIdle)
+
 		If Not WaitForMain() Then
 			SetLog("Cannot get in Main Screen!! Exiting SuperXP", $COLOR_RED)
 			Return False
@@ -551,37 +558,16 @@ EndFunc   ;==>GetDropPointSuperXP
 
 Func PrepareSuperXPAttack()
 	If $g_bDebugSX Then SetDebugLog("SX|PrepareSuperXPAttack", $COLOR_PURPLE)
-	Local $troopsnumber = 0
 	If _Sleep($DELAYPREPAREATTACK1) Then Return
+
+	Local $troopsnumber = 0
+
 	Local $avAttackBar = GetAttackBar()
 	For $i = 0 To UBound($g_avAttackTroops, 1) - 1
 		Local $bClearSlot = True ; by default clear the slot, if no corresponding slot is found in attackbar detection
 			; keep initial heroes to avoid possibly "losing" them when not dropped yet
 			;Local $bSlotDetectedAgain = UBound($avAttackBar, 1) > $i And $g_avAttackTroops[$i][0] = Number($avAttackBar[$i][0]) ; wrong, as attackbar array on remain is shorter
-			Local $bDropped = Default
 			Local $iTroopIndex = $g_avAttackTroops[$i][0]
-			Switch $iTroopIndex
-				Case $eKing
-					$bDropped = $g_bDropKing
-				Case $eQueen
-					$bDropped = $g_bDropQueen
-				Case $eWarden
-					$bDropped = $g_bDropWarden
-			EndSwitch
-			If $bDropped = False Then
-				SetDebugLog("Discard updating hero " & GetTroopName($g_avAttackTroops[$i][0]) & " because not dropped yet")
-				$troopsnumber += $g_avAttackTroops[$i][2]
-				ContinueLoop
-			EndIf
-			If $bDropped = True Then
-				;If $bSlotDetectedAgain Then
-					; ok, hero was dropped, really? don't know yet... TODO add check if hero was really dropped...
-				;EndIf
-				SetDebugLog("Discard updating hero " & GetTroopName($g_avAttackTroops[$i][0]) & " because already dropped")
-				$troopsnumber += $g_avAttackTroops[$i][2]
-				ContinueLoop
-			EndIf
-
 		If UBound($avAttackBar, 1) > 0 Then
 			For $j = 0 To UBound($avAttackBar, 1) - 1
 				If $avAttackBar[$j][1] = $i Then
@@ -615,8 +601,20 @@ Func PrepareSuperXPAttack()
 			$g_avAttackTroops[$i][4] = 0
 			$g_avAttackTroops[$i][5] = 0
 		EndIf
+		Next
+
+	$g_iKingSlot = -1
+	$g_iQueenSlot = -1
+	$g_iWardenSlot = -1
+	For $i = 0 To UBound($g_avAttackTroops) - 1
+		If $g_avAttackTroops[$i][0] = $eKing Then
+			$g_iKingSlot = $i
+		ElseIf $g_avAttackTroops[$i][0] = $eQueen Then
+			$g_iQueenSlot = $i
+		ElseIf $g_avAttackTroops[$i][0] = $eWarden Then
+			$g_iWardenSlot = $i
+		EndIf
 	Next
-	SetSlotSpecialTroops()
 
 	If $g_bDebugSX Then SetDebugLog("SX|PrepareSuperXPAttack Finished", $COLOR_PURPLE)
 	Return $troopsnumber
@@ -791,7 +789,7 @@ Func OpenGoblinPicnic()
 	If $g_bDebugSX Then SetDebugLog("SX|OGP|Clicking On GP Text: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1])
 	Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1]) ; Click On Goblin Picnic Text To Show Attack Button
 	Local $Counter = 0
-	While _ColorCheck(_GetPixelColor(621, 665, True), Hex(0xFFFFFF, 6), 10) = False Or _ColorCheck(_GetPixelColor(663, 662, True), Hex(0xFFFFFF, 6), 10) = False ; Wait for Attack Button
+	While _ColorCheck(_GetPixelColor(621, 665, True), Hex(0xFEFEFE, 6), 10) = False Or _ColorCheck(_GetPixelColor(663, 662, True), Hex(0xFEFEFE, 6), 10) = False ; Wait for Attack Button
 		If _Sleep(50) Then ExitLoop
 		$Counter += 1
 		If $Counter > 200 Then
@@ -802,7 +800,10 @@ Func OpenGoblinPicnic()
 	WEnd
 
 	$Counter = 0
-	While _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 83, True), Hex(0xE04A00, 6), 30) = False
+	Local $ButtonColor
+	$ButtonColor = _GetPixelColor($rDragToGoblinPicnic[0] + 30, $rDragToGoblinPicnic[1] + 90, True)
+	If $g_bDebugSX Then SetDebugLog("SX|OGP|Check Button: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1] + 90 & "," & $ButtonColor)
+	While _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0] + 30, $rDragToGoblinPicnic[1] + 90, True), Hex(0xEE5613, 6), 40) = False
 		If _Sleep(50) Then ExitLoop
 		;SetLog("waiting for button color")
 		Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1]) ; Click On Goblin Picnic Text To Show Attack Button
@@ -821,6 +822,8 @@ Func OpenGoblinPicnic()
 			Return False
 		EndIf
 	WEnd
+
+	If _Sleep(500) Then Return
 
 	If $g_bDebugSX Then SetDebugLog("SX|OGP|Clicking On Attack Btn: " & $rDragToGoblinPicnic[0] & ", " & $rDragToGoblinPicnic[1] + 78)
 	Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 78) ; Click On Attack Button
