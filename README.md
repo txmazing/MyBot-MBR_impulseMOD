@@ -42,3 +42,8 @@ Mybot uses non-GPL/GPL 3rd party libraries for extension (#SystemLibraryExceptio
 Contacts
   --------
 - https://mybot.run/forums/index.php?/contact/
+
+![image](https://i.imgur.com/MQdiszO.png) 
+![image](https://i.imgur.com/RzvhoLp.png)
+![image](https://i.imgur.com/ARSle0X.png)
+![image](https://i.imgur.com/71wnNPi.png)
